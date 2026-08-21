@@ -16,26 +16,27 @@ Welcome to the documentation for **`n8n-nodes-dartfx`**, the official [n8n](http
 
 ---
 
-```eval_rst
-.. toctree::
-   :maxdepth: 2
-   :caption: Getting Started
+```{toctree}
+:maxdepth: 2
+:caption: Getting Started
 
-   getting-started/installation
-   getting-started/local-testing
+getting-started/installation
+getting-started/local-testing
+```
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Node Reference
+```{toctree}
+:maxdepth: 2
+:caption: Node Reference
 
-   nodes/qsv-overview
-   nodes/qsv-operations
+nodes/qsv-overview
+nodes/qsv-operations
+```
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Development & Internals
+```{toctree}
+:maxdepth: 2
+:caption: Development & Internals
 
-   development/architecture
+development/architecture
 ```
 
 ---
