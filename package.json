@@ -1,0 +1,60 @@
+{
+  "name": "n8n-nodes-dartfx",
+  "version": "0.1.0",
+  "description": "n8n community nodes for Data Artifex FAIRification and QSV high-performance data wrangling operations",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n-nodes",
+    "dartfx",
+    "fair",
+    "fairification",
+    "qsv",
+    "data-wrangling",
+    "csv",
+    "schema",
+    "unf"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/DataArtifex/dartfx-n8n",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DataArtifex/dartfx-n8n.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "generate:qsv": "npx tsx scripts/generate-qsv-nodes.ts",
+    "format": "prettier --write \"**/*.{ts,js,json,md}\"",
+    "lint": "eslint \"**/*.ts\"",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "nodes": [
+      "dist/nodes/Qsv/Qsv.node.js",
+      "dist/nodes/FairData/FairData.node.js"
+    ]
+  },
+  "dependencies": {
+    "execa": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.13.4",
+    "@typescript-eslint/eslint-plugin": "^8.24.1",
+    "@typescript-eslint/parser": "^8.24.1",
+    "eslint": "^9.20.1",
+    "gulp": "^5.0.0",
+    "jest": "^29.7.0",
+    "n8n-workflow": "^1.78.1",
+    "prettier": "^3.5.1",
+    "ts-jest": "^29.2.5",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}

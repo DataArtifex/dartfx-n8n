@@ -1,0 +1,13 @@
+{
+  "node": "n8n-nodes-dartfx.qsv",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": ["Data & Storage", "Utility", "Development"],
+  "resources": {
+    "primaryDocumentation": [
+      {
+        "url": "https://github.com/dathere/qsv"
+      }
+    ]
+  }
+}

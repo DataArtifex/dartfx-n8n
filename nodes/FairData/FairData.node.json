@@ -1,0 +1,13 @@
+{
+  "node": "n8n-nodes-dartfx.fairData",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": ["Data & Storage", "Utility"],
+  "resources": {
+    "primaryDocumentation": [
+      {
+        "url": "https://github.com/DataArtifex/dartfx-n8n"
+      }
+    ]
+  }
+}
