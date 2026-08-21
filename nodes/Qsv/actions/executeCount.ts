@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv count'
@@ -9,18 +9,26 @@ export async function executeCount(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['count'];
+  const args: string[] = ["count"];
 
   // Collect flags and parameters
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('-o', outputPath);
+      args.push("-o", outputPath);
     }
   } catch {
     // outputPath not applicable for this command
@@ -29,14 +37,14 @@ export async function executeCount(
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv count',
+        command: "qsv count",
         inputPath,
         rawOutput: stdout,
       };
@@ -46,7 +54,7 @@ export async function executeCount(
       {
         json: {
           success: true,
-          command: 'count',
+          command: "count",
           inputPath,
           result: resultJson,
         },

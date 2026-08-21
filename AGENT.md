@@ -9,8 +9,8 @@ Welcome, Agent. This document provides essential architectural context, conventi
 `n8n-nodes-dartfx` is a collection of custom **n8n Community Nodes** designed to power end-to-end **data FAIRification** pipelines (Findable, Accessible, Interoperable, Reusable) and high-performance tabular data wrangling.
 
 Primary components:
+
 1. **QSV Node (`nodes/Qsv/Qsv.node.ts`)**: Fast wrappers for [datHere QSV](https://github.com/dathere/qsv) commands (`stats`, `frequency`, `schema`, `index`, `count`, `sniff`, `to`, `sqlp`, etc.).
-2. **FAIR Data Node (`nodes/FairData/FairData.node.ts`)**: High-level FAIRification utilities (UNF fingerprinting, frictionless schema generation, metadata crosswalks, DCAT-US / DCAT-AP packaging).
 
 ---
 
@@ -23,13 +23,13 @@ Primary components:
 - **Code Generation**: `tsx scripts/generate-qsv-nodes.ts` to generate/update node definitions from `qsv <command> --help`
 - **External Dependencies**:
   - `qsv` CLI (Rust binary, version >= 22.0.0) available in `$PATH`
-  - Python / `uvx` for Data Artifex Python CLIs (`dartfx-qsv`, `dartfx-unf`, `dartfx-fairdataschema`, etc.)
 
 ---
 
 ## 📐 Architecture & Key Design Decisions
 
 ### 1. File Path-First (Zero-Copy) Data Flow
+
 - **Default paradigm**: Pass file paths (`inputPath`, `outputPath`) across nodes rather than passing large binary buffers through n8n memory.
 - **Rationale**: QSV processes multi-gigabyte datasets in seconds using memory mapping and multi-threaded indexing. Passing full binaries through n8n’s internal execution state causes memory spikes and degrades throughput.
 - **Metadata Paths & Inline JSON**:
@@ -37,6 +37,7 @@ Primary components:
   - Heavy sidecars (like `stats.csv.data.jsonl`, generated schemas, or index files `.qsv.idx`) emit output file paths.
 
 ### 2. Automated Node Generation from QSV CLI
+
 - QSV evolves rapidly with dozens of subcommands and flags.
 - **`scripts/generate-qsv-nodes.ts`** inspects `qsv <command> --help` to extract:
   - Command descriptions and parameter lists (`--flags`, `--options <arg>`, positional inputs).
@@ -45,6 +46,7 @@ Primary components:
 - Manual overrides / custom ergonomics are layered via `nodes/Qsv/overrides/` to preserve hand-tuned UX where needed.
 
 ### 3. Version Compatibility & Graceful Degradation
+
 - Nodes check for the presence and minimum version of `qsv` upon execution.
 - If `qsv` is missing or fails, helpful actionable error messages are returned with installation instructions.
 
@@ -62,23 +64,20 @@ dartfx-n8n/
 ├── scripts/
 │   └── generate-qsv-nodes.ts     # CLI-to-n8n-node generator
 ├── nodes/
-│   ├── Qsv/
-│   │   ├── Qsv.node.ts           # Main QSV node implementation
-│   │   ├── Qsv.node.json         # Node metadata & catalog categorization
-│   │   ├── qsv.svg               # Node icon
-│   │   ├── descriptions/         # UI property definitions per command
-│   │   │   ├── IndexDescription.ts
-│   │   │   ├── StatsDescription.ts
-│   │   │   ├── FrequencyDescription.ts
-│   │   │   └── SchemaDescription.ts
-│   │   └── actions/              # Subprocess execution handlers
-│   │       ├── executeIndex.ts
-│   │       ├── executeStats.ts
-│   │       ├── executeFrequency.ts
-│   │       └── executeSchema.ts
-│   └── FairData/
-│       ├── FairData.node.ts      # FAIR operations (UNF, DCAT, Schema)
-│       └── FairData.node.json
+│   └── Qsv/
+│       ├── Qsv.node.ts           # Main QSV node implementation
+│       ├── Qsv.node.json         # Node metadata & catalog categorization
+│       ├── qsv.svg               # Node icon
+│       ├── descriptions/         # UI property definitions per command
+│       │   ├── IndexDescription.ts
+│       │   ├── StatsDescription.ts
+│       │   ├── FrequencyDescription.ts
+│       │   └── SchemaDescription.ts
+│       └── actions/              # Subprocess execution handlers
+│           ├── executeIndex.ts
+│           ├── executeStats.ts
+│           ├── executeFrequency.ts
+│           └── executeSchema.ts
 └── test/
     └── Qsv.node.test.ts
 ```
@@ -88,7 +87,9 @@ dartfx-n8n/
 ## 📖 Development & Testing Workflows
 
 ### 📦 Package Management with `pnpm`
+
 Always use `pnpm` for managing Node dependencies and scripts.
+
 - **Install dependencies**: `pnpm install`
 - **Build package**: `pnpm run build`
 - **Watch mode**: `pnpm run dev`
@@ -96,7 +97,9 @@ Always use `pnpm` for managing Node dependencies and scripts.
 - **Regenerate QSV nodes**: `pnpm run generate:qsv`
 
 ### 🧪 Local Testing with n8n
+
 To test nodes directly inside a local n8n instance:
+
 1. In `dartfx-n8n`:
    ```bash
    pnpm run build

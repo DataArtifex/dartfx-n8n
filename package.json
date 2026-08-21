@@ -27,7 +27,9 @@
     "generate:qsv": "tsx scripts/generate-qsv-nodes.ts",
     "format": "prettier --write \"**/*.{ts,js,json,md}\"",
     "lint": "eslint \"**/*.ts\"",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
+    "docs:build": "sphinx-build -b html docs/source docs/build/html",
+    "docs:serve": "sphinx-autobuild docs/source docs/build/html",
     "prepublishOnly": "pnpm run build"
   },
   "files": [
@@ -36,8 +38,7 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "nodes": [
-      "dist/nodes/Qsv/Qsv.node.js",
-      "dist/nodes/FairData/FairData.node.js"
+      "dist/nodes/Qsv/Qsv.node.js"
     ]
   },
   "dependencies": {

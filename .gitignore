@@ -1,7 +1,119 @@
+# ==========================================
+# Dependencies & Package Managers
+# ==========================================
 node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+
+# ==========================================
+# Build & Compilation Outputs
+# ==========================================
 dist/
-.DS_Store
+build/
+docs/build/
+docs/_build/
+*.tsbuildinfo
+.gulp-cache/
+
+# ==========================================
+# Logs & Process Artifacts
+# ==========================================
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ==========================================
+# Testing & Code Coverage
+# ==========================================
 coverage/
-tmp/
+.nyc_output/
+*.lcov
+
+# ==========================================
+# Environment Variables & Secrets
+# ==========================================
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ==========================================
+# Temporary & Cache Files
+# ==========================================
+tmp/
+temp/
+scratch/
+.cache/
+.eslintcache
+.prettiercache
+.parcel-cache
+*.tmp
+*.bak
+
+# ==========================================
+# Local QSV / Data Test Artifacts
+# ==========================================
+*.qsv.idx
+*.stats.csv
+*.schema.json
+test-output/
+
+# ==========================================
+# Operating System Files
+# ==========================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+
+# ==========================================
+# IDEs, Editors & AI Agent Artifacts
+# ==========================================
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains (WebStorm, IntelliJ, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Antigravity, Gemini & AI Assistants
+.gemini/
+.agents/
+.claude/
+.cursor/
+.aider*
+
+# Vim / Sublime / Emacs
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace

@@ -1,6 +1,6 @@
-import { execSync } from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
+import { execSync } from "child_process";
+import * as fs from "fs";
+import * as path from "path";
 
 interface CliOption {
   flag: string;
@@ -22,52 +22,61 @@ interface ParsedCommand {
  * List of target QSV commands to generate wrapper nodes for.
  */
 const TARGET_COMMANDS = [
-  'index',
-  'stats',
-  'frequency',
-  'schema',
-  'count',
-  'sniff',
-  'sample',
-  'select',
-  'slice',
-  'sort',
-  'search',
-  'validate',
-  'to',
+  "index",
+  "stats",
+  "frequency",
+  "schema",
+  "count",
+  "sniff",
+  "sample",
+  "select",
+  "slice",
+  "sort",
+  "search",
+  "validate",
+  "to",
 ];
 
 function getCommandHelp(cmd: string): string {
   try {
-    return execSync(`qsv ${cmd} --help`, { encoding: 'utf8' });
+    return execSync(`qsv ${cmd} --help`, { encoding: "utf8" });
   } catch (error: any) {
-    console.warn(`Warning: Could not get help for 'qsv ${cmd}': ${error.message}`);
-    return '';
+    console.warn(
+      `Warning: Could not get help for 'qsv ${cmd}': ${error.message}`,
+    );
+    return "";
   }
 }
 
 function parseHelpText(cmdName: string, helpText: string): ParsedCommand {
-  const lines = helpText.split('\n');
+  const lines = helpText.split("\n");
   const options: CliOption[] = [];
-  let description = '';
-  let usage = '';
+  let description = "";
+  let usage = "";
 
   // Extract usage
-  const usageIdx = lines.findIndex(l => l.toLowerCase().startsWith('usage:'));
+  const usageIdx = lines.findIndex((l) => l.toLowerCase().startsWith("usage:"));
   if (usageIdx !== -1) {
-    usage = lines[usageIdx].replace(/^usage:\s*/i, '').trim();
-    if (lines[usageIdx + 1] && lines[usageIdx + 1].startsWith('  ')) {
-      usage += ' ' + lines[usageIdx + 1].trim();
+    usage = lines[usageIdx].replace(/^usage:\s*/i, "").trim();
+    if (lines[usageIdx + 1] && lines[usageIdx + 1].startsWith("  ")) {
+      usage += " " + lines[usageIdx + 1].trim();
     }
   }
 
   // Extract description (first non-empty lines before usage or options)
   for (const line of lines) {
-    if (line.trim().startsWith('Usage:') || line.trim().startsWith('Common options:')) {
+    if (
+      line.trim().startsWith("Usage:") ||
+      line.trim().startsWith("Common options:")
+    ) {
       break;
     }
-    if (line.trim().length > 0 && !line.startsWith(' ') && !line.startsWith('\t')) {
-      description += (description ? ' ' : '') + line.trim();
+    if (
+      line.trim().length > 0 &&
+      !line.startsWith(" ") &&
+      !line.startsWith("\t")
+    ) {
+      description += (description ? " " : "") + line.trim();
     }
   }
 
@@ -79,7 +88,8 @@ function parseHelpText(cmdName: string, helpText: string): ParsedCommand {
   // Regex looks for patterns like:
   // -f, --flag <arg>   Description text
   // --long-flag        Description text
-  const optionRegex = /^\s*(?:-([a-zA-Z]),\s+)?--([a-zA-Z0-9_-]+)(?:\s+<([^>]+)>)?\s+(.*)$/;
+  const optionRegex =
+    /^\s*(?:-([a-zA-Z]),\s+)?--([a-zA-Z0-9_-]+)(?:\s+<([^>]+)>)?\s+(.*)$/;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -88,16 +98,19 @@ function parseHelpText(cmdName: string, helpText: string): ParsedCommand {
       const shortFlag = match[1];
       const flag = match[2];
       const argName = match[3];
-      const descPart = match[4] || '';
+      const descPart = match[4] || "";
 
       // Skip generic help
-      if (flag === 'help') continue;
+      if (flag === "help") continue;
 
       let fullDesc = descPart.trim();
       // Collect continuation lines
       let j = i + 1;
-      while (j < lines.length && lines[j].startsWith('                              ')) {
-        fullDesc += ' ' + lines[j].trim();
+      while (
+        j < lines.length &&
+        lines[j].startsWith("                              ")
+      ) {
+        fullDesc += " " + lines[j].trim();
         j++;
       }
 
@@ -128,7 +141,7 @@ function generateDescriptionFile(parsed: ParsedCommand): string {
   const opName = parsed.name;
   const capitalized = opName.charAt(0).toUpperCase() + opName.slice(1);
 
-  let propertiesCode = '';
+  let propertiesCode = "";
 
   // Input path parameter (primary)
   propertiesCode += `
@@ -147,7 +160,18 @@ function generateDescriptionFile(parsed: ParsedCommand): string {
     },`;
 
   // Output path parameter (optional / command specific)
-  if (['stats', 'frequency', 'schema', 'select', 'slice', 'sort', 'sample', 'to'].includes(opName)) {
+  if (
+    [
+      "stats",
+      "frequency",
+      "schema",
+      "select",
+      "slice",
+      "sort",
+      "sample",
+      "to",
+    ].includes(opName)
+  ) {
     propertiesCode += `
     {
       displayName: 'Output File Path',
@@ -167,11 +191,11 @@ function generateDescriptionFile(parsed: ParsedCommand): string {
   for (const opt of parsed.options) {
     const propName = opt.flag.replace(/-([a-z])/g, (_, g) => g.toUpperCase());
     const displayName = opt.flag
-      .split('-')
-      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(' ');
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
 
-    const cleanDesc = opt.description.replace(/'/g, "\\'").replace(/\n/g, ' ');
+    const cleanDesc = opt.description.replace(/'/g, "\\'").replace(/\n/g, " ");
 
     if (!opt.hasArg) {
       // Boolean flag
@@ -195,7 +219,7 @@ function generateDescriptionFile(parsed: ParsedCommand): string {
       displayName: '${displayName}',
       name: '${propName}',
       type: 'string',
-      default: '${opt.defaultValue || ''}',
+      default: '${opt.defaultValue || ""}',
       displayOptions: {
         show: {
           operation: ['${opName}'],
@@ -287,9 +311,9 @@ export async function execute${capitalized}(
 }
 
 async function main() {
-  console.log('Generating QSV node definitions from CLI help...');
-  const descriptionsDir = path.join(__dirname, '../nodes/Qsv/descriptions');
-  const actionsDir = path.join(__dirname, '../nodes/Qsv/actions');
+  console.log("Generating QSV node definitions from CLI help...");
+  const descriptionsDir = path.join(__dirname, "../nodes/Qsv/descriptions");
+  const actionsDir = path.join(__dirname, "../nodes/Qsv/actions");
 
   fs.mkdirSync(descriptionsDir, { recursive: true });
   fs.mkdirSync(actionsDir, { recursive: true });
@@ -305,17 +329,25 @@ async function main() {
     const actionContent = generateActionFile(parsed);
 
     const capitalized = cmd.charAt(0).toUpperCase() + cmd.slice(1);
-    fs.writeFileSync(path.join(descriptionsDir, `${capitalized}Description.ts`), descContent);
-    fs.writeFileSync(path.join(actionsDir, `execute${capitalized}.ts`), actionContent);
+    fs.writeFileSync(
+      path.join(descriptionsDir, `${capitalized}Description.ts`),
+      descContent,
+    );
+    fs.writeFileSync(
+      path.join(actionsDir, `execute${capitalized}.ts`),
+      actionContent,
+    );
 
     generatedCommands.push(cmd);
     console.log(`✓ Generated definitions for 'qsv ${cmd}'`);
   }
 
-  console.log(`\nSuccessfully generated ${generatedCommands.length} command nodes!`);
+  console.log(
+    `\nSuccessfully generated ${generatedCommands.length} command nodes!`,
+  );
 }
 
-main().catch(err => {
-  console.error('Generation failed:', err);
+main().catch((err) => {
+  console.error("Generation failed:", err);
   process.exit(1);
 });
