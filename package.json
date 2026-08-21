@@ -24,11 +24,11 @@
   "scripts": {
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
-    "generate:qsv": "npx tsx scripts/generate-qsv-nodes.ts",
+    "generate:qsv": "tsx scripts/generate-qsv-nodes.ts",
     "format": "prettier --write \"**/*.{ts,js,json,md}\"",
     "lint": "eslint \"**/*.ts\"",
     "test": "jest",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "pnpm run build"
   },
   "files": [
     "dist"

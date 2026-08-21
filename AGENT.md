@@ -87,28 +87,24 @@ dartfx-n8n/
 
 ## 📖 Development & Testing Workflows
 
-### 📦 Build & Lint
-```bash
-npm run build      # Compiles TS and copies assets to dist/
-npm run dev        # Watch mode
-npm run lint       # ESLint check
-```
-
-### 🔄 Regenerating QSV Node Definitions
-```bash
-npm run generate:qsv
-```
+### 📦 Package Management with `pnpm`
+Always use `pnpm` for managing Node dependencies and scripts.
+- **Install dependencies**: `pnpm install`
+- **Build package**: `pnpm run build`
+- **Watch mode**: `pnpm run dev`
+- **Lint**: `pnpm run lint`
+- **Regenerate QSV nodes**: `pnpm run generate:qsv`
 
 ### 🧪 Local Testing with n8n
 To test nodes directly inside a local n8n instance:
 1. In `dartfx-n8n`:
    ```bash
-   npm run build
-   npm link
+   pnpm run build
+   pnpm link --global
    ```
 2. In your local n8n installation directory (`~/.n8n/custom` or local test project):
    ```bash
-   npm link n8n-nodes-dartfx
+   pnpm link --global n8n-nodes-dartfx
    n8n start
    ```
 

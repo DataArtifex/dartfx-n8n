@@ -46,14 +46,17 @@ Follow the [n8n Community Nodes installation guide](https://docs.n8n.io/integrat
 git clone https://github.com/DataArtifex/dartfx-n8n.git
 cd dartfx-n8n
 
+# Use supported Node LTS (20/22)
+nvm use
+
 # Install dependencies
-npm install
+pnpm install
 
 # Regenerate QSV node definitions from latest CLI help
-npm run generate:qsv
+pnpm run generate:qsv
 
 # Build package
-npm run build
+pnpm run build
 ```
 
 See [AGENT.md](AGENT.md) for full architecture and development workflows.

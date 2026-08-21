@@ -1,0 +1,6 @@
+allowBuilds:
+  esbuild: true
+  isolated-vm: true
+onlyBuiltDependencies:
+  - esbuild
+  - isolated-vm
