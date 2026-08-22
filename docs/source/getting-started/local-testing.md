@@ -30,34 +30,32 @@ pnpm run dev
 
 ## 🔗 2. Linking to Local n8n
 
-### Method A: Global Linking with `pnpm` (Recommended)
+### Method A: Direct Local Linking (`pnpm link <dir>`) — Recommended
 
-1. **Register the local package globally**:
-
-   ```bash
-   cd /path/to/dartfx-n8n
-   pnpm link --global
-   ```
-
-2. **Link into your local n8n custom nodes directory**:
-
-   ```bash
-   mkdir -p ~/.n8n/custom
-   cd ~/.n8n/custom
-   pnpm link --global n8n-nodes-dartfx
-   ```
-
-3. **Start n8n**:
-   ```bash
-   n8n start
-   ```
-
-### Method B: Direct Installation (`pnpm add`)
+In `pnpm`, link directly to the package directory in a single step:
 
 ```bash
 mkdir -p ~/.n8n/custom
 cd ~/.n8n/custom
-pnpm add /path/to/dartfx-n8n
+pnpm link /path/to/dartfx-n8n
+
+# Start n8n
+n8n start
+```
+
+### Method B: Traditional 2-Step `npm link`
+
+```bash
+# Step 1: In the dartfx-n8n directory
+cd /path/to/dartfx-n8n
+npm link
+
+# Step 2: In the n8n custom directory
+mkdir -p ~/.n8n/custom
+cd ~/.n8n/custom
+npm link n8n-nodes-dartfx
+
+# Start n8n
 n8n start
 ```
 

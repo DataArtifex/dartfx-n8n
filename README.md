@@ -74,39 +74,37 @@ pnpm run dev
 
 ### 2. Testing with a Local n8n Instance
 
-#### Method A: Global Linking (`pnpm link --global`) — _Recommended_
+#### Method A: Direct Local Link with `pnpm link <dir>` — _Recommended_
 
-1. Register the local package globally:
+In `pnpm`, you link directly to the local package folder in one step:
 
-   ```bash
-   cd /path/to/dartfx-n8n
-   pnpm link --global
-   ```
+```bash
+mkdir -p ~/.n8n/custom
+cd ~/.n8n/custom
+pnpm link /path/to/dartfx-n8n
 
-2. Link it into your n8n custom nodes directory:
-
-   ```bash
-   mkdir -p ~/.n8n/custom
-   cd ~/.n8n/custom
-   pnpm link --global n8n-nodes-dartfx
-   ```
-
-3. Start n8n:
-   ```bash
-   n8n start
-   ```
+# Start n8n
+n8n start
+```
 
 > **🔄 Do changes auto-refresh?**
 >
 > - **Recompilation**: Running `pnpm run dev` automatically recompiles TypeScript into `dist/` on save.
 > - **n8n Process**: **No**, n8n caches loaded node modules in memory on startup. You must **stop and restart `n8n start`** (and reload your browser tab) whenever you update node code for changes to take effect.
 
-#### Method B: Direct Local Installation (`pnpm add`)
+#### Method B: Traditional 2-Step `npm link`
 
 ```bash
+# Step 1: Register package globally
+cd /path/to/dartfx-n8n
+npm link
+
+# Step 2: Link into n8n custom directory
 mkdir -p ~/.n8n/custom
 cd ~/.n8n/custom
-pnpm add /path/to/dartfx-n8n
+npm link n8n-nodes-dartfx
+
+# Start n8n
 n8n start
 ```
 
