@@ -10,7 +10,14 @@ export async function executeProfile(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
+  const rawInputPath = this.getNodeParameter(
+    "inputPath",
+    itemIndex,
+    "",
+  ) as string;
+  const inputPath = rawInputPath
+    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
+    : "";
   if (!inputPath) {
     throw new NodeOperationError(
       this.getNode(),
@@ -166,11 +173,14 @@ export async function executeProfile(
   } catch {}
 
   try {
-    const outputPath = this.getNodeParameter(
+    const rawOutputPath = this.getNodeParameter(
       "outputPath",
       itemIndex,
       "",
     ) as string;
+    const outputPath = rawOutputPath
+      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
+      : "";
     if (outputPath) {
       args.push("--output", outputPath);
     }

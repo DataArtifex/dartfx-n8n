@@ -79,3 +79,35 @@ docker run -it --rm \
 - **TypeScript Compilation**: `pnpm run dev` continuously compiles `.ts` files into `dist/`.
 - **n8n Reloading**: Because n8n loads custom node modules into Node memory at startup, **you must restart `n8n start`** (`Ctrl + C` then `n8n start`) when node code changes.
 - **UI Refresh**: Hard-refresh your browser tab (`Cmd + Shift + R` or `Ctrl + F5`) to fetch the updated node UI schemas.
+
+---
+
+## 🛡️ Troubleshooting & Permissions
+
+### macOS External Drive Permissions (`/Volumes/...`)
+
+If executing a node returns:
+
+```text
+Failed executing 'qsv count': io error: No such file or directory (os error 2)
+# or
+io error: Operation not permitted (os error 1)
+```
+
+when accessing external drive paths (e.g. `/Volumes/MyDrive/...`):
+
+1. macOS Transparency, Consent, and Control (TCC) restricts child processes spawned by Node from reading external drives unless granted permission.
+2. Open macOS **System Settings** > **Privacy & Security** > **Files and Folders** (or **Full Disk Access**).
+3. Find your terminal application (e.g. **Terminal**, **iTerm2**, **VS Code**, or **Ghostty**).
+4. Ensure **Removable Volumes** (and/or **Full Disk Access**) is toggled **ON**.
+5. Restart your terminal session and re-run `n8n start`.
+
+### Docker Path Mapping
+
+If running n8n in Docker, host paths (like `/Volumes/...` or `/Users/...`) are not accessible inside the container unless explicitly volume-mounted:
+
+```bash
+-v /Volumes/MyDrive/data:/data:ro
+```
+
+Then reference the file in the n8n node as `/data/filename.csv`.

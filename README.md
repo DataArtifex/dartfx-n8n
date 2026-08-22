@@ -125,4 +125,36 @@ _(Note: `qsv` CLI must be installed and accessible in the Docker container's `$P
 
 ---
 
+### 3. Troubleshooting & Permissions
+
+#### macOS External Drive Permissions (`/Volumes/...` / `os error 2` / `os error 1`)
+
+If you see errors like:
+
+```text
+Failed executing 'qsv count': io error: No such file or directory (os error 2)
+# or
+io error: Operation not permitted (os error 1)
+```
+
+when accessing files on external drives (under `/Volumes/<DriveName>/...`):
+
+1. macOS restricts child processes spawned by Node from accessing external drives without user consent.
+2. Go to **System Settings** > **Privacy & Security** > **Files and Folders** (or **Full Disk Access**).
+3. Locate the application where you run `n8n` (e.g. **Terminal**, **iTerm2**, **VS Code**, or **Ghostty**).
+4. Ensure **Removable Volumes** (and/or **Full Disk Access**) is toggled **ON**.
+5. Restart your terminal / n8n session.
+
+#### Docker Filesystem Paths
+
+If n8n is running inside Docker, host filesystem paths like `/Volumes/...` or `/Users/...` are **not visible** inside the container by default. You must volume-mount the data directory into the container:
+
+```bash
+-v /Volumes/MyExternalDrive/data:/data:ro
+```
+
+and then reference the path inside n8n as `/data/myfile.csv`.
+
+---
+
 See [AGENT.md](AGENT.md) for full architecture and development workflows.
