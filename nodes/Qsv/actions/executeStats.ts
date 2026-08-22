@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv stats'
@@ -10,256 +10,328 @@ export async function executeStats(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['stats'];
+  const args: string[] = ["stats"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('select', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--select', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('everything', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--everything');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('typesonly', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--typesonly');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('inferBoolean', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--infer-boolean');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('booleanPatterns', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--boolean-patterns', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('mode', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--mode');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cardinality', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--cardinality');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('zeroPaddedNumeric', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--zero-padded-numeric');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('median', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--median');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('mad', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--mad');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('quartiles', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--quartiles');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('percentiles', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--percentiles');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('percentileList', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--percentile-list', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('quantileMethod', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--quantile-method', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cardinalityMethod', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--cardinality-method', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('modeCardinalityCap', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--mode-cardinality-cap', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('round', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--round', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('nulls', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--nulls');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('weight', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--weight', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('inferDates', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--infer-dates');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('datesWhitelist', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--dates-whitelist', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('preferDmy', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--prefer-dmy');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('force', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--force');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--jobs', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('statsJsonl', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--stats-jsonl');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jsonl', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--jsonl');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('prettyJson', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--pretty-json');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cacheThreshold', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--cache-threshold', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('visWhitespace', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--vis-whitespace');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-headers');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('memcheck', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--memcheck');
-      }
-    } catch {}
+    const val = this.getNodeParameter("select", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--select", val);
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter(
+      "everything",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--everything");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("typesonly", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--typesonly");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "inferBoolean",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--infer-boolean");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "booleanPatterns",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--boolean-patterns", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("mode", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--mode");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "cardinality",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--cardinality");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "zeroPaddedNumeric",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--zero-padded-numeric");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("median", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--median");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("mad", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--mad");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("quartiles", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--quartiles");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "percentiles",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--percentiles");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "percentileList",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--percentile-list", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "quantileMethod",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--quantile-method", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "cardinalityMethod",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--cardinality-method", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "modeCardinalityCap",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--mode-cardinality-cap", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("round", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--round", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("nulls", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--nulls");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("weight", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--weight", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "inferDates",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--infer-dates");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "datesWhitelist",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--dates-whitelist", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("preferDmy", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--prefer-dmy");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("force", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--force");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--jobs", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "statsJsonl",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--stats-jsonl");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jsonl", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--jsonl");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "prettyJson",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--pretty-json");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "cacheThreshold",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--cache-threshold", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "visWhitespace",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--vis-whitespace");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-headers");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("memcheck", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--memcheck");
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv stats',
+        command: "qsv stats",
         inputPath,
         rawOutput: stdout,
       };
@@ -269,7 +341,7 @@ export async function executeStats(
       {
         json: {
           success: true,
-          command: 'stats',
+          command: "stats",
           inputPath,
           result: resultJson,
         },

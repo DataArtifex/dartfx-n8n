@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv partition'
@@ -10,74 +10,82 @@ export async function executePartition(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['partition'];
+  const args: string[] = ["partition"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('filename', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--filename', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('prefixLength', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--prefix-length', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('drop', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--drop');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('limit', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--limit', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-headers');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
+    const val = this.getNodeParameter("filename", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--filename", val);
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter("prefixLength", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--prefix-length", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("drop", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--drop");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("limit", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--limit", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-headers");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv partition',
+        command: "qsv partition",
         inputPath,
         rawOutput: stdout,
       };
@@ -87,7 +95,7 @@ export async function executePartition(
       {
         json: {
           success: true,
-          command: 'partition',
+          command: "partition",
           inputPath,
           result: resultJson,
         },

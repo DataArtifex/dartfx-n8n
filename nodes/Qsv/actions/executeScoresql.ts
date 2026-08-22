@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv scoresql'
@@ -10,88 +10,108 @@ export async function executeScoresql(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['scoresql'];
+  const args: string[] = ["scoresql"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('json', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--json');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('duckdb', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--duckdb');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('tryParsedates', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--try-parsedates');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('inferLen', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--infer-len', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('ignoreErrors', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--ignore-errors');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('truncateRaggedLines', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--truncate-ragged-lines');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--quiet');
-      }
-    } catch {}
+    const val = this.getNodeParameter("json", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--json");
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter("duckdb", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--duckdb");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "tryParsedates",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--try-parsedates");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("inferLen", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--infer-len", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "ignoreErrors",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--ignore-errors");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "truncateRaggedLines",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--truncate-ragged-lines");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--quiet");
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv scoresql',
+        command: "qsv scoresql",
         inputPath,
         rawOutput: stdout,
       };
@@ -101,7 +121,7 @@ export async function executeScoresql(
       {
         json: {
           success: true,
-          command: 'scoresql',
+          command: "scoresql",
           inputPath,
           result: resultJson,
         },

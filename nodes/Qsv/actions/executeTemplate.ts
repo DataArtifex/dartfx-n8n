@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv template'
@@ -10,137 +10,153 @@ export async function executeTemplate(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['template'];
+  const args: string[] = ["template"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('template', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--template', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('templateFile', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--template-file', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('globalsJson', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--globals-json', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('outfilename', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--outfilename', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('outsubdirSize', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--outsubdir-size', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('customfilterError', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--customfilter-error', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--jobs', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('batch', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--batch', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('timeout', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--timeout', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cacheDir', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--cache-dir', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('ckanApi', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--ckan-api', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('ckanToken', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--ckan-token', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-headers');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('progressbar', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--progressbar');
-      }
-    } catch {}
+    const val = this.getNodeParameter("template", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--template", val);
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter("templateFile", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--template-file", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("globalsJson", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--globals-json", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("outfilename", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--outfilename", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("outsubdirSize", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--outsubdir-size", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "customfilterError",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--customfilter-error", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--jobs", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("batch", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--batch", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("timeout", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--timeout", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("cacheDir", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--cache-dir", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("ckanApi", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--ckan-api", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("ckanToken", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--ckan-token", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-headers");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "progressbar",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--progressbar");
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv template',
+        command: "qsv template",
         inputPath,
         rawOutput: stdout,
       };
@@ -150,7 +166,7 @@ export async function executeTemplate(
       {
         json: {
           success: true,
-          command: 'template',
+          command: "template",
           inputPath,
           result: resultJson,
         },

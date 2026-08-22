@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv datefmt'
@@ -10,116 +10,132 @@ export async function executeDatefmt(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['datefmt'];
+  const args: string[] = ["datefmt"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('newColumn', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--new-column', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('rename', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--rename', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('preferDmy', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--prefer-dmy');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('keepZeroTime', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--keep-zero-time');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('utc', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--utc');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('zulu', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--zulu');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('tsResolution', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--ts-resolution', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--jobs', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('batch', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--batch', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-headers');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('progressbar', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--progressbar');
-      }
-    } catch {}
+    const val = this.getNodeParameter("newColumn", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--new-column", val);
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter("rename", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--rename", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("preferDmy", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--prefer-dmy");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "keepZeroTime",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--keep-zero-time");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("utc", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--utc");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("zulu", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--zulu");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("tsResolution", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--ts-resolution", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--jobs", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("batch", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--batch", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-headers");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "progressbar",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--progressbar");
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv datefmt',
+        command: "qsv datefmt",
         inputPath,
         rawOutput: stdout,
       };
@@ -129,7 +145,7 @@ export async function executeDatefmt(
       {
         json: {
           success: true,
-          command: 'datefmt',
+          command: "datefmt",
           inputPath,
           result: resultJson,
         },

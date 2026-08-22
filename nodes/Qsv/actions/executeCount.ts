@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv count'
@@ -10,95 +10,111 @@ export async function executeCount(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['count'];
+  const args: string[] = ["count"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('humanReadable', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--human-readable');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('width', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--width');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('widthNoDelims', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--width-no-delims');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('json', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--json');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noPolars', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-polars');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('lowMemory', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--low-memory');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('flexible', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--flexible');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-headers');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
+    const val = this.getNodeParameter(
+      "humanReadable",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--human-readable");
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter("width", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--width");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "widthNoDelims",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--width-no-delims");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("json", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--json");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noPolars", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-polars");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("lowMemory", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--low-memory");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("flexible", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--flexible");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-headers");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv count',
+        command: "qsv count",
         inputPath,
         rawOutput: stdout,
       };
@@ -108,7 +124,7 @@ export async function executeCount(
       {
         json: {
           success: true,
-          command: 'count',
+          command: "count",
           inputPath,
           result: resultJson,
         },

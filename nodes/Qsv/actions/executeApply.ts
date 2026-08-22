@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv apply'
@@ -10,186 +10,198 @@ export async function executeApply(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['apply'];
+  const args: string[] = ["apply"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('newColumn', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--new-column', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('rename', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--rename', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--jobs', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('batch', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--batch', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('baseUrl', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--base-url', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('model', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--model', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('apiKey', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--api-key', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('maxTokens', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--max-tokens', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('timeout', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--timeout', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('addlProps', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--addl-props', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('prompt', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--prompt', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('promptFile', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--prompt-file', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('rateLimit', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--rate-limit', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('onError', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--on-error', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('userAgent', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--user-agent', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cacheDir', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--cache-dir', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noCache', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-cache');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('fresh', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--fresh');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('stats', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--stats');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-headers');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('progressbar', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--progressbar');
-      }
-    } catch {}
+    const val = this.getNodeParameter("newColumn", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--new-column", val);
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter("rename", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--rename", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--jobs", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("batch", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--batch", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("baseUrl", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--base-url", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("model", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--model", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("apiKey", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--api-key", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("maxTokens", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--max-tokens", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("timeout", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--timeout", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("addlProps", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--addl-props", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("prompt", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--prompt", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("promptFile", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--prompt-file", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("rateLimit", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--rate-limit", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("onError", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--on-error", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("userAgent", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--user-agent", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("cacheDir", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--cache-dir", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noCache", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-cache");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("fresh", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--fresh");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("stats", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--stats");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-headers");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "progressbar",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--progressbar");
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv apply',
+        command: "qsv apply",
         inputPath,
         rawOutput: stdout,
       };
@@ -199,7 +211,7 @@ export async function executeApply(
       {
         json: {
           success: true,
-          command: 'apply',
+          command: "apply",
           inputPath,
           result: resultJson,
         },

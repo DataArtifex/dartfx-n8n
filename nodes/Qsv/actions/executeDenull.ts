@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv denull'
@@ -10,95 +10,107 @@ export async function executeDenull(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['denull'];
+  const args: string[] = ["denull"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('select', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--select', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('vocab', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--vocab', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('addVocab', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--add-vocab', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('maxDistinct', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--max-distinct', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('allColumns', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--all-columns');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('apply', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--apply');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('json', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--json');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-headers');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
+    const val = this.getNodeParameter("select", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--select", val);
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter("vocab", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--vocab", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("addVocab", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--add-vocab", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("maxDistinct", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--max-distinct", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "allColumns",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--all-columns");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("apply", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--apply");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("json", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--json");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-headers");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv denull',
+        command: "qsv denull",
         inputPath,
         rawOutput: stdout,
       };
@@ -108,7 +120,7 @@ export async function executeDenull(
       {
         json: {
           success: true,
-          command: 'denull',
+          command: "denull",
           inputPath,
           result: resultJson,
         },

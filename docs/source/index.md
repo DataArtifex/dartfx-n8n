@@ -11,7 +11,7 @@ Welcome to the documentation for **`n8n-nodes-dartfx`**, the official [n8n](http
 ## ⚡ Overview & Key Highlights
 
 - **File Path-First (Zero-Copy Architecture)**: Pass filesystem paths (`inputPath`, `outputPath`) between nodes to stream multi-gigabyte datasets directly through native Rust engines without consuming n8n JavaScript heap memory.
-- **13+ Native QSV Operations**: Automated high-performance operations including `stats`, `frequency`, `schema`, `index`, `count`, `sniff`, `sample`, `select`, `slice`, `sort`, `search`, `validate`, and `to`.
+- **77+ Native QSV Operations**: Automated high-performance operations covering profiling, cleaning, SQL queries (`sqlp`), joins (`joinp`), regex searches, partitioning, AI inference (`describegpt`), format conversions (`to`, `excel`, `parquet`), and scripting (`luau`).
 - **Seamless n8n Integration**: Fully typed parameter forms, dynamic conditional options, and clean error formatting.
 
 ---

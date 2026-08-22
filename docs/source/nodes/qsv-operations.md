@@ -1,119 +1,128 @@
 # QSV Operations Reference
 
-`n8n-nodes-dartfx` supports 13 high-performance QSV operations:
+`n8n-nodes-dartfx` supports **77 high-performance QSV operations** organized across functional domains:
 
 ---
 
-## 📊 Summary & Profiling
+## 📊 1. Profiling & Statistical Analysis
 
-### `stats`
-
-Computes column-wise summary statistics, data type inference, min/max, mean, median, standard deviation, and quantiles.
-
-- **Key Options**:
-  - `everything`: Compute all available statistics including advanced measures.
-  - `typesonly`: Infer data types only (faster).
-  - `cardinality`: Calculate exact or approximate unique values per column.
-  - `nullcheck`: Explicit null checking.
-- **Output**: Structured JSON array containing stats for each column.
-
-### `frequency`
-
-Calculates frequency distributions, top values, and unique counts for columns.
-
-- **Key Options**:
-  - `select`: Limit frequency calculation to specific columns (names or 1-based indices).
-  - `limit`: Number of top frequent values to return per column (default: `10`).
-  - `asc`: Sort ascending instead of descending.
-
-### `schema`
-
-Infers a complete **JSON Schema** from tabular data, including type constraints, min/max, string patterns, and required fields.
-
-- **Key Options**:
-  - `pattern-columns`: Enable regex pattern inference for text columns.
-  - `enum-threshold`: Threshold under which unique values are converted to enum sets.
-  - `strict-dates`: Strict ISO 8601 date parsing.
-
-### `sniff`
-
-Quickly probes and identifies CSV metadata (delimiter, quote character, header row presence, line terminators, encoding, and row count estimate).
-
-### `count`
-
-Returns the exact number of records in the dataset in sub-seconds.
-
-- **Key Options**:
-  - `human-readable`: Format large row counts with commas (e.g. `1,245,900`).
-  - `width`: Count column width instead of rows.
+| Operation        | Description                                                                                                                            |
+| :--------------- | :------------------------------------------------------------------------------------------------------------------------------------- |
+| **`stats`**      | Computes column-wise summary statistics, data types, min/max, mean, median, stddev, null checks, and quantiles. Emits structured JSON. |
+| **`frequency`**  | Builds frequency distributions, top cardinality values, and value counts per column.                                                   |
+| **`schema`**     | Infers a complete JSON Schema from tabular data with strict dates, enums, and regex patterns.                                          |
+| **`sniff`**      | Quickly detects CSV delimiter, quote character, header row presence, line terminator, and encoding.                                    |
+| **`count`**      | Returns exact record count in sub-seconds with or without an existing index.                                                           |
+| **`moarstats`**  | Computes extended statistical metrics (IQR, mode, skewness, kurtosis) on existing stats output.                                        |
+| **`pragmastat`** | Pragmatic statistical toolkit for fast confidence intervals and estimations.                                                           |
+| **`headers`**    | Returns all column header names and 1-based indices.                                                                                   |
 
 ---
 
-## 🔍 Slicing, Searching & Transformation
+## 🧹 2. Data Cleaning & Transformation
 
-### `index`
-
-Builds a `.qsv.idx` index file for the CSV, enabling instantaneous sub-second random access and slicing across multi-gigabyte files.
-
-### `select`
-
-Reorders, selects, or drops specific columns using indices or column names.
-
-- **Key Options**:
-  - `selection`: Column selector expression (e.g. `id,name,1-5,status`).
-
-### `slice`
-
-Slices rows from the dataset by index range (start, end, length, or index).
-
-- **Key Options**:
-  - `start`: 0-based starting record offset.
-  - `end`: Ending record offset.
-  - `len`: Total number of records to return.
-  - `index`: Single row index to extract.
-
-### `search`
-
-Applies high-speed regex search across specified columns or the entire dataset.
-
-- **Key Options**:
-  - `regex`: Regular expression pattern to search.
-  - `select`: Limit search to specific column(s).
-  - `ignore-case`: Case-insensitive search.
-  - `invert-match`: Invert match to select non-matching rows.
-
-### `sample`
-
-Extracts a random or stratified sample of rows from a dataset.
-
-- **Key Options**:
-  - `sample-size`: Number of records to extract.
-  - `seed`: Random seed for reproducible sampling.
-
-### `sort`
-
-Sorts rows lexicographically or numerically across one or multiple columns.
-
-- **Key Options**:
-  - `select`: Column(s) to sort by.
-  - `numeric`: Treat column values as numbers during sort.
-  - `reverse`: Reverse sort order (descending).
+| Operation        | Description                                                                                                |
+| :--------------- | :--------------------------------------------------------------------------------------------------------- |
+| **`apply`**      | Applies complex string transformations, casing changes, currency parsing, or regex operations to a column. |
+| **`behead`**     | Removes the header row from a CSV dataset.                                                                 |
+| **`clean`**      | Cleans and removes cached QSV metadata and temporary files.                                                |
+| **`datefmt`**    | Parses, normalizes, and re-formats date/datetime column values into standardized formats.                  |
+| **`dedup`**      | Fast in-memory deduplication of redundant rows.                                                            |
+| **`extdedup`**   | External-memory deduplication for arbitrarily large (100GB+) datasets.                                     |
+| **`denull`**     | Detects and replaces null sentinels (e.g. `NULL`, `N/A`, `None`, `-`) with empty values.                   |
+| **`edit`**       | Replaces specific cell values by row coordinate and column name/index.                                     |
+| **`enum`**       | Appends an enumeration/row-counter column to the dataset.                                                  |
+| **`fill`**       | Fills empty or missing values forward, backward, or with static text.                                      |
+| **`fixlengths`** | Enforces equal record length by padding or trimming uneven CSV rows.                                       |
+| **`flatten`**    | Unrolls tabular records into one field per line for inspectability.                                        |
+| **`fmt`**        | Formats CSV delimiters, quote styles, and line endings.                                                    |
+| **`pseudo`**     | Pseudonymizes column values using cryptographic salts for privacy compliance.                              |
+| **`rename`**     | Efficiently renames CSV columns.                                                                           |
+| **`replace`**    | Replaces regex patterns in column values with replacement strings.                                         |
+| **`reverse`**    | Inverts the row order of CSV data.                                                                         |
+| **`safenames`**  | Sanitizes header names into database-friendly snake_case identifiers.                                      |
 
 ---
 
-## 🛡️ Validation & Conversion
+## 🔍 3. Slicing, Search & Sampling
 
-### `validate`
+| Operation       | Description                                                                              |
+| :-------------- | :--------------------------------------------------------------------------------------- |
+| **`index`**     | Builds a `.qsv.idx` index file for sub-second random access across multi-gigabyte files. |
+| **`select`**    | Reorders, selects, duplicates, or drops specific columns.                                |
+| **`slice`**     | Slices records by row index, offset, or range.                                           |
+| **`search`**    | High-speed multi-threaded regex search across columns or entire records.                 |
+| **`searchset`** | Simultaneous regex search using a precompiled set of multiple regex patterns.            |
+| **`sample`**    | Random or Bernoulli sampling of rows with deterministic random seeding.                  |
+| **`sort`**      | Sorts CSV data alphabetically, numerically, in reverse, or randomly.                     |
+| **`extsort`**   | External-memory merge sort for datasets exceeding physical RAM.                          |
+| **`sortcheck`** | Fast validation check to confirm whether a CSV dataset is already sorted.                |
+| **`split`**     | Splits a large CSV into multiple smaller chunk files based on row limits.                |
+| **`partition`** | Partitions CSV rows into distinct files dynamically based on unique column values.       |
 
-Validates tabular data against a JSON Schema, returning errors and non-compliant row indices.
+---
 
-- **Key Options**:
-  - `schema`: Path to JSON Schema file.
-  - `fail-fast`: Stop validation upon first error encountered.
+## ⚡ 4. High-Performance SQL, Joins & Polars Engine
 
-### `to`
+| Operation       | Description                                                                          |
+| :-------------- | :----------------------------------------------------------------------------------- |
+| **`sqlp`**      | Runs ultra-fast SQL queries against one or more CSVs using the native Polars engine. |
+| **`scoresql`**  | Scores and benchmarks SQL queries against CSV caches for performance tuning.         |
+| **`join`**      | Standard streaming joins (inner, outer, cross, left, right) between two CSV files.   |
+| **`joinp`**     | Polars-accelerated multi-threaded joins with memory-mapped execution.                |
+| **`pivotp`**    | Computes pivot tables and aggregations using the Polars engine.                      |
+| **`diff`**      | Computes row-level differences and changes between two CSV datasets.                 |
+| **`exclude`**   | Excludes matching records found in a second CSV file.                                |
+| **`explode`**   | Explodes packed multi-value string columns into separate rows.                       |
+| **`implode`**   | Groups records on keys and aggregates/joins values into delimited list cells.        |
+| **`transpose`** | Transposes CSV rows into columns and vice-versa.                                     |
+| **`cat`**       | Concatenates multiple CSV files either row-wise or column-wise.                      |
 
-Converts tabular datasets between formats (`json`, `jsonl`, `parquet`, `xlsx`, etc.).
+---
 
-- **Key Options**:
-  - `format`: Target export format.
+## 🔄 5. Format Conversions
+
+| Operation        | Description                                                                                                        |
+| :--------------- | :----------------------------------------------------------------------------------------------------------------- |
+| **`to`**         | Converts CSVs into Apache Parquet, Excel (.xlsx), SQLite database, PostgreSQL dump, or Frictionless Data Packages. |
+| **`excel`**      | Extracts and converts sheets from Microsoft Excel workbooks into CSV.                                              |
+| **`json`**       | Converts JSON arrays and objects into tabular CSV.                                                                 |
+| **`jsonl`**      | Converts newline-delimited JSON (JSON Lines) streams into CSV.                                                     |
+| **`tojsonl`**    | Converts CSV datasets into JSON Lines files.                                                                       |
+| **`fixedwidth`** | Parses fixed-width text files into delimited CSV columns.                                                          |
+| **`geoconvert`** | Converts spatial formats (GeoJSON, Shapefile, CSV coordinates) back and forth.                                     |
+| **`snappy`**     | High-speed stream compression/decompression using Google's Snappy algorithm.                                       |
+
+---
+
+## 🌐 6. Web Services & AI Integrations
+
+| Operation         | Description                                                                                                      |
+| :---------------- | :--------------------------------------------------------------------------------------------------------------- |
+| **`describegpt`** | Interacts with OpenAI / LLMs to generate descriptions, infer dictionary metadata, or query tabular data with AI. |
+| **`fetch`**       | Makes concurrent HTTP GET requests per row using column values as URL parameters.                                |
+| **`fetchpost`**   | Makes concurrent HTTP POST requests per row with JSON/form payloads.                                             |
+| **`geocode`**     | Geocodes city and coordinate locations against local GeoNames databases without external API rate limits.        |
+| **`get`**         | Fetches remote tabular data into local disk cache.                                                               |
+
+---
+
+## 💻 7. Scripting, Templates & Advanced Tooling
+
+| Operation        | Description                                                                               |
+| :--------------- | :---------------------------------------------------------------------------------------- |
+| **`luau`**       | Executes embedded Luau scripts (sandboxed, high-performance Lua) directly on CSV records. |
+| **`template`**   | Renders dynamic text templates populated by CSV row data.                                 |
+| **`foreach`**    | Loops through CSV rows to execute bash/shell commands.                                    |
+| **`blake3`**     | Calculates cryptographic BLAKE3 hashes for file integrity and row fingerprinting.         |
+| **`validate`**   | Validates CSV data for RFC4180 compliance or against custom JSON Schema definitions.      |
+| **`synthesize`** | Generates statistically faithful synthetic CSV data modeled from a source dataset.        |
+| **`table`**      | Aligns CSV records into formatted ASCII terminal tables.                                  |
+| **`color`**      | Displays color-coded terminal representations of tabular data.                            |
+| **`lens`**       | Configures interactive tabular inspection prompts.                                        |
+| **`log`**        | Logs tool and MCP invocations for auditing.                                               |
+| **`pro`**        | Integrates with QSV Pro cloud services.                                                   |
+| **`profile`**    | Extracts and infers DCAT-3 / Croissant schema metadata specifications.                    |
+| **`prompt`**     | Launches native file dialogs.                                                             |
+| **`clipboard`**  | Imports from or exports to operating system clipboard.                                    |
+| **`viz`**        | Generates interactive HTML charts and Plotly dashboards from CSV data.                    |

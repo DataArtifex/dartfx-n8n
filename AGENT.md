@@ -20,7 +20,7 @@ Primary components:
 - **Runtime**: Node.js 20+ (compiled with TypeScript 5.x)
 - **Framework**: `n8n-workflow` (Declarative & Programmatic node APIs)
 - **Process Orchestration**: `execa` for async subprocess execution
-- **Code Generation**: `tsx scripts/generate-qsv-nodes.ts` to generate/update node definitions from `qsv <command> --help`
+- **Code Generation**: `tsx scripts/generate-qsv-nodes.ts` to dynamically discover all available commands from `qsv --list` and generate typed node definitions, actions, and `Qsv.node.ts` directly from CLI help
 - **External Dependencies**:
   - `qsv` CLI (Rust binary, version >= 22.0.0) available in `$PATH`
 
@@ -36,14 +36,14 @@ Primary components:
   - Summaries (like `stats`, `schema`, `frequency`) can emit **inline JSON** to the next node when small enough.
   - Heavy sidecars (like `stats.csv.data.jsonl`, generated schemas, or index files `.qsv.idx`) emit output file paths.
 
-### 2. Automated Node Generation from QSV CLI
+### 2. Dynamic Node Generation from QSV CLI
 
-- QSV evolves rapidly with dozens of subcommands and flags.
-- **`scripts/generate-qsv-nodes.ts`** inspects `qsv <command> --help` to extract:
+- QSV evolves rapidly with over 77 subcommands and hundreds of flags.
+- **`scripts/generate-qsv-nodes.ts`** dynamically discovers installed commands via `qsv --list` and inspects `qsv <command> --help` to extract:
   - Command descriptions and parameter lists (`--flags`, `--options <arg>`, positional inputs).
   - Type mappings (boolean flags -> `boolean`, strings -> `string`, numbers -> `number`, options with presets -> `options`).
-  - Common options (`--delimiter`, `--no-headers`, `--jobs`, `--output`).
-- Manual overrides / custom ergonomics are layered via `nodes/Qsv/overrides/` to preserve hand-tuned UX where needed.
+  - Dynamic parameter collection and compilation in action handlers.
+  - Full synchronization of `nodes/Qsv/Qsv.node.ts` dropdowns, properties, and execute switch-cases.
 
 ### 3. Version Compatibility & Graceful Degradation
 

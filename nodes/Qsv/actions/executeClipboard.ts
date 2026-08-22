@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv clipboard'
@@ -10,39 +10,47 @@ export async function executeClipboard(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['clipboard'];
+  const args: string[] = ["clipboard"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('save', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--save');
-      }
-    } catch {}
+    const val = this.getNodeParameter("save", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--save");
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv clipboard',
+        command: "qsv clipboard",
         inputPath,
         rawOutput: stdout,
       };
@@ -52,7 +60,7 @@ export async function executeClipboard(
       {
         json: {
           success: true,
-          command: 'clipboard',
+          command: "clipboard",
           inputPath,
           result: resultJson,
         },

@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv tojsonl'
@@ -10,81 +10,89 @@ export async function executeTojsonl(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['tojsonl'];
+  const args: string[] = ["tojsonl"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('trim', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--trim');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noBoolean', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-boolean');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--jobs', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('batch', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--batch', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('memcheck', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--memcheck');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--quiet');
-      }
-    } catch {}
+    const val = this.getNodeParameter("trim", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--trim");
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter("noBoolean", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-boolean");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--jobs", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("batch", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--batch", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("memcheck", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--memcheck");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--quiet");
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv tojsonl',
+        command: "qsv tojsonl",
         inputPath,
         rawOutput: stdout,
       };
@@ -94,7 +102,7 @@ export async function executeTojsonl(
       {
         json: {
           success: true,
-          command: 'tojsonl',
+          command: "tojsonl",
           inputPath,
           result: resultJson,
         },

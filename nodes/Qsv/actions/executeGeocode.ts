@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv geocode'
@@ -10,200 +10,216 @@ export async function executeGeocode(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['geocode'];
+  const args: string[] = ["geocode"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('newColumn', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--new-column', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('rename', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--rename', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('country', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--country', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('minScore', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--min-score', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('admin1', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--admin1', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('k_weight', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--k_weight', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('apiKey', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--api-key', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('rateLimit', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--rate-limit', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('reverse', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--reverse');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noAnnotations', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-annotations');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cacheTtl', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--cache-ttl', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noCache', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-cache');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('language', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--language', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('invalidResult', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--invalid-result', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--jobs', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('batch', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--batch', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('timeout', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--timeout', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cacheDir', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--cache-dir', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('olderThan', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--older-than', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('languages', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--languages', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('citiesUrl', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--cities-url', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('force', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--force');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('progressbar', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--progressbar');
-      }
-    } catch {}
+    const val = this.getNodeParameter("newColumn", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--new-column", val);
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter("rename", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--rename", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("country", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--country", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("minScore", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--min-score", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("admin1", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--admin1", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("k_weight", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--k_weight", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("apiKey", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--api-key", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("rateLimit", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--rate-limit", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("reverse", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--reverse");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "noAnnotations",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--no-annotations");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("cacheTtl", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--cache-ttl", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noCache", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-cache");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("language", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--language", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("invalidResult", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--invalid-result", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--jobs", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("batch", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--batch", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("timeout", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--timeout", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("cacheDir", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--cache-dir", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("olderThan", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--older-than", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("languages", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--languages", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("citiesUrl", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--cities-url", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("force", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--force");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "progressbar",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--progressbar");
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv geocode',
+        command: "qsv geocode",
         inputPath,
         rawOutput: stdout,
       };
@@ -213,7 +229,7 @@ export async function executeGeocode(
       {
         json: {
           success: true,
-          command: 'geocode',
+          command: "geocode",
           inputPath,
           result: resultJson,
         },

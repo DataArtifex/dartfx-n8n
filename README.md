@@ -12,14 +12,16 @@ A collection of custom [n8n](https://n8n.io/) community nodes to support **data 
 
 ## ⚡ Key Features
 
-- **File Path-First (Zero-Copy Architecture)**: Pass filesystem paths (`inputPath`, `outputPath`) between nodes to stream multi-gigabyte datasets directly through native Rust/Python engines without overwhelming n8n memory.
-- **Automated QSV Wrappers**: High-speed wrappers for:
-  - `stats`: Column-wise statistics, quantiles, and data type detection.
-  - `frequency`: Frequency distributions and cardinality calculations.
-  - `schema`: Automated JSON Schema inference.
-  - `index`: Rapid multi-threaded indexing for sub-second slicing and search.
-  - `count`: Instant record counting.
-- **FAIRification Utilities**: Universal Numeric Fingerprints (UNF), Frictionless Table Schema validation, and metadata crosswalks.
+- **File Path-First (Zero-Copy Architecture)**: Pass filesystem paths (`inputPath`, `outputPath`) between nodes to stream multi-gigabyte datasets directly through native Rust engines without overwhelming n8n memory.
+- **77+ Automated QSV Operations**: Full suite of high-performance tabular operations:
+  - **Profiling & Analysis**: `stats`, `frequency`, `schema`, `sniff`, `count`, `moarstats`, `pragmastat`
+  - **Transformation & Cleaning**: `apply`, `behead`, `dedup`, `denull`, `fill`, `flatten`, `fmt`, `replace`, `safenames`, `rename`, `pseudo`
+  - **Slicing, Search & Sampling**: `index`, `slice`, `search`, `searchset`, `select`, `sample`, `split`, `partition`
+  - **High-Speed SQL & Joins**: `sqlp` (Polars SQL engine), `join`, `joinp`, `pivotp`, `diff`, `explode`, `implode`
+  - **Format Conversions**: `to` (Parquet, XLSX, SQLite, Postgres), `excel`, `json`, `jsonl`, `tojsonl`, `fixedwidth`, `geoconvert`
+  - **AI & Web Services**: `describegpt` (LLM metadata/chat), `fetch`, `fetchpost`, `geocode`
+  - **Advanced Scripting & Validation**: `luau` embedded scripting, `validate` (JSON Schema / RFC4180), `blake3` cryptographic hashing, `synthesize`
+- **Dynamic CLI Synchronizer**: `pnpm run generate:qsv` automatically queries `qsv --list` and keeps all node definitions and parameter forms synchronized with your installed QSV binary.
 
 ---
 

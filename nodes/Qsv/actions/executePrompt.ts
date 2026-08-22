@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execa } from "execa";
 
 /**
  * Action runner for 'qsv prompt'
@@ -10,81 +10,89 @@ export async function executePrompt(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex, "") as string;
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['prompt'];
+  const args: string[] = ["prompt"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('msg', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--msg', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('filters', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--filters', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('workdir', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--workdir', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('fdOutput', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--fd-output');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('saveFname', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--save-fname', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('baseDelayMs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--base-delay-ms', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--quiet');
-      }
-    } catch {}
+    const val = this.getNodeParameter("msg", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--msg", val);
+    }
+  } catch {}
 
   try {
-    const outputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const val = this.getNodeParameter("filters", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--filters", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("workdir", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--workdir", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("fdOutput", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--fd-output");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("saveFname", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--save-fname", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("baseDelayMs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--base-delay-ms", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--quiet");
+    }
+  } catch {}
+
+  try {
+    const outputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa("qsv", args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv prompt',
+        command: "qsv prompt",
         inputPath,
         rawOutput: stdout,
       };
@@ -94,7 +102,7 @@ export async function executePrompt(
       {
         json: {
           success: true,
-          command: 'prompt',
+          command: "prompt",
           inputPath,
           result: resultJson,
         },

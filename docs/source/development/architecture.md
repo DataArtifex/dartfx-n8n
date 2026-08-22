@@ -50,13 +50,15 @@ When an n8n workflow triggers the QSV node:
 
 ## 🤖 Automated Node Generation (`generate:qsv`)
 
-QSV has numerous commands and options. The code generator script (`scripts/generate-qsv-nodes.ts`):
+QSV has over 77 commands and hundreds of flags. The code generator script (`scripts/generate-qsv-nodes.ts`):
 
-1. Runs `qsv <command> --help`.
-2. Parses CLI flags, arguments, descriptions, and default values.
-3. Automatically generates:
-   - `nodes/Qsv/descriptions/<Command>Description.ts` (n8n UI properties)
-   - `nodes/Qsv/actions/execute<Command>.ts` (subprocess execution logic)
+1. Executes `qsv --list` dynamically to discover all installed subcommands in the active binary.
+2. Runs `qsv <command> --help` for each command.
+3. Parses CLI flags, arguments, descriptions, and default values.
+4. Generates:
+   - `nodes/Qsv/descriptions/<Command>Description.ts` (Typed n8n UI properties)
+   - `nodes/Qsv/actions/execute<Command>.ts` (Subprocess execution logic and dynamic CLI flag compiler)
+5. Automatically rewires and updates `nodes/Qsv/Qsv.node.ts` with all discovered operations and handlers.
 
 Run the generator whenever updating QSV CLI versions:
 
