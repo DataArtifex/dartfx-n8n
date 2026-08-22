@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv sniff'
@@ -10,171 +10,139 @@ export async function executeSniff(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["sniff"];
+  const args: string[] = ['sniff'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("sample", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--sample", val);
-    }
-  } catch {}
+      const val = this.getNodeParameter('sample', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--sample', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('preferDmy', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--prefer-dmy');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('quote', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--quote', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('json', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--json');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('prettyJson', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--pretty-json');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('saveUrlsample', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--save-urlsample', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('timeout', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--timeout', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('userAgent', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--user-agent', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('statsTypes', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--stats-types');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noInfer', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-infer');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('justMime', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--just-mime');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('quick', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--quick');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('harvestMode', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--harvest-mode');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('progressbar', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--progressbar');
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter("preferDmy", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--prefer-dmy");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("quote", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--quote", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("json", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--json");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "prettyJson",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--pretty-json");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("saveUrlsample", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--save-urlsample", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("timeout", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--timeout", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("userAgent", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--user-agent", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "statsTypes",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--stats-types");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noInfer", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-infer");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("justMime", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--just-mime");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("quick", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--quick");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "harvestMode",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--harvest-mode");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "progressbar",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--progressbar");
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv sniff",
+        command: 'qsv sniff',
         inputPath,
         rawOutput: stdout,
       };
@@ -184,7 +152,7 @@ export async function executeSniff(
       {
         json: {
           success: true,
-          command: "sniff",
+          command: 'sniff',
           inputPath,
           result: resultJson,
         },

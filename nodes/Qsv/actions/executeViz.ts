@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv viz'
@@ -10,619 +10,559 @@ export async function executeViz(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["viz"];
+  const args: string[] = ['viz'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("x", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--x", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("y", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--y", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("z", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--z", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("cols", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--cols", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("series", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--series", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("color", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--color", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("size", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--size", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("donut", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--donut");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("ohlcOpen", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--ohlc-open", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("high", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--high", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("low", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--low", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("close", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--close", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("source", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--source", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("target", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--target", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("value", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--value", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "sankeyValueOrder",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--sankey-value-order");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("bins", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--bins", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("agg", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--agg", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("boxPoints", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--box-points", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("lat", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--lat", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("lon", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--lon", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("text", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--text", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("density", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--density");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("style", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--style", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("projection", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--projection", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("locations", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--locations", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("locationMode", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--location-mode", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("colorScale", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--color-scale", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("map", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--map");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("geojson", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--geojson", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("featureIdKey", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--feature-id-key", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "featureNameKey",
-      itemIndex,
-      "",
-    ) as string;
-    if (val !== undefined && val !== "") {
-      args.push("--feature-name-key", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "denominatorKey",
-      itemIndex,
-      "",
-    ) as string;
-    if (val !== undefined && val !== "") {
-      args.push("--denominator-key", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "denominatorUnit",
-      itemIndex,
-      "",
-    ) as string;
-    if (val !== undefined && val !== "") {
-      args.push("--denominator-unit", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("denominator", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--denominator", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("geocode", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--geocode");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "geocodeCountry",
-      itemIndex,
-      "",
-    ) as string;
-    if (val !== undefined && val !== "") {
-      args.push("--geocode-country", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("geocodeAdmin1", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--geocode-admin1", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noSnap", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-snap");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("snapMaxDist", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--snap-max-dist", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("maxCharts", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--max-charts", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("gridCols", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--grid-cols", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "previewThreshold",
-      itemIndex,
-      "",
-    ) as string;
-    if (val !== undefined && val !== "") {
-      args.push("--preview-threshold", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "heatmapDensity",
-      itemIndex,
-      "",
-    ) as string;
-    if (val !== undefined && val !== "") {
-      args.push("--heatmap-density", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("cluster", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--cluster", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("photos", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--photos");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("limit", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--limit", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noNulls", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-nulls");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noOther", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-other");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("smarter", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--smarter");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "hierarchyStyle",
-      itemIndex,
-      "",
-    ) as string;
-    if (val !== undefined && val !== "") {
-      args.push("--hierarchy-style", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("dictionary", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--dictionary", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "dictionaryContext",
-      itemIndex,
-      "",
-    ) as string;
-    if (val !== undefined && val !== "") {
-      args.push("--dictionary-context", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("dictInfo", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--dict-info");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("datasetPid", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--dataset-pid", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("bivariate", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--bivariate");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("logScale", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--log-scale", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("violin", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--violin", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("title", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--title", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("xTitle", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--x-title", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("yTitle", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--y-title", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("yRange", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--y-range", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "rangeslider",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--rangeslider");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("slider", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--slider", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("sliderSpeed", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--slider-speed", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "sliderCumulative",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--slider-cumulative");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("annotation", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--annotation", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("theme", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--theme", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("language", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--language", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("width", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--width", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("height", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--height", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("scale", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--scale", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("open", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--open");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-headers");
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+      const val = this.getNodeParameter('x', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--x', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('y', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--y', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('z', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--z', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('cols', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--cols', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('series', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--series', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('color', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--color', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('size', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--size', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('donut', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--donut');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('ohlcOpen', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--ohlc-open', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('high', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--high', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('low', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--low', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('close', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--close', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('source', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--source', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('target', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--target', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('value', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--value', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('sankeyValueOrder', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--sankey-value-order');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('bins', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--bins', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('agg', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--agg', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('boxPoints', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--box-points', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('lat', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--lat', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('lon', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--lon', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('text', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--text', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('density', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--density');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('style', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--style', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('projection', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--projection', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('locations', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--locations', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('locationMode', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--location-mode', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('colorScale', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--color-scale', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('map', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--map');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('geojson', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--geojson', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('featureIdKey', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--feature-id-key', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('featureNameKey', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--feature-name-key', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('denominatorKey', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--denominator-key', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('denominatorUnit', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--denominator-unit', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('denominator', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--denominator', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('geocode', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--geocode');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('geocodeCountry', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--geocode-country', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('geocodeAdmin1', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--geocode-admin1', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noSnap', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-snap');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('snapMaxDist', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--snap-max-dist', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('maxCharts', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--max-charts', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('gridCols', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--grid-cols', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('previewThreshold', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--preview-threshold', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('heatmapDensity', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--heatmap-density', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('cluster', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--cluster', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('photos', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--photos');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('limit', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--limit', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noNulls', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-nulls');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noOther', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-other');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('smarter', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--smarter');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('hierarchyStyle', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--hierarchy-style', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('dictionary', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--dictionary', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('dictionaryContext', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--dictionary-context', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('dictInfo', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--dict-info');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('datasetPid', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--dataset-pid', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('bivariate', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--bivariate');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('logScale', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--log-scale', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('violin', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--violin', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('title', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--title', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('xTitle', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--x-title', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('yTitle', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--y-title', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('yRange', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--y-range', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('rangeslider', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--rangeslider');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('slider', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--slider', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('sliderSpeed', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--slider-speed', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('sliderCumulative', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--slider-cumulative');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('annotation', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--annotation', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('theme', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--theme', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('language', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--language', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('width', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--width', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('height', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--height', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('scale', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--scale', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('open', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--open');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers');
+      }
+    } catch {}
+
+  try {
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv viz",
+        command: 'qsv viz',
         inputPath,
         rawOutput: stdout,
       };
@@ -632,7 +572,7 @@ export async function executeViz(
       {
         json: {
           success: true,
-          command: "viz",
+          command: 'viz',
           inputPath,
           result: resultJson,
         },

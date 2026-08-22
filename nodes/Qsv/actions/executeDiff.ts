@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv diff'
@@ -10,162 +10,118 @@ export async function executeDiff(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["diff"];
+  const args: string[] = ['diff'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter(
-      "noHeadersLeft",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--no-headers-left");
-    }
-  } catch {}
+      const val = this.getNodeParameter('noHeadersLeft', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers-left');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noHeadersRight', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers-right');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noHeadersOutput', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers-output');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiterLeft', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter-left', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiterRight', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter-right', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiterOutput', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter-output', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('key', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--key', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('sortColumns', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--sort-columns', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('dropEqualFields', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--drop-equal-fields');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('dropEqualColumns', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--drop-equal-columns');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--jobs', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter(
-      "noHeadersRight",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--no-headers-right");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "noHeadersOutput",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--no-headers-output");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiterLeft", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter-left", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "delimiterRight",
-      itemIndex,
-      "",
-    ) as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter-right", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "delimiterOutput",
-      itemIndex,
-      "",
-    ) as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter-output", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("key", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--key", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("sortColumns", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--sort-columns", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "dropEqualFields",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--drop-equal-fields");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "dropEqualColumns",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--drop-equal-columns");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--jobs", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv diff",
+        command: 'qsv diff',
         inputPath,
         rawOutput: stdout,
       };
@@ -175,7 +131,7 @@ export async function executeDiff(
       {
         json: {
           success: true,
-          command: "diff",
+          command: 'diff',
           inputPath,
           result: resultJson,
         },

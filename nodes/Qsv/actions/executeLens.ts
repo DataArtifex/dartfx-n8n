@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv lens'
@@ -10,175 +10,139 @@ export async function executeLens(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["lens"];
+  const args: string[] = ['lens'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('tabSeparated', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--tab-separated');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('columns', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--columns', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('filter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--filter', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('find', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--find', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('ignoreCase', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--ignore-case');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('freezeColumns', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--freeze-columns', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('monochrome', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--monochrome');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('wrapMode', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--wrap-mode', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('autoReload', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--auto-reload');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('streamingStdin', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--streaming-stdin');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('prompt', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--prompt', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('echoColumn', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--echo-column', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('debug', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--debug');
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter(
-      "tabSeparated",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--tab-separated");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-headers");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("columns", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--columns", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("filter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--filter", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("find", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--find", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "ignoreCase",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--ignore-case");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("freezeColumns", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--freeze-columns", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "monochrome",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--monochrome");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("wrapMode", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--wrap-mode", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "autoReload",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--auto-reload");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "streamingStdin",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--streaming-stdin");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("prompt", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--prompt", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("echoColumn", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--echo-column", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("debug", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--debug");
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv lens",
+        command: 'qsv lens',
         inputPath,
         rawOutput: stdout,
       };
@@ -188,7 +152,7 @@ export async function executeLens(
       {
         json: {
           success: true,
-          command: "lens",
+          command: 'lens',
           inputPath,
           result: resultJson,
         },

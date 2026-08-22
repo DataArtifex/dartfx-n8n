@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv to'
@@ -10,188 +10,160 @@ export async function executeTo(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["to"];
+  const args: string[] = ['to'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter(
-      "printPackage",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--print-package");
-    }
-  } catch {}
+      const val = this.getNodeParameter('printPackage', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--print-package');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('dump', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--dump');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('stats', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--stats');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('statsCsv', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--stats-csv', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--quiet');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('schema', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--schema', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('inferLen', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--infer-len', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('tryParseDates', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--try-parse-dates');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('drop', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--drop');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('evolve', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--evolve');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('pipe', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--pipe');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('table', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--table', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('separator', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--separator', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('compression', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--compression', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('compressLevel', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--compress-level', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('allStrings', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--all-strings');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--jobs', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter("dump", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--dump");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("stats", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--stats");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("statsCsv", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--stats-csv", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--quiet");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("schema", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--schema", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("inferLen", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--infer-len", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "tryParseDates",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--try-parse-dates");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("drop", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--drop");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("evolve", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--evolve");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("pipe", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--pipe");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("table", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--table", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("separator", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--separator", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("compression", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--compression", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("compressLevel", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--compress-level", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "allStrings",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--all-strings");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--jobs", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv to",
+        command: 'qsv to',
         inputPath,
         rawOutput: stdout,
       };
@@ -201,7 +173,7 @@ export async function executeTo(
       {
         json: {
           success: true,
-          command: "to",
+          command: 'to',
           inputPath,
           result: resultJson,
         },

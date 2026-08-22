@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv blake3'
@@ -10,120 +10,104 @@ export async function executeBlake3(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["blake3"];
+  const args: string[] = ['blake3'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("keyed", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--keyed");
-    }
-  } catch {}
+      const val = this.getNodeParameter('keyed', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--keyed');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('deriveKey', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--derive-key', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('length', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--length', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noMmap', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-mmap');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noNames', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-names');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('raw', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--raw');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('tag', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--tag');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('check', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--check');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--jobs', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--quiet');
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter("deriveKey", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--derive-key", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("length", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--length", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noMmap", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-mmap");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noNames", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-names");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("raw", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--raw");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("tag", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--tag");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("check", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--check");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--jobs", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--quiet");
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv blake3",
+        command: 'qsv blake3',
         inputPath,
         rawOutput: stdout,
       };
@@ -133,7 +117,7 @@ export async function executeBlake3(
       {
         json: {
           success: true,
-          command: "blake3",
+          command: 'blake3',
           inputPath,
           result: resultJson,
         },

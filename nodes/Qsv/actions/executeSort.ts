@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv sort'
@@ -10,152 +10,132 @@ export async function executeSort(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["sort"];
+  const args: string[] = ['sort'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("select", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--select", val);
-    }
-  } catch {}
+      const val = this.getNodeParameter('select', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--select', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('numeric', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--numeric');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('natural', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--natural');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('reverse', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--reverse');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('ignoreCase', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--ignore-case');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('unique', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--unique');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('random', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--random');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('seed', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--seed', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('rng', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--rng', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--jobs', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('faster', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--faster');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('memcheck', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--memcheck');
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter("numeric", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--numeric");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("natural", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--natural");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("reverse", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--reverse");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "ignoreCase",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--ignore-case");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("unique", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--unique");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("random", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--random");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("seed", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--seed", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("rng", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--rng", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--jobs", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("faster", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--faster");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-headers");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("memcheck", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--memcheck");
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv sort",
+        command: 'qsv sort',
         inputPath,
         rawOutput: stdout,
       };
@@ -165,7 +145,7 @@ export async function executeSort(
       {
         json: {
           success: true,
-          command: "sort",
+          command: 'sort',
           inputPath,
           result: resultJson,
         },

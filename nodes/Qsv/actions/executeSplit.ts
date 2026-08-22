@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv split'
@@ -10,142 +10,118 @@ export async function executeSplit(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["split"];
+  const args: string[] = ['split'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("size", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--size", val);
-    }
-  } catch {}
+      const val = this.getNodeParameter('size', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--size', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('chunks', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--chunks', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('kbSize', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--kb-size', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--jobs', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('filename', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--filename', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('pad', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--pad', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('filter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--filter', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('filterCleanup', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--filter-cleanup');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('filterIgnoreErrors', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--filter-ignore-errors');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--quiet');
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter("chunks", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--chunks", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("kbSize", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--kb-size", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--jobs", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("filename", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--filename", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("pad", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--pad", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("filter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--filter", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "filterCleanup",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--filter-cleanup");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "filterIgnoreErrors",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--filter-ignore-errors");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-headers");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--quiet");
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv split",
+        command: 'qsv split',
         inputPath,
         rawOutput: stdout,
       };
@@ -155,7 +131,7 @@ export async function executeSplit(
       {
         json: {
           success: true,
-          command: "split",
+          command: 'split',
           inputPath,
           result: resultJson,
         },

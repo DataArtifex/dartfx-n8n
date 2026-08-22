@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv json'
@@ -10,64 +10,48 @@ export async function executeJson(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["json"];
+  const args: string[] = ['json'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("jaq", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--jaq", val);
-    }
-  } catch {}
+      const val = this.getNodeParameter('jaq', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--jaq', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('select', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--select', val);
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter("select", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--select", val);
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv json",
+        command: 'qsv json',
         inputPath,
         rawOutput: stdout,
       };
@@ -77,7 +61,7 @@ export async function executeJson(
       {
         json: {
           success: true,
-          command: "json",
+          command: 'json',
           inputPath,
           result: resultJson,
         },

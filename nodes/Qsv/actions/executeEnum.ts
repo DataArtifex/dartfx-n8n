@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv enum'
@@ -10,120 +10,104 @@ export async function executeEnum(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["enum"];
+  const args: string[] = ['enum'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("newColumn", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--new-column", val);
-    }
-  } catch {}
+      const val = this.getNodeParameter('newColumn', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--new-column', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('start', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--start', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('increment', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--increment', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('constant', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--constant', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('copy', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--copy', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('uuid4', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--uuid4');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('uuid7', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--uuid7');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('hash', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--hash', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter("start", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--start", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("increment", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--increment", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("constant", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--constant", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("copy", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--copy", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("uuid4", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--uuid4");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("uuid7", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--uuid7");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("hash", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--hash", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-headers");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv enum",
+        command: 'qsv enum',
         inputPath,
         rawOutput: stdout,
       };
@@ -133,7 +117,7 @@ export async function executeEnum(
       {
         json: {
           success: true,
-          command: "enum",
+          command: 'enum',
           inputPath,
           result: resultJson,
         },

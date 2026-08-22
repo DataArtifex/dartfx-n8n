@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv sample'
@@ -10,226 +10,202 @@ export async function executeSample(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["sample"];
+  const args: string[] = ['sample'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("seed", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--seed", val);
-    }
-  } catch {}
+      const val = this.getNodeParameter('seed', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--seed', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('rng', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--rng', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('bernoulli', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--bernoulli');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('systematic', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--systematic', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('stratified', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--stratified', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('weighted', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--weighted', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('varopt', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--varopt', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('mergeableReservoir', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--mergeable-reservoir');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('cluster', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--cluster', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('timeseries', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--timeseries', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('tsInterval', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--ts-interval', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('tsStart', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--ts-start', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('tsAdaptive', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--ts-adaptive', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('tsAggregate', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--ts-aggregate', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('tsInputTz', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--ts-input-tz', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('tsPreferDmy', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--ts-prefer-dmy');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('sketchOut', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--sketch-out', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('sketchIn', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--sketch-in', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('userAgent', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--user-agent', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('timeout', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--timeout', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('maxSize', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--max-size', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('force', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--force');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter("rng", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--rng", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("bernoulli", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--bernoulli");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("systematic", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--systematic", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("stratified", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--stratified", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("weighted", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--weighted", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("varopt", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--varopt", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "mergeableReservoir",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--mergeable-reservoir");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("cluster", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--cluster", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("timeseries", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--timeseries", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("tsInterval", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--ts-interval", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("tsStart", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--ts-start", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("tsAdaptive", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--ts-adaptive", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("tsAggregate", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--ts-aggregate", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("tsInputTz", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--ts-input-tz", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "tsPreferDmy",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--ts-prefer-dmy");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("sketchOut", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--sketch-out", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("sketchIn", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--sketch-in", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("userAgent", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--user-agent", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("timeout", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--timeout", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("maxSize", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--max-size", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("force", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--force");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-headers");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv sample",
+        command: 'qsv sample',
         inputPath,
         rawOutput: stdout,
       };
@@ -239,7 +215,7 @@ export async function executeSample(
       {
         json: {
           success: true,
-          command: "sample",
+          command: 'sample',
           inputPath,
           result: resultJson,
         },

@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv luau'
@@ -10,145 +10,125 @@ export async function executeLuau(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["luau"];
+  const args: string[] = ['luau'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("noGlobals", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-globals");
-    }
-  } catch {}
+      const val = this.getNodeParameter('noGlobals', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-globals');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('colindex', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--colindex');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('remap', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--remap');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('begin', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--begin', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('end', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--end', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('maxErrors', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--max-errors', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('timeout', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--timeout', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('ckanApi', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--ckan-api', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('ckanToken', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--ckan-token', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('cacheDir', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--cache-dir', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('progressbar', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--progressbar');
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter("colindex", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--colindex");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("remap", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--remap");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("begin", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--begin", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("end", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--end", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("maxErrors", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--max-errors", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("timeout", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--timeout", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("ckanApi", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--ckan-api", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("ckanToken", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--ckan-token", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("cacheDir", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--cache-dir", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-headers");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "progressbar",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--progressbar");
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv luau",
+        command: 'qsv luau',
         inputPath,
         rawOutput: stdout,
       };
@@ -158,7 +138,7 @@ export async function executeLuau(
       {
         json: {
           success: true,
-          command: "luau",
+          command: 'luau',
           inputPath,
           result: resultJson,
         },

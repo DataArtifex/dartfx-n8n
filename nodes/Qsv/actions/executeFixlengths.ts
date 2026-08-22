@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv fixlengths'
@@ -10,103 +10,83 @@ export async function executeFixlengths(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["fixlengths"];
+  const args: string[] = ['fixlengths'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("length", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--length", val);
-    }
-  } catch {}
+      const val = this.getNodeParameter('length', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--length', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('removeEmpty', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--remove-empty');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('insert', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--insert', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('quote', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--quote', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('escape', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--escape', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--quiet');
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter(
-      "removeEmpty",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--remove-empty");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("insert", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--insert", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("quote", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--quote", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("escape", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--escape", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--quiet");
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv fixlengths",
+        command: 'qsv fixlengths',
         inputPath,
         rawOutput: stdout,
       };
@@ -116,7 +96,7 @@ export async function executeFixlengths(
       {
         json: {
           success: true,
-          command: "fixlengths",
+          command: 'fixlengths',
           inputPath,
           result: resultJson,
         },

@@ -1,6 +1,6 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execa } from "execa";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execa } from 'execa';
 
 /**
  * Action runner for 'qsv fetchpost'
@@ -10,259 +10,223 @@ export async function executeFetchpost(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter(
-    "inputPath",
-    itemIndex,
-    "",
-  ) as string;
-  const inputPath = rawInputPath
-    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
-    : "";
+  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
+  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
   if (!inputPath) {
-    throw new NodeOperationError(
-      this.getNode(),
-      "Input CSV file path is required.",
-      { itemIndex },
-    );
+    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
   }
 
-  const args: string[] = ["fetchpost"];
+  const args: string[] = ['fetchpost'];
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("payloadTpl", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--payload-tpl", val);
-    }
-  } catch {}
+      const val = this.getNodeParameter('payloadTpl', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--payload-tpl', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('contentType', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--content-type', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('globalsJson', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--globals-json', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('newColumn', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--new-column', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('jaq', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--jaq', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('jaqfile', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--jaqfile', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('pretty', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--pretty');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('rateLimit', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--rate-limit', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('timeout', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--timeout', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('httpHeader', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--http-header', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('compress', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--compress');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('maxRetries', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--max-retries', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('maxErrors', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--max-errors', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('storeError', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--store-error');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('cookies', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--cookies');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('userAgent', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--user-agent', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('report', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--report', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noCache', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-cache');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('memCacheSize', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--mem-cache-size', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('diskCache', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--disk-cache');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('diskCacheDir', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--disk-cache-dir', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('redisCache', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--redis-cache');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('cacheError', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--cache-error');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('flushCache', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--flush-cache');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--no-headers');
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
+      if (val !== undefined && val !== '') {
+        args.push('--delimiter', val);
+      }
+    } catch {}
+
+    try {
+      const val = this.getNodeParameter('progressbar', itemIndex, false) as boolean;
+      if (val) {
+        args.push('--progressbar');
+      }
+    } catch {}
 
   try {
-    const val = this.getNodeParameter("contentType", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--content-type", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("globalsJson", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--globals-json", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("newColumn", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--new-column", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("jaq", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--jaq", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("jaqfile", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--jaqfile", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("pretty", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--pretty");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("rateLimit", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--rate-limit", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("timeout", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--timeout", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("httpHeader", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--http-header", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("compress", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--compress");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("maxRetries", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--max-retries", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("maxErrors", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--max-errors", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "storeError",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--store-error");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("cookies", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--cookies");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("userAgent", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--user-agent", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("report", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--report", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noCache", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-cache");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("memCacheSize", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--mem-cache-size", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("diskCache", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--disk-cache");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("diskCacheDir", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--disk-cache-dir", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "redisCache",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--redis-cache");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "cacheError",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--cache-error");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "flushCache",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--flush-cache");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--no-headers");
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--delimiter", val);
-    }
-  } catch {}
-
-  try {
-    const val = this.getNodeParameter(
-      "progressbar",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--progressbar");
-    }
-  } catch {}
-
-  try {
-    const rawOutputPath = this.getNodeParameter(
-      "outputPath",
-      itemIndex,
-      "",
-    ) as string;
-    const outputPath = rawOutputPath
-      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
-      : "";
+    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
+    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
     if (outputPath) {
-      args.push("--output", outputPath);
+      args.push('--output', outputPath);
     }
   } catch {}
 
   args.push(inputPath);
 
   try {
-    const { stdout, stderr } = await execa("qsv", args);
+    const { stdout, stderr } = await execa('qsv', args);
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv fetchpost",
+        command: 'qsv fetchpost',
         inputPath,
         rawOutput: stdout,
       };
@@ -272,7 +236,7 @@ export async function executeFetchpost(
       {
         json: {
           success: true,
-          command: "fetchpost",
+          command: 'fetchpost',
           inputPath,
           result: resultJson,
         },
