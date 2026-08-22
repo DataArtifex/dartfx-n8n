@@ -41,7 +41,8 @@ export const ExtsortDescription: INodeProperties[] = [
         operation: ["extsort"],
       },
     },
-    description: "Select a subset of columns to sort (CSV MODE).",
+    description:
+      "Select a subset of columns to sort (CSV MODE). Note that the outputs will remain at the full width of the CSV. If --select is NOT set, extsort will work in LINE MODE, sorting the input as a text file on a line-by-line basis.",
   },
   {
     displayName: "Reverse",
@@ -59,26 +60,27 @@ export const ExtsortDescription: INodeProperties[] = [
     displayName: "Memory Limit",
     name: "memoryLimit",
     type: "string",
-    default: "",
+    default: "20",
     displayOptions: {
       show: {
         operation: ["extsort"],
       },
     },
     description:
-      "The maximum amount of memory to buffer the external merge sort.",
+      "The maximum amount of memory to buffer the external merge sort. If less than 50, this is a percentage of total memory. If more than 50, this is the memory in MB to allocate, capped at 90 percent of total memory. [default: 20]",
   },
   {
     displayName: "Tmp Dir",
     name: "tmpDir",
     type: "string",
-    default: "",
+    default: "./",
     displayOptions: {
       show: {
         operation: ["extsort"],
       },
     },
-    description: "The directory to use for externally sorting file segments.",
+    description:
+      "The directory to use for externally sorting file segments. [default: ./]",
   },
   {
     displayName: "Jobs",
@@ -90,7 +92,8 @@ export const ExtsortDescription: INodeProperties[] = [
         operation: ["extsort"],
       },
     },
-    description: "The number of jobs to run in parallel.",
+    description:
+      "The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.",
   },
   {
     displayName: "Delimiter",
@@ -102,7 +105,8 @@ export const ExtsortDescription: INodeProperties[] = [
         operation: ["extsort"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "No Headers",
@@ -114,6 +118,7 @@ export const ExtsortDescription: INodeProperties[] = [
         operation: ["extsort"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers and will be sorted with the rest of the rows. Otherwise, the first row will always appear as the header row in the output.",
   },
 ];

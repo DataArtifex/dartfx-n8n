@@ -35,37 +35,39 @@ export const TableDescription: INodeProperties[] = [
     displayName: "Width",
     name: "width",
     type: "string",
-    default: "",
+    default: "2",
     displayOptions: {
       show: {
         operation: ["table"],
       },
     },
-    description: "The minimum width of each column.",
+    description: "The minimum width of each column. [default: 2]",
   },
   {
     displayName: "Pad",
     name: "pad",
     type: "string",
-    default: "",
+    default: "2",
     displayOptions: {
       show: {
         operation: ["table"],
       },
     },
-    description: "The minimum number of spaces between each column.",
+    description:
+      "The minimum number of spaces between each column. [default: 2]",
   },
   {
     displayName: "Align",
     name: "align",
     type: "string",
-    default: "",
+    default: "left",
     displayOptions: {
       show: {
         operation: ["table"],
       },
     },
-    description: "How entries should be aligned in a column.",
+    description:
+      'How entries should be aligned in a column. Options: "left", "right", "center", "leftendtab", "leftfwf". "leftendtab" is a special alignment that similar to "left" but with whitespace padding ending with a tab character. The resulting output still validates as a valid TSV file, while also being more human-readable (aka "aligned" TSV). "leftfwf" is similar to "left" with Fixed Width Format alignment. The first line is a comment (prefixed with "#") that enumerates the position (1-based, comma-separated) of each column. [default: left]',
   },
   {
     displayName: "Condense",
@@ -77,7 +79,8 @@ export const TableDescription: INodeProperties[] = [
         operation: ["table"],
       },
     },
-    description: "Limits the length of each field to the value",
+    description:
+      "Limits the length of each field to the value specified. If the field is UTF-8 encoded, then <arg> refers to the number of code points. Otherwise, it refers to the number of bytes.",
   },
   {
     displayName: "Delimiter",
@@ -89,7 +92,8 @@ export const TableDescription: INodeProperties[] = [
         operation: ["table"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Memcheck",
@@ -101,6 +105,7 @@ export const TableDescription: INodeProperties[] = [
         operation: ["table"],
       },
     },
-    description: "Check if there is enough memory to load the entire",
+    description:
+      "Check if there is enough memory to load the entire CSV into memory using CONSERVATIVE heuristics.",
   },
 ];

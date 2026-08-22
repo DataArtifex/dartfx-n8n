@@ -186,6 +186,19 @@ export const GeocodeDescription: INodeProperties[] = [
       "Disable the persistent on-disk OpenCage cache. Duplicate queries within a run are still de-duplicated.",
   },
   {
+    displayName: "Formatstr",
+    name: "formatstr",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["geocode"],
+      },
+    },
+    description:
+      '=<string>    The place format to use. It has three options: 1. Use one of the predefined formats. 2. Use dynamic formatting to create a custom format. 3. Use the special format "%dyncols:" to dynamically add multiple columns to the output CSV using fields from a geocode result.',
+  },
+  {
     displayName: "Language",
     name: "language",
     type: "string",

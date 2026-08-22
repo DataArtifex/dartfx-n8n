@@ -53,7 +53,7 @@ export const ExplodeDescription: INodeProperties[] = [
         operation: ["explode"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description: "When set, the first row will not be interpreted as headers.",
   },
   {
     displayName: "Delimiter",
@@ -65,6 +65,7 @@ export const ExplodeDescription: INodeProperties[] = [
         operation: ["explode"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

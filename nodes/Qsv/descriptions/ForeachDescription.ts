@@ -80,7 +80,7 @@ export const ForeachDescription: INodeProperties[] = [
         operation: ["foreach"],
       },
     },
-    description: "When set, the file will be considered to have no",
+    description: "When set, the file will be considered to have no headers.",
   },
   {
     displayName: "Delimiter",
@@ -92,7 +92,8 @@ export const ForeachDescription: INodeProperties[] = [
         operation: ["foreach"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Progressbar",

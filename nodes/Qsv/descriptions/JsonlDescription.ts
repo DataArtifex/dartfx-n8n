@@ -53,30 +53,33 @@ export const JsonlDescription: INodeProperties[] = [
         operation: ["jsonl"],
       },
     },
-    description: "The number of jobs to run in parallel.",
+    description:
+      "The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.",
   },
   {
     displayName: "Batch",
     name: "batch",
     type: "string",
-    default: "",
+    default: "50000",
     displayOptions: {
       show: {
         operation: ["jsonl"],
       },
     },
-    description: "The number of rows per batch to load into memory,",
+    description:
+      "The number of rows per batch to load into memory, before running in parallel. Set to 0 to load all rows in one batch. [default: 50000]",
   },
   {
     displayName: "Delimiter",
     name: "delimiter",
     type: "string",
-    default: "",
+    default: ",",
     displayOptions: {
       show: {
         operation: ["jsonl"],
       },
     },
-    description: "The delimiter to use when writing CSV data.",
+    description:
+      "The delimiter to use when writing CSV data. Must be a single character. [default: ,]",
   },
 ];

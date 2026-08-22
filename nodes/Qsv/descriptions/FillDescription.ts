@@ -90,7 +90,8 @@ export const FillDescription: INodeProperties[] = [
         operation: ["fill"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers. (i.e., They are not searched, analyzed, sliced, etc.)",
   },
   {
     displayName: "Delimiter",
@@ -102,6 +103,7 @@ export const FillDescription: INodeProperties[] = [
         operation: ["fill"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

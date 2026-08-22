@@ -113,14 +113,13 @@ export const ExcelDescription: INodeProperties[] = [
     displayName: "Error Format",
     name: "errorFormat",
     type: "string",
-    default: "code",
+    default: "",
     displayOptions: {
       show: {
         operation: ["excel"],
       },
     },
-    description:
-      'The format to use when formatting error cells. There are 3 formats: * "code": return the error code. (#DIV/0!; #N/A; #NAME?; #NULL!; #NUM!; #REF!; #VALUE!; #DATA!) * "formula": return the formula, prefixed with \'#\'. (e.g. #=A1/B1 where B1 is 0; #=100/0) * "both": return both error code and the formula. (e.g. #DIV/0!: =A1/B1) [default: code]',
+    description: "The format to use when formatting error cells.",
   },
   {
     displayName: "Flexible",

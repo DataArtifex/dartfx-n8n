@@ -279,13 +279,14 @@ export const SqlpDescription: INodeProperties[] = [
     displayName: "Delimiter",
     name: "delimiter",
     type: "string",
-    default: "",
+    default: ",",
     displayOptions: {
       show: {
         operation: ["sqlp"],
       },
     },
-    description: "The field delimiter for reading and writing CSV data.",
+    description:
+      "The field delimiter for reading and writing CSV data. Must be a single character. [default: ,]",
   },
   {
     displayName: "Quiet",

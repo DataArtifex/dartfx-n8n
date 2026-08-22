@@ -41,7 +41,7 @@ export const EnumDescription: INodeProperties[] = [
         operation: ["enum"],
       },
     },
-    description: "Name of the column to create.",
+    description: 'Name of the column to create. Will default to "index".',
   },
   {
     displayName: "Start",
@@ -53,7 +53,8 @@ export const EnumDescription: INodeProperties[] = [
         operation: ["enum"],
       },
     },
-    description: "The value to start the enumeration from.",
+    description:
+      "The value to start the enumeration from. Only applies in Increment mode. (default: 0)",
   },
   {
     displayName: "Increment",
@@ -65,7 +66,8 @@ export const EnumDescription: INodeProperties[] = [
         operation: ["enum"],
       },
     },
-    description: "The value to increment the enumeration by.",
+    description:
+      "The value to increment the enumeration by. Only applies in Increment mode. (default: 1)",
   },
   {
     displayName: "Constant",
@@ -77,7 +79,8 @@ export const EnumDescription: INodeProperties[] = [
         operation: ["enum"],
       },
     },
-    description: "Fill a new column with the given value.",
+    description:
+      'Fill a new column with the given value. Changes the default column name to "constant" unless overridden by --new-column. To specify a null value, pass the literal "<NULL>".',
   },
   {
     displayName: "Copy",
@@ -89,7 +92,8 @@ export const EnumDescription: INodeProperties[] = [
         operation: ["enum"],
       },
     },
-    description: "Name of a column to copy.",
+    description:
+      'Name of a column to copy. Changes the default column name to "{column}_copy" unless overridden by --new-column.',
   },
   {
     displayName: "Uuid4",
@@ -101,7 +105,8 @@ export const EnumDescription: INodeProperties[] = [
         operation: ["enum"],
       },
     },
-    description: "When set, the column will be populated with",
+    description:
+      'When set, the column will be populated with uuids (v4) instead of the incremental identifier. Changes the default column name to "uuid4" unless overridden by --new-column.',
   },
   {
     displayName: "Uuid7",
@@ -113,7 +118,8 @@ export const EnumDescription: INodeProperties[] = [
         operation: ["enum"],
       },
     },
-    description: "When set, the column will be populated with",
+    description:
+      'When set, the column will be populated with uuids (v7) instead of the incremental identifier. uuid v7 is a time-based uuid and is monotonically increasing. See https://buildkite.com/blog/goodbye-integers-hello-uuids Changes the default column name to "uuid7" unless overridden by --new-column.',
   },
   {
     displayName: "Hash",
@@ -125,7 +131,8 @@ export const EnumDescription: INodeProperties[] = [
         operation: ["enum"],
       },
     },
-    description: "Create a new column filled with the hash of the",
+    description:
+      'Create a new column filled with the hash of the given column/s. Use "1-" to hash all columns. Changes the default column name to "hash" unless overridden by --new-column. Will remove an existing "hash" column if it exists.',
   },
   {
     displayName: "No Headers",
@@ -137,7 +144,7 @@ export const EnumDescription: INodeProperties[] = [
         operation: ["enum"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description: "When set, the first row will not be interpreted as headers.",
   },
   {
     displayName: "Delimiter",
@@ -149,6 +156,7 @@ export const EnumDescription: INodeProperties[] = [
         operation: ["enum"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

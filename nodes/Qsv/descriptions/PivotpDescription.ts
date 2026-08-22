@@ -41,7 +41,8 @@ export const PivotpDescription: INodeProperties[] = [
         operation: ["pivotp"],
       },
     },
-    description: "The column(s) to use as the index (row labels).",
+    description:
+      "The column(s) to use as the index (row labels). Specify multiple columns by separating them with a comma. The output will have one row for each unique combination of the index's values. In pivot mode, if None, all remaining columns not specified on --on and --values will be used; at least one of --index and --values must be specified. Required in group-by mode.",
   },
   {
     displayName: "Values",
@@ -53,20 +54,21 @@ export const PivotpDescription: INodeProperties[] = [
         operation: ["pivotp"],
       },
     },
-    description: "The column(s) containing values to aggregate.",
+    description:
+      'The column(s) containing values to aggregate. If an aggregation is specified, these are the values on which the aggregation will be computed. In pivot mode, if None, all remaining columns not specified on --on and --index will be used; at least one of --index and --values must be specified. In group-by mode, if omitted, a single "count" column is produced.',
   },
   {
     displayName: "Agg",
     name: "agg",
     type: "string",
-    default: "",
+    default: "smart",
     displayOptions: {
       show: {
         operation: ["pivotp"],
       },
     },
     description:
-      "The aggregation function to use: first - First value encountered last - Last value encountered sum - Sum of values min - Minimum value max - Maximum value mean - Average value median - Median value quantile@<p> - Quantile at probability p in [0, 1] using linear interpolation. Alias: q@<p>. Examples: quantile@0.95, q@0.5 (q@0.5 is equivalent to median for even-length groups). len - Count of values item - Get single value from group. Raises error if there are multiple values. smart - use value column data type & statistics to pick an aggregation. Always uses type, cardinality, sparsity, CV, sign distribution (n_negative/n_positive), and sort_order from streaming stats. When the stats cache includes non-streaming stats (from a prior `stats --everything` or `stats --mode --quartiles`), also uses skewness and mode_count. When moarstats has been run, also leverages outlier profile, Pearson skewness, MAD/stddev ratio, median/mean ratio, and quartile coefficient of dispersion for smarter selection. With moarstats --advanced, also uses kurtosis, bimodality, entropy and Gini coefficient. For Date/DateTime values, checks sparsity and sort order. Will only work if there is one value column, otherwise it falls back to `first`",
+      "The aggregation function to use: first - First value encountered last - Last value encountered sum - Sum of values min - Minimum value max - Maximum value mean - Average value median - Median value quantile@<p> - Quantile at probability p in [0, 1] using linear interpolation. Alias: q@<p>. Examples: quantile@0.95, q@0.5 (q@0.5 is equivalent to median for even-length groups). len - Count of values item - Get single value from group. Raises error if there are multiple values. smart - use value column data type & statistics to pick an aggregation. Always uses type, cardinality, sparsity, CV, sign distribution (n_negative/n_positive), and sort_order from streaming stats. When the stats cache includes non-streaming stats (from a prior `stats --everything` or `stats --mode --quartiles`), also uses skewness and mode_count. When moarstats has been run, also leverages outlier profile, Pearson skewness, MAD/stddev ratio, median/mean ratio, and quartile coefficient of dispersion for smarter selection. With moarstats --advanced, also uses kurtosis, bimodality, entropy and Gini coefficient. For Date/DateTime values, checks sparsity and sort order. Will only work if there is one value column, otherwise it falls back to `first` [default: smart]",
   },
   {
     displayName: "Sort Columns",
@@ -91,20 +93,20 @@ export const PivotpDescription: INodeProperties[] = [
       },
     },
     description:
-      "Maintain output order: preserve input column order in pivot mode,",
+      "Maintain output order: preserve input column order in pivot mode, and preserve group/row order in group-by mode.",
   },
   {
     displayName: "Col Separator",
     name: "colSeparator",
     type: "string",
-    default: "",
+    default: "_",
     displayOptions: {
       show: {
         operation: ["pivotp"],
       },
     },
     description:
-      "The separator in generated column names in case of multiple --values columns.",
+      "The separator in generated column names in case of multiple --values columns. (pivot mode only; ignored in group-by mode) [default: _]",
   },
   {
     displayName: "Validate",
@@ -135,13 +137,14 @@ export const PivotpDescription: INodeProperties[] = [
     displayName: "Infer Len",
     name: "inferLen",
     type: "string",
-    default: "",
+    default: "10000",
     displayOptions: {
       show: {
         operation: ["pivotp"],
       },
     },
-    description: "Number of rows to scan when inferring schema.",
+    description:
+      "Number of rows to scan when inferring schema. Set to 0 to scan entire file. [default: 10000]",
   },
   {
     displayName: "Decimal Comma",
@@ -153,7 +156,8 @@ export const PivotpDescription: INodeProperties[] = [
         operation: ["pivotp"],
       },
     },
-    description: "Use comma as decimal separator when READING the input.",
+    description:
+      "Use comma as decimal separator when READING the input. Note that you will need to specify an alternate --delimiter.",
   },
   {
     displayName: "Ignore Errors",
@@ -178,7 +182,7 @@ export const PivotpDescription: INodeProperties[] = [
       },
     },
     description:
-      "Append a grand total row summing all numeric non-index columns.",
+      'Append a grand total row summing all numeric non-index columns. The first index column will contain "Grand <total-label>".',
   },
   {
     displayName: "Subtotal",
@@ -191,7 +195,7 @@ export const PivotpDescription: INodeProperties[] = [
       },
     },
     description:
-      "Insert subtotal rows after each group in the first index column.",
+      "Insert subtotal rows after each group in the first index column. The second index column will contain the total label. Requires 2+ index columns. (pivot mode only)",
   },
   {
     displayName: "Total Label",
@@ -215,7 +219,8 @@ export const PivotpDescription: INodeProperties[] = [
         operation: ["pivotp"],
       },
     },
-    description: "The field delimiter for reading/writing CSV data.",
+    description:
+      "The field delimiter for reading/writing CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Quiet",

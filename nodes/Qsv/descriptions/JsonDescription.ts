@@ -42,18 +42,19 @@ export const JsonDescription: INodeProperties[] = [
       },
     },
     description:
-      "Filter JSON data using jaq syntax (https://github.com/01mf02/jaq),",
+      "Filter JSON data using jaq syntax (https://github.com/01mf02/jaq), which is identical to the popular JSON command-line tool - jq. https://jqlang.github.io/jq/ Note that the filter is applied BEFORE converting JSON to CSV",
   },
   {
     displayName: "Select",
     name: "select",
     type: "string",
-    default: "",
+    default: "1-",
     displayOptions: {
       show: {
         operation: ["json"],
       },
     },
-    description: "Select, reorder or drop columns for output.",
+    description:
+      "Select, reorder or drop columns for output. Otherwise, all the columns will be output in the same order as the first object's keys in the JSON data. See 'qsv select --help' for the full syntax. Note however that <cols> NEED to be a comma-delimited list of column NAMES and NOT column INDICES. [default: 1- ]",
   },
 ];

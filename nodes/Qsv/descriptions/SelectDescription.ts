@@ -65,7 +65,8 @@ export const SelectDescription: INodeProperties[] = [
         operation: ["select"],
       },
     },
-    description: "Sort the selected columns lexicographically,",
+    description:
+      "Sort the selected columns lexicographically, i.e. by their byte values.",
   },
   {
     displayName: "No Headers",
@@ -77,7 +78,8 @@ export const SelectDescription: INodeProperties[] = [
         operation: ["select"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers. (i.e., They are not searched, analyzed, sliced, etc.)",
   },
   {
     displayName: "Delimiter",
@@ -89,6 +91,7 @@ export const SelectDescription: INodeProperties[] = [
         operation: ["select"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

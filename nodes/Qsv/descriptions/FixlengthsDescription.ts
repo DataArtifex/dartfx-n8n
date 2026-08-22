@@ -41,7 +41,8 @@ export const FixlengthsDescription: INodeProperties[] = [
         operation: ["fixlengths"],
       },
     },
-    description: "Forcefully set the length of each record. If a",
+    description:
+      "Forcefully set the length of each record. If a record is not the size given, then it is truncated or expanded as appropriate.",
   },
   {
     displayName: "Remove Empty",
@@ -59,13 +60,14 @@ export const FixlengthsDescription: INodeProperties[] = [
     displayName: "Insert",
     name: "insert",
     type: "string",
-    default: "",
+    default: "0",
     displayOptions: {
       show: {
         operation: ["fixlengths"],
       },
     },
-    description: "If empty fields need to be inserted, insert them",
+    description:
+      "If empty fields need to be inserted, insert them at <pos>. If <pos> is zero, then it is inserted at the end of each record. If <pos> is negative, it is inserted from the END of each record going backwards. If <pos> is positive, it is inserted from the BEGINNING of each record going forward. [default: 0]",
   },
   {
     displayName: "Quote",
@@ -89,7 +91,8 @@ export const FixlengthsDescription: INodeProperties[] = [
         operation: ["fixlengths"],
       },
     },
-    description: "The escape character to use. When not specified,",
+    description:
+      "The escape character to use. When not specified, quotes are escaped by doubling them.",
   },
   {
     displayName: "Delimiter",
@@ -101,7 +104,8 @@ export const FixlengthsDescription: INodeProperties[] = [
         operation: ["fixlengths"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Quiet",

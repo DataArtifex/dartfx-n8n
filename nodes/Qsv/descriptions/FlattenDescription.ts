@@ -80,7 +80,8 @@ export const FlattenDescription: INodeProperties[] = [
         operation: ["flatten"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers. When set, the name of each field will be its index.",
   },
   {
     displayName: "Delimiter",
@@ -92,6 +93,7 @@ export const FlattenDescription: INodeProperties[] = [
         operation: ["flatten"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

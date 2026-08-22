@@ -30,6 +30,13 @@ export async function executeDatefmt(
 
   // Collect options and flags
   try {
+    const val = this.getNodeParameter("formatstr", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--formatstr");
+    }
+  } catch {}
+
+  try {
     const val = this.getNodeParameter("newColumn", itemIndex, "") as string;
     if (val !== undefined && val !== "") {
       args.push("--new-column", val);
@@ -58,6 +65,27 @@ export async function executeDatefmt(
     ) as boolean;
     if (val) {
       args.push("--keep-zero-time");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("inputTz", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--input-tz");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("outputTz", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--output-tz");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("defaultTz", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--default-tz");
     }
   } catch {}
 

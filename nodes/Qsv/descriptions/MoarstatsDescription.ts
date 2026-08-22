@@ -41,43 +41,48 @@ export const MoarstatsDescription: INodeProperties[] = [
         operation: ["moarstats"],
       },
     },
-    description: "Compute Kurtosis, Shannon Entropy, Bimodality Coefficient,",
+    description:
+      "Compute Kurtosis, Shannon Entropy, Bimodality Coefficient, Jarque-Bera, Gini Coefficient, Atkinson Index, Theil Index, Mean Absolute Deviation, and Simpson's Diversity Index. These advanced statistics computations require reading the original CSV file to collect all values for computation and are computationally expensive. Further, Entropy computation requires the frequency command to be run with --limit 0 to collect all frequencies. An index will be auto-created for the original CSV file if it doesn't already exist to enable parallel processing.",
   },
   {
     displayName: "Epsilon",
     name: "epsilon",
     type: "string",
-    default: "",
+    default: "1.0",
     displayOptions: {
       show: {
         operation: ["moarstats"],
       },
     },
-    description: "The Atkinson Index Inequality Aversion parameter.",
+    description:
+      "The Atkinson Index Inequality Aversion parameter. Epsilon controls the sensitivity of the Atkinson Index to inequality. The higher the epsilon, the more sensitive the index is to inequality. Typical values are 0.5 (standard in economic research), 1.0 (natural boundary), or 2.0 (useful for poverty analysis). [default: 1.0]",
   },
   {
     displayName: "Stats Options",
     name: "statsOptions",
     type: "string",
-    default: "",
+    default:
+      "--infer-dates --infer-boolean --cardinality --mode --mad --quartiles --percentiles --force --stats-jsonl",
     displayOptions: {
       show: {
         operation: ["moarstats"],
       },
     },
-    description: "Options to pass to the stats command if baseline stats need",
+    description:
+      "Options to pass to the stats command if baseline stats need to be generated. The options are passed as a single string that will be split by whitespace. [default: --infer-dates --infer-boolean --cardinality --mode --mad --quartiles --percentiles --force --stats-jsonl]",
   },
   {
     displayName: "Round",
     name: "round",
     type: "string",
-    default: "",
+    default: "4",
     displayOptions: {
       show: {
         operation: ["moarstats"],
       },
     },
-    description: "Round statistics to <n> decimal places. Rounding follows",
+    description:
+      "Round statistics to <n> decimal places. Rounding follows Midpoint Nearest Even (Bankers Rounding) rule. [default: 4]",
   },
   {
     displayName: "Use Percentiles",
@@ -89,31 +94,34 @@ export const MoarstatsDescription: INodeProperties[] = [
         operation: ["moarstats"],
       },
     },
-    description: "Use percentiles instead of Q1/Q3 for winsorization/trimming.",
+    description:
+      "Use percentiles instead of Q1/Q3 for winsorization/trimming. Requires percentiles to be computed in the stats CSV.",
   },
   {
     displayName: "Pct Thresholds",
     name: "pctThresholds",
     type: "string",
-    default: "",
+    default: "5,95",
     displayOptions: {
       show: {
         operation: ["moarstats"],
       },
     },
-    description: 'Comma-separated percentile pair (e.g., "10,90") to use',
+    description:
+      'Comma-separated percentile pair (e.g., "10,90") to use for winsorization/trimming when --use-percentiles is set. Both values must truncate to whole percentiles between 1 and 100, and lower < upper. The thresholds are automatically merged into the --percentile-list of the stats run, and an existing stats CSV computed with a percentile list that lacks them is recomputed. [default: 5,95]',
   },
   {
     displayName: "Xsd Gdate Scan",
     name: "xsdGdateScan",
     type: "string",
-    default: "",
+    default: "quick",
     displayOptions: {
       show: {
         operation: ["moarstats"],
       },
     },
-    description: "Gregorian XSD date type detection mode.",
+    description:
+      'Gregorian XSD date type detection mode. "quick": Fast detection using min/max values. Produces types with ?? suffix (less confident). "thorough": Comprehensive detection checking all percentile values. Slower but ensures all values match the pattern. Produces types with ? suffix (more confident). [default: quick]',
   },
   {
     displayName: "Bivariate",
@@ -125,35 +133,25 @@ export const MoarstatsDescription: INodeProperties[] = [
         operation: ["moarstats"],
       },
     },
-    description: "Enable bivariate statistics computation.",
+    description:
+      "Enable bivariate statistics computation. Requires indexed CSV file (index will be auto-created if missing). Computes pairwise correlations, covariances, mutual information, and normalized mutual information between columns. The bivariate statistics",
   },
   {
     displayName: "Bivariate Stats",
     name: "bivariateStats",
-    type: "boolean",
-    default: false,
+    type: "string",
+    default: "fast",
     displayOptions: {
       show: {
         operation: ["moarstats"],
       },
     },
-    description: "<stats>",
+    description:
+      'Comma-separated list of bivariate statistics to compute. Options: pearson, spearman, kendall, covariance, mi (mutual information), nmi (normalized mutual information), u (Theil\'s directed uncertainty coefficient; emits u_field2_given_field1 and u_field1_given_field2) Use "all" to compute all statistics or "fast" to compute only pearson & covariance, which is much faster as it doesn\'t require storing all values and uses streaming algorithms. [default: fast]',
   },
   {
     displayName: "Cardinality Threshold",
     name: "cardinalityThreshold",
-    type: "boolean",
-    default: false,
-    displayOptions: {
-      show: {
-        operation: ["moarstats"],
-      },
-    },
-    description: "<n>",
-  },
-  {
-    displayName: "Bivariate Batch",
-    name: "bivariateBatch",
     type: "string",
     default: "",
     displayOptions: {
@@ -161,43 +159,60 @@ export const MoarstatsDescription: INodeProperties[] = [
         operation: ["moarstats"],
       },
     },
-    description: "Process at most <n> field pairs per pass over the input,",
+    description:
+      "Skip mutual information (mi/nmi/u) for field pairs where either field's cardinality exceeds this threshold. Such pairs also skip building their joint-frequency table, which is the dominant memory cost of --bivariate-stats all. Defaults to half the row count, floored at 1000, so it stays inert on small inputs and scales with large ones. Mutual information between near-unique columns saturates at log(n) and is noise regardless of how efficiently it is computed.",
+  },
+  {
+    displayName: "Bivariate Batch",
+    name: "bivariateBatch",
+    type: "string",
+    default: "0",
+    displayOptions: {
+      show: {
+        operation: ["moarstats"],
+      },
+    },
+    description:
+      "Process at most <n> field pairs per pass over the input, bounding peak memory at the cost of extra passes. Peak memory is otherwise O(columns^2) regardless of row count - a 160-column, 100k-row (60 MB) input needs ~21 GiB with mi/nmi/u enabled. Extra passes are cheap, so prefer the largest <n> that fits. Only applies to indexed input with >= 10,000 rows. Set to 0 to process all pairs in one pass. [default: 0]",
   },
   {
     displayName: "Join Inputs",
     name: "joinInputs",
-    type: "boolean",
-    default: false,
+    type: "string",
+    default: "",
     displayOptions: {
       show: {
         operation: ["moarstats"],
       },
     },
-    description: "<files>",
+    description:
+      "Additional datasets to join. Comma-separated list of CSV files to join with the primary input. e.g.: --join-inputs customers.csv,products.csv",
   },
   {
     displayName: "Join Keys",
     name: "joinKeys",
-    type: "boolean",
-    default: false,
+    type: "string",
+    default: "",
     displayOptions: {
       show: {
         operation: ["moarstats"],
       },
     },
-    description: "<keys>",
+    description:
+      "Join keys for each dataset. Comma-separated list of join key column names, one per dataset. Must specify same number of keys as datasets (primary + addl). e.g.: --join-keys customer_id,customer_id,product_id",
   },
   {
     displayName: "Join Type",
     name: "joinType",
-    type: "boolean",
-    default: false,
+    type: "string",
+    default: "inner",
     displayOptions: {
       show: {
         operation: ["moarstats"],
       },
     },
-    description: "<type>",
+    description:
+      "Join type when using --join-inputs. Valid values: inner, left, right, full [default: inner]",
   },
   {
     displayName: "Progressbar",
@@ -221,7 +236,8 @@ export const MoarstatsDescription: INodeProperties[] = [
         operation: ["moarstats"],
       },
     },
-    description: "Force recomputing stats even if valid precomputed stats",
+    description:
+      "Force recomputing stats even if valid precomputed stats cache exists.",
   },
   {
     displayName: "Jobs",
@@ -233,6 +249,7 @@ export const MoarstatsDescription: INodeProperties[] = [
         operation: ["moarstats"],
       },
     },
-    description: "The number of jobs to run in parallel.",
+    description:
+      "The number of jobs to run in parallel. This works only when the given CSV has an index. Note that a file handle is opened for each job. When not set, the number of jobs is set to the number of CPUs detected.",
   },
 ];

@@ -35,13 +35,14 @@ export const SniffDescription: INodeProperties[] = [
     displayName: "Sample",
     name: "sample",
     type: "string",
-    default: "",
+    default: "1000",
     displayOptions: {
       show: {
         operation: ["sniff"],
       },
     },
-    description: "First n rows to sample to sniff out the metadata.",
+    description:
+      "First n rows to sample to sniff out the metadata. When sample size is between 0 and 1 exclusive, it is treated as a percentage of the CSV to sample (e.g. 0.20 is 20 percent). When it is zero, the entire file will be sampled. When the input is a URL, the sample size dictates how many lines to sample without having to download the entire file. Ignored when --no-infer is enabled. When sniffing a local file that has a CSV index, the sample budget is instead drawn as a DISTRIBUTED sample (the first & last 5 rows, 5 rows each around the 25th, 50th & 75th percentiles, and the rest random across the whole file) rather than just the first n rows. This improves type/date inference for values that only appear late in the file. Run `qsv index` to create an index. [default: 1000]",
   },
   {
     displayName: "Prefer Dmy",
@@ -54,7 +55,7 @@ export const SniffDescription: INodeProperties[] = [
       },
     },
     description:
-      "Prefer to parse dates in dmy format. Otherwise, use mdy format.",
+      "Prefer to parse dates in dmy format. Otherwise, use mdy format. Ignored when --no-infer is enabled.",
   },
   {
     displayName: "Delimiter",
@@ -66,7 +67,8 @@ export const SniffDescription: INodeProperties[] = [
         operation: ["sniff"],
       },
     },
-    description: "The delimiter for reading CSV data.",
+    description:
+      "The delimiter for reading CSV data. Specify this when the delimiter is known beforehand, as the delimiter inferencing algorithm can sometimes fail. Must be a single ascii character.",
   },
   {
     displayName: "Quote",
@@ -78,7 +80,8 @@ export const SniffDescription: INodeProperties[] = [
         operation: ["sniff"],
       },
     },
-    description: "The quote character for reading CSV data.",
+    description:
+      "The quote character for reading CSV data. Specify this when the quote character is known beforehand, as the quote char inferencing algorithm can sometimes fail. Must be a single ascii character - typically, double quote (\"), single quote ('), or backtick (`).",
   },
   {
     displayName: "Json",
@@ -114,20 +117,21 @@ export const SniffDescription: INodeProperties[] = [
         operation: ["sniff"],
       },
     },
-    description: "Save the URL sample to a file.",
+    description:
+      "Save the URL sample to a file. Valid only when input is a URL.",
   },
   {
     displayName: "Timeout",
     name: "timeout",
     type: "string",
-    default: "",
+    default: "30",
     displayOptions: {
       show: {
         operation: ["sniff"],
       },
     },
     description:
-      "Timeout when sniffing URLs in seconds. If 0, no timeout is used.",
+      "Timeout when sniffing URLs in seconds. If 0, no timeout is used. [default: 30]",
   },
   {
     displayName: "User Agent",
@@ -140,7 +144,7 @@ export const SniffDescription: INodeProperties[] = [
       },
     },
     description:
-      "Specify custom user agent to use when sniffing a CSV on a URL.",
+      "Specify custom user agent to use when sniffing a CSV on a URL. It supports the following variables - $QSV_VERSION, $QSV_TARGET, $QSV_BIN_NAME, $QSV_KIND and $QSV_COMMAND. Try to follow the syntax here - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent",
   },
   {
     displayName: "Stats Types",
@@ -152,7 +156,8 @@ export const SniffDescription: INodeProperties[] = [
         operation: ["sniff"],
       },
     },
-    description: "Use the same data type names as `stats`.",
+    description:
+      "Use the same data type names as `stats`. (Unsigned, Signed => Integer, Text => String, everything else the same)",
   },
   {
     displayName: "No Infer",
@@ -165,7 +170,7 @@ export const SniffDescription: INodeProperties[] = [
       },
     },
     description:
-      "Do not infer the schema. Only return the file's mime type, size and",
+      "Do not infer the schema. Only return the file's mime type, size and last modified date. Use this to use sniff as a general mime type detector. Note that CSV and TSV files will only be detected as mime type plain/text in this mode.",
   },
   {
     displayName: "Just Mime",
@@ -178,7 +183,7 @@ export const SniffDescription: INodeProperties[] = [
       },
     },
     description:
-      "Only return the file's mime type. Use this to use sniff as a general",
+      "Only return the file's mime type. Use this to use sniff as a general mime type detector. Synonym for --no-infer.",
   },
   {
     displayName: "Quick",
@@ -191,7 +196,7 @@ export const SniffDescription: INodeProperties[] = [
       },
     },
     description:
-      "When sniffing a non-CSV remote file, only download the first chunk of the file",
+      "When sniffing a non-CSV remote file, only download the first chunk of the file before attempting to detect the mime type. This is faster but less accurate as some mime types cannot be detected with just the first downloaded chunk.",
   },
   {
     displayName: "Harvest Mode",
@@ -204,7 +209,7 @@ export const SniffDescription: INodeProperties[] = [
       },
     },
     description:
-      "This is a convenience flag when using sniff in CKAN harvesters.",
+      'This is a convenience flag when using sniff in CKAN harvesters. It is equivalent to --quick --timeout 10 --stats-types --json and --user-agent "CKAN-harvest/$QSV_VERSION ($QSV_TARGET; $QSV_BIN_NAME)"',
   },
   {
     displayName: "Progressbar",

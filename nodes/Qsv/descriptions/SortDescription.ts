@@ -41,7 +41,8 @@ export const SortDescription: INodeProperties[] = [
         operation: ["sort"],
       },
     },
-    description: "Select a subset of columns to sort.",
+    description:
+      "Select a subset of columns to sort. See 'qsv select --help' for the format details.",
   },
   {
     displayName: "Numeric",
@@ -65,7 +66,8 @@ export const SortDescription: INodeProperties[] = [
         operation: ["sort"],
       },
     },
-    description: "Compare strings using natural sort order",
+    description:
+      'Compare strings using natural sort order (treats numbers within strings as actual numbers, e.g. "data1.txt", "data2.txt", "data10.txt", as opposed to "data1.txt", "data10.txt", "data2.txt" when sorting lexicographically) https://en.wikipedia.org/wiki/Natural_sort_order When combined with --numeric, --natural takes precedence.',
   },
   {
     displayName: "Reverse",
@@ -89,7 +91,8 @@ export const SortDescription: INodeProperties[] = [
         operation: ["sort"],
       },
     },
-    description: "Compare strings disregarding case.",
+    description:
+      "Compare strings disregarding case. Has no effect when numeric comparison is selected (i.e. when --numeric is used without --natural).",
   },
   {
     displayName: "Unique",
@@ -101,7 +104,8 @@ export const SortDescription: INodeProperties[] = [
         operation: ["sort"],
       },
     },
-    description: "When set, identical consecutive lines will be dropped",
+    description:
+      "When set, identical consecutive lines will be dropped to keep only one line per sorted value. The same comparison mode used to sort the input is also used here, so unique-equality always agrees with the sort.",
   },
   {
     displayName: "Random",
@@ -113,7 +117,8 @@ export const SortDescription: INodeProperties[] = [
         operation: ["sort"],
       },
     },
-    description: "Randomize (scramble) the data by row.",
+    description:
+      "Randomize (scramble) the data by row. When set, the numeric, natural, and ignore-case comparison flags still apply to unique-filtering (if --unique is also set). The reverse flag has no effect on unique-filter equality and is ignored for the shuffle itself.",
   },
   {
     displayName: "Seed",
@@ -149,7 +154,8 @@ export const SortDescription: INodeProperties[] = [
         operation: ["sort"],
       },
     },
-    description: "The number of jobs to run in parallel.",
+    description:
+      "The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.",
   },
   {
     displayName: "Faster",
@@ -161,7 +167,8 @@ export const SortDescription: INodeProperties[] = [
         operation: ["sort"],
       },
     },
-    description: "When set, the sort will be faster. This is done by",
+    description:
+      'When set, the sort will be faster. This is done by using a faster sorting algorithm that is not "stable" (i.e. the order of identical values is not guaranteed to be preserved). It has the added side benefit that the sort will also be in-place (i.e. does not allocate), which is useful for sorting large files that will otherwise NOT fit in memory using the default allocating stable sort.',
   },
   {
     displayName: "No Headers",
@@ -173,7 +180,8 @@ export const SortDescription: INodeProperties[] = [
         operation: ["sort"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers. Namely, it will be sorted with the rest of the rows. Otherwise, the first row will always appear as the header row in the output.",
   },
   {
     displayName: "Delimiter",
@@ -185,7 +193,8 @@ export const SortDescription: INodeProperties[] = [
         operation: ["sort"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Memcheck",
@@ -197,6 +206,7 @@ export const SortDescription: INodeProperties[] = [
         operation: ["sort"],
       },
     },
-    description: "Check if there is enough memory to load the entire",
+    description:
+      "Check if there is enough memory to load the entire CSV into memory using CONSERVATIVE heuristics. Ignored if --random or --faster is set.",
   },
 ];

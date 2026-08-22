@@ -30,9 +30,27 @@ export async function executeApply(
 
   // Collect options and flags
   try {
-    const val = this.getNodeParameter("newColumn", itemIndex, "") as string;
-    if (val !== undefined && val !== "") {
-      args.push("--new-column", val);
+    const val = this.getNodeParameter(
+      "replacement",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--replacement");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("formatstr", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--formatstr");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("newColumn", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--new-column");
     }
   } catch {}
 
@@ -40,6 +58,13 @@ export async function executeApply(
     const val = this.getNodeParameter("rename", itemIndex, "") as string;
     if (val !== undefined && val !== "") {
       args.push("--rename", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("comparand", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--comparand");
     }
   } catch {}
 

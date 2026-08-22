@@ -158,7 +158,20 @@ export const ProfileDescription: INodeProperties[] = [
       },
     },
     description:
-      "With --validate, fail the command on JSON Schema violations or non-Info external- validator findings (Required/Recommended severities) instead of just warning. Note: RFC4180 structural failures from `qsv validate` (emitted when a spec declares `validators`) are always appended as warnings, regardless of this flag.",
+      "With --validate, fail the command on JSON Schema violations or non-Info external- validator findings (Required/Recommended",
+  },
+  {
+    displayName: "Allow External Validator",
+    name: "allowExternalValidator",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["profile"],
+      },
+    },
+    description:
+      "Opt in to spawning the validator binary declared by `validation.external` when the profile was loaded from an arbitrary YAML file. Bundled profiles (dcat-us-v3, dcat-ap-v3, croissant, geoconnex) always run their declared external validators because the profile content is vetted at qsv release time. Without this flag, file-loaded profiles emit a Recommended-severity warning instead of running the binary, so an untrusted YAML can't silently execute arbitrary commands. Default: off.",
   },
   {
     displayName: "Catalog",

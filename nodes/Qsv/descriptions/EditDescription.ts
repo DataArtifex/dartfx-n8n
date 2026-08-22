@@ -41,7 +41,8 @@ export const EditDescription: INodeProperties[] = [
         operation: ["edit"],
       },
     },
-    description: "Overwrite the input file data with the output.",
+    description:
+      "Overwrite the input file data with the output. The input file is renamed to a .bak file in the same directory. If the .bak file already exists, the command errors instead of overwriting it. Symbolic links are rejected; pass the resolved path instead. (Other Windows reparse points such as junction points are not detected.)",
   },
   {
     displayName: "No Headers",

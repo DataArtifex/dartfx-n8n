@@ -35,13 +35,14 @@ export const PartitionDescription: INodeProperties[] = [
     displayName: "Filename",
     name: "filename",
     type: "string",
-    default: "",
+    default: "{}.csv",
     displayOptions: {
       show: {
         operation: ["partition"],
       },
     },
-    description: "A filename template to use when constructing the",
+    description:
+      "A filename template to use when constructing the names of the output files.  The string '{}' will be replaced by a value based on the partition column, but sanitized for shell safety. [default: {}.csv]",
   },
   {
     displayName: "Prefix Length",
@@ -53,7 +54,8 @@ export const PartitionDescription: INodeProperties[] = [
         operation: ["partition"],
       },
     },
-    description: "Truncate the partition column after the",
+    description:
+      "Truncate the partition column after the specified number of bytes when creating the output file.",
   },
   {
     displayName: "Drop",
@@ -77,7 +79,8 @@ export const PartitionDescription: INodeProperties[] = [
         operation: ["partition"],
       },
     },
-    description: "Limit the number of simultaneously open files.",
+    description:
+      'Limit the number of simultaneously open files. Useful for partitioning large datasets with many unique values to avoid "too many open files" errors. Data is processed in batches until all unique values are processed. If not set, it will be automatically set to the system limit with a 10% safety margin. If set to 0, it will process all data at once, regardless of the system\'s open files limit.',
   },
   {
     displayName: "No Headers",
@@ -89,7 +92,8 @@ export const PartitionDescription: INodeProperties[] = [
         operation: ["partition"],
       },
     },
-    description: "When set, the first row will NOT be interpreted",
+    description:
+      "When set, the first row will NOT be interpreted as column names. Otherwise, the first row will appear in all chunks as the header row.",
   },
   {
     displayName: "Delimiter",
@@ -101,6 +105,7 @@ export const PartitionDescription: INodeProperties[] = [
         operation: ["partition"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

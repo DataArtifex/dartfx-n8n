@@ -66,7 +66,7 @@ export const SampleDescription: INodeProperties[] = [
       },
     },
     description:
-      "Use Bernoulli sampling instead of indexed or reservoir sampling.",
+      "Use Bernoulli sampling instead of indexed or reservoir sampling. When this flag is set, <sample-size> must be between 0 and 1 and represents the probability of selecting each record.",
   },
   {
     displayName: "Systematic",
@@ -79,7 +79,7 @@ export const SampleDescription: INodeProperties[] = [
       },
     },
     description:
-      "Use systematic sampling (every nth record as specified by <sample-size>).",
+      'Use systematic sampling (every nth record as specified by <sample-size>). If <arg> is "random", the starting point is randomly chosen between 0 & n. If <arg> is "first", the starting point is the first record. The sample size must be a whole number. Uses CONSTANT memory - O(1).',
   },
   {
     displayName: "Stratified",
@@ -92,7 +92,7 @@ export const SampleDescription: INodeProperties[] = [
       },
     },
     description:
-      "Use stratified sampling. The strata column is specified by <col>.",
+      "Use stratified sampling. The strata column is specified by <col>. Can be either a column name or 0-based column index. The sample size must be a whole number. Uses MEMORY PROPORTIONAL to the number of strata (s) and samples per stratum (k) - O(s*k).",
   },
   {
     displayName: "Weighted",
@@ -105,7 +105,7 @@ export const SampleDescription: INodeProperties[] = [
       },
     },
     description:
-      "Use weighted sampling. The weight column is specified by <col>.",
+      "Use weighted sampling. The weight column is specified by <col>. Can be either a column name or 0-based column index. The column will be parsed as a number. Records with non-number weights will be skipped. Uses MEMORY PROPORTIONAL to the sample size (k) - O(k).",
   },
   {
     displayName: "Varopt",
@@ -117,7 +117,8 @@ export const SampleDescription: INodeProperties[] = [
         operation: ["sample"],
       },
     },
-    description: "Use VAROPT weighted reservoir sampling (A-ExpJ keying).",
+    description:
+      "Use VAROPT weighted reservoir sampling (A-ExpJ keying). The weight column is specified by <col> (column name or 0-based index). Variance-bounded, single-pass, no stats-cache required, mergeable via --sketch-out / --sketch-in. Records with non-positive or non-numeric weights are silently skipped. Uses MEMORY PROPORTIONAL to the sample size (k) - O(k).",
   },
   {
     displayName: "Mergeable Reservoir",
@@ -130,7 +131,7 @@ export const SampleDescription: INodeProperties[] = [
       },
     },
     description:
-      "Use a mergeable Algorithm-R reservoir sampler. Distribution is",
+      "Use a mergeable Algorithm-R reservoir sampler. Distribution is identical to the default RESERVOIR method, but the resulting sketch is mergeable via --sketch-out / --sketch-in. Cannot be combined with another sampling-method flag.",
   },
   {
     displayName: "Cluster",
@@ -143,7 +144,7 @@ export const SampleDescription: INodeProperties[] = [
       },
     },
     description:
-      "Use cluster sampling. The cluster column is specified by <col>.",
+      "Use cluster sampling. The cluster column is specified by <col>. Can be either a column name or 0-based column index. Uses MEMORY PROPORTIONAL to the number of clusters (c) - O(c).",
   },
   {
     displayName: "Timeseries",
@@ -156,7 +157,7 @@ export const SampleDescription: INodeProperties[] = [
       },
     },
     description:
-      "Use time-series sampling. The time column is specified by <col>.",
+      "Use time-series sampling. The time column is specified by <col>. Can be either a column name or 0-based column index. Sorts records by the specified time column and then groups by time intervals and selects one record per interval. Supports various date formats (19 formats recognized by qsv-dateparser). Uses MEMORY PROPORTIONAL to the number of records - O(n).",
   },
   {
     displayName: "Ts Interval",
@@ -168,19 +169,21 @@ export const SampleDescription: INodeProperties[] = [
         operation: ["sample"],
       },
     },
-    description: "Time interval for grouping records. Format: <number><unit>",
+    description:
+      'Time interval for grouping records. Format: <number><unit> where unit is h (hour), d (day), w (week), m (month), y (year). Examples: "1h", "1d", "1w", "2d" (every 2 days). If not specified, <sample-size> is treated as hours.',
   },
   {
     displayName: "Ts Start",
     name: "tsStart",
     type: "string",
-    default: "",
+    default: "first",
     displayOptions: {
       show: {
         operation: ["sample"],
       },
     },
-    description: "Starting point for time-series sampling.",
+    description:
+      'Starting point for time-series sampling. Options: "first" (earliest timestamp, default), "last" (most recent timestamp), "random" (random starting point). [default: first]',
   },
   {
     displayName: "Ts Adaptive",
@@ -192,7 +195,8 @@ export const SampleDescription: INodeProperties[] = [
         operation: ["sample"],
       },
     },
-    description: "Adaptive sampling mode for time-series data.",
+    description:
+      'Adaptive sampling mode for time-series data. Options: "business-hours" (prefer 9am-5pm Mon-Fri), "weekends" (prefer weekends), "business-days" (prefer weekdays), "both" (combine business-hours and weekends).',
   },
   {
     displayName: "Ts Aggregate",
@@ -204,20 +208,21 @@ export const SampleDescription: INodeProperties[] = [
         operation: ["sample"],
       },
     },
-    description: "Aggregation function to apply within each time interval.",
+    description:
+      'Aggregation function to apply within each time interval. Options: "first", "last", "mean", "sum", "count", "min", "max", "median". When specified, aggregates all records in each interval instead of selecting a single record.',
   },
   {
     displayName: "Ts Input Tz",
     name: "tsInputTz",
     type: "string",
-    default: "",
+    default: "UTC",
     displayOptions: {
       show: {
         operation: ["sample"],
       },
     },
     description:
-      'Timezone for parsing input timestamps. Can be an IANA timezone name or "local" for the local timezone.',
+      'Timezone for parsing input timestamps. Can be an IANA timezone name or "local" for the local timezone. [default: UTC]',
   },
   {
     displayName: "Ts Prefer Dmy",
@@ -243,7 +248,7 @@ export const SampleDescription: INodeProperties[] = [
       },
     },
     description:
-      "After sampling, also write a binary sketch describing the internal",
+      "After sampling, also write a binary sketch describing the internal sampler state to <file>. The blob can later be merged into another run via --sketch-in. Only valid with --varopt or --mergeable-reservoir. The format is qsv-specific and is not interoperable with serialized sketches from other tools.",
   },
   {
     displayName: "Sketch In",
@@ -256,7 +261,7 @@ export const SampleDescription: INodeProperties[] = [
       },
     },
     description:
-      "Comma-separated list of sketch files produced by --sketch-out.",
+      "Comma-separated list of sketch files produced by --sketch-out. CSV input is NOT read; the listed sketches (which must all be of the same sampler kind) are merged and the resulting sample is emitted as CSV. <sample-size> may be used to cap the merged sample below the sketches' own k.",
   },
   {
     displayName: "User Agent",
@@ -268,20 +273,21 @@ export const SampleDescription: INodeProperties[] = [
         operation: ["sample"],
       },
     },
-    description: "Specify custom user agent to use when the input is a URL.",
+    description:
+      "Specify custom user agent to use when the input is a URL. It supports the following variables - $QSV_VERSION, $QSV_TARGET, $QSV_BIN_NAME, $QSV_KIND and $QSV_COMMAND. Try to follow the syntax here - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent",
   },
   {
     displayName: "Timeout",
     name: "timeout",
     type: "string",
-    default: "",
+    default: "30",
     displayOptions: {
       show: {
         operation: ["sample"],
       },
     },
     description:
-      "Inactivity timeout for downloading URLs in seconds. Aborts only if",
+      "Inactivity timeout for downloading URLs in seconds. Aborts only if no data is received from the server for this long. If 0, no timeout. [default: 30]",
   },
   {
     displayName: "Max Size",
@@ -293,7 +299,8 @@ export const SampleDescription: INodeProperties[] = [
         operation: ["sample"],
       },
     },
-    description: "Maximum size of the file to download in MB before sampling.",
+    description:
+      "Maximum size of the file to download in MB before sampling. Will download the entire file if not specified. If the CSV is partially downloaded, the sample will be taken only from the downloaded portion.",
   },
   {
     displayName: "Force",
@@ -317,7 +324,8 @@ export const SampleDescription: INodeProperties[] = [
         operation: ["sample"],
       },
     },
-    description: "When set, the first row will be considered as part of",
+    description:
+      "When set, the first row will be considered as part of the population to sample from. (When not set, the first row is the header row and will always appear in the output.)",
   },
   {
     displayName: "Delimiter",
@@ -329,6 +337,7 @@ export const SampleDescription: INodeProperties[] = [
         operation: ["sample"],
       },
     },
-    description: "The field delimiter for reading/writing CSV data.",
+    description:
+      "The field delimiter for reading/writing CSV data. Must be a single character. (default: ,)",
   },
 ];

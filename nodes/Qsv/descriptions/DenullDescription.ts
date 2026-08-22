@@ -41,7 +41,8 @@ export const DenullDescription: INodeProperties[] = [
         operation: ["denull"],
       },
     },
-    description: "Select the columns to scan. See `qsv select --help`",
+    description:
+      "Select the columns to scan. See `qsv select --help` for the full selection syntax.",
   },
   {
     displayName: "Vocab",
@@ -53,7 +54,8 @@ export const DenullDescription: INodeProperties[] = [
         operation: ["denull"],
       },
     },
-    description: "Comma-separated null sentinel vocabulary, REPLACING",
+    description:
+      "Comma-separated null sentinel vocabulary, REPLACING the built-in list. Matched case-insensitively after trimming surrounding whitespace.",
   },
   {
     displayName: "Add Vocab",
@@ -65,19 +67,21 @@ export const DenullDescription: INodeProperties[] = [
         operation: ["denull"],
       },
     },
-    description: "Comma-separated tokens to ADD to the built-in list.",
+    description:
+      "Comma-separated tokens to ADD to the built-in list. Use this for site-specific markers.",
   },
   {
     displayName: "Max Distinct",
     name: "maxDistinct",
     type: "string",
-    default: "",
+    default: "16",
     displayOptions: {
       show: {
         operation: ["denull"],
       },
     },
-    description: "Abandon a column once it holds this many distinct",
+    description:
+      "Abandon a column once it holds this many distinct non-numeric values. Guards memory on free-text columns and bounds the report. [default: 16]",
   },
   {
     displayName: "All Columns",
@@ -89,7 +93,8 @@ export const DenullDescription: INodeProperties[] = [
         operation: ["denull"],
       },
     },
-    description: "Also report columns with nothing to flag. By default",
+    description:
+      "Also report columns with nothing to flag. By default only columns with a verdict are listed.",
   },
   {
     displayName: "Apply",
@@ -101,7 +106,8 @@ export const DenullDescription: INodeProperties[] = [
         operation: ["denull"],
       },
     },
-    description: "Rewrite the data instead of only reporting it. Blanks",
+    description:
+      "Rewrite the data instead of only reporting it. Blanks the sentinels in every CONFIRMED column and writes the CSV to <output> (or stdout), sending the report to stderr. Rejected and unscanned columns pass through untouched. Needs a file input, and <output> must not be the input file.",
   },
   {
     displayName: "Json",
@@ -125,7 +131,8 @@ export const DenullDescription: INodeProperties[] = [
         operation: ["denull"],
       },
     },
-    description: "When set, the first row will NOT be interpreted as",
+    description:
+      "When set, the first row will NOT be interpreted as column names. Columns are named col_1, col_2, etc.",
   },
   {
     displayName: "Delimiter",
@@ -137,6 +144,7 @@ export const DenullDescription: INodeProperties[] = [
         operation: ["denull"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

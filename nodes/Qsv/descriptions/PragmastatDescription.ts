@@ -53,7 +53,8 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "One-sample confirmatory analysis. Test center/spread against",
+    description:
+      "One-sample confirmatory analysis. Test center/spread against thresholds. Format: metric:value[,metric:value,...]. Mutually exclusive with --twosample and --compare2.",
   },
   {
     displayName: "Compare2",
@@ -65,7 +66,8 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "Two-sample confirmatory analysis. Test shift/ratio/disparity",
+    description:
+      "Two-sample confirmatory analysis. Test shift/ratio/disparity against thresholds. Format: metric:value[,metric:value,...]. Mutually exclusive with --twosample and --compare1.",
   },
   {
     displayName: "Select",
@@ -77,19 +79,21 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "Select columns for analysis. Uses qsv's column selection",
+    description:
+      "Select columns for analysis. Uses qsv's column selection syntax. Non-numeric columns appear with n=0. In two-sample mode, all pairs of selected columns are computed.",
   },
   {
     displayName: "Misrate",
     name: "misrate",
     type: "string",
-    default: "",
+    default: "0.001",
     displayOptions: {
       show: {
         operation: ["pragmastat"],
       },
     },
-    description: "Probability that bounds fail to contain the true parameter.",
+    description:
+      "Probability that bounds fail to contain the true parameter. Lower values produce wider bounds. Must be achievable for the given sample size. [default: 0.001]",
   },
   {
     displayName: "Standalone",
@@ -101,31 +105,35 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "Output one-sample results as standalone CSV instead of",
+    description:
+      "Output one-sample results as standalone CSV instead of appending to the stats cache.",
   },
   {
     displayName: "Stats Options",
     name: "statsOptions",
     type: "string",
-    default: "",
+    default:
+      "--infer-dates --infer-boolean --mad --quartiles --force --stats-jsonl",
     displayOptions: {
       show: {
         operation: ["pragmastat"],
       },
     },
-    description: "Options to pass to the stats command if baseline stats need",
+    description:
+      "Options to pass to the stats command if baseline stats need to be generated. The options are passed as a single string that will be split by whitespace. [default: --infer-dates --infer-boolean --mad --quartiles --force --stats-jsonl]",
   },
   {
     displayName: "Round",
     name: "round",
     type: "string",
-    default: "",
+    default: "4",
     displayOptions: {
       show: {
         operation: ["pragmastat"],
       },
     },
-    description: "Round statistics to <n> decimal places. Rounding follows",
+    description:
+      "Round statistics to <n> decimal places. Rounding follows Midpoint Nearest Even (Bankers Rounding) rule. [default: 4]",
   },
   {
     displayName: "Force",
@@ -137,7 +145,8 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "Force recomputing ps_* columns even if they already exist",
+    description:
+      "Force recomputing ps_* columns even if they already exist in the stats cache.",
   },
   {
     displayName: "Subsample",
@@ -149,7 +158,8 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "Randomly subsample N values per column before computing.",
+    description:
+      "Randomly subsample N values per column before computing. Speeds up large datasets while maintaining statistical robustness. Recommended: 10000-50000 for exploratory analysis.",
   },
   {
     displayName: "Seed",
@@ -161,7 +171,8 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "Seed for reproducible subsampling.",
+    description:
+      "Seed for reproducible subsampling. If not specified, defaults to 42 when --subsample is used.",
   },
   {
     displayName: "No Bounds",
@@ -173,7 +184,8 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "Skip confidence bounds computation (~2x faster).",
+    description:
+      "Skip confidence bounds computation (~2x faster). Incompatible with --compare1/--compare2.",
   },
   {
     displayName: "Delimiter",
@@ -185,7 +197,8 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "The field delimiter for reading/writing CSV data.",
+    description:
+      "The field delimiter for reading/writing CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "No Headers",
@@ -209,7 +222,8 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "The number of jobs to run in parallel.",
+    description:
+      "The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.",
   },
   {
     displayName: "Memcheck",
@@ -221,6 +235,7 @@ export const PragmastatDescription: INodeProperties[] = [
         operation: ["pragmastat"],
       },
     },
-    description: "Check if there is enough memory to load the entire",
+    description:
+      "Check if there is enough memory to load the entire CSV into memory using CONSERVATIVE heuristics. Not valid for stdin.",
   },
 ];

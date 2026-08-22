@@ -35,37 +35,40 @@ export const PseudoDescription: INodeProperties[] = [
     displayName: "Start",
     name: "start",
     type: "string",
-    default: "",
+    default: "0",
     displayOptions: {
       show: {
         operation: ["pseudo"],
       },
     },
-    description: "The starting number for the incremental identifier.",
+    description:
+      "The starting number for the incremental identifier. [default: 0]",
   },
   {
     displayName: "Increment",
     name: "increment",
     type: "string",
-    default: "",
+    default: "1",
     displayOptions: {
       show: {
         operation: ["pseudo"],
       },
     },
-    description: "The increment for the incremental identifier.",
+    description:
+      "The increment for the incremental identifier. Must be greater than 0. [default: 1]",
   },
   {
     displayName: "Formatstr",
     name: "formatstr",
     type: "string",
-    default: "",
+    default: "{}",
     displayOptions: {
       show: {
         operation: ["pseudo"],
       },
     },
-    description: "The format string for the incremental identifier.",
+    description:
+      'The format string for the incremental identifier. The format string must contain a single "{}" which will be replaced with the incremental identifier. [default: {}]',
   },
   {
     displayName: "No Headers",
@@ -77,7 +80,7 @@ export const PseudoDescription: INodeProperties[] = [
         operation: ["pseudo"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description: "When set, the first row will not be interpreted as headers.",
   },
   {
     displayName: "Delimiter",
@@ -89,6 +92,7 @@ export const PseudoDescription: INodeProperties[] = [
         operation: ["pseudo"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

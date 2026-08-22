@@ -32,6 +32,30 @@ export const ValidateDescription: INodeProperties[] = [
       "Path where the output will be saved. If empty, result may be returned in stdout/JSON.",
   },
   {
+    displayName: "                                                     ",
+    name: "-----------------------------------------------------",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["validate"],
+      },
+    },
+    description: "",
+  },
+  {
+    displayName: "                                     ",
+    name: "-------------------------------------",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["validate"],
+      },
+    },
+    description: "",
+  },
+  {
     displayName: "Trim",
     name: "trim",
     type: "boolean",

@@ -41,7 +41,8 @@ export const PromptDescription: INodeProperties[] = [
         operation: ["prompt"],
       },
     },
-    description: "The prompt message to display in the file dialog title.",
+    description:
+      'The prompt message to display in the file dialog title. When not using --fd-output, the default is "Select a File". When using --fd-output, the default is "Save File As".',
   },
   {
     displayName: "Filters",
@@ -54,19 +55,19 @@ export const PromptDescription: INodeProperties[] = [
       },
     },
     description:
-      'The filter to use for the INPUT file dialog. Set to "None" to',
+      'The filter to use for the INPUT file dialog. Set to "None" to disable filters. Filters are comma-delimited file extensions. Defaults to csv,tsv,tab,ssv,xls,xlsx,xlsm,xlsb,ods. If the polars feature is enabled, it adds avro,arrow,ipc,parquet, json,jsonl,ndjson & gz,zst,zlib compressed files to the filter.',
   },
   {
     displayName: "Workdir",
     name: "workdir",
     type: "string",
-    default: "",
+    default: ".",
     displayOptions: {
       show: {
         operation: ["prompt"],
       },
     },
-    description: "The directory to start the file dialog in.",
+    description: "The directory to start the file dialog in. [default: .]",
   },
   {
     displayName: "Fd Output",
@@ -78,32 +79,34 @@ export const PromptDescription: INodeProperties[] = [
         operation: ["prompt"],
       },
     },
-    description: "Write output to a file by using a save file dialog.",
+    description:
+      "Write output to a file by using a save file dialog. Used when piping into qsv prompt. Mutually exclusive with --output.",
   },
   {
     displayName: "Save Fname",
     name: "saveFname",
     type: "string",
-    default: "",
-    displayOptions: {
-      show: {
-        operation: ["prompt"],
-      },
-    },
-    description: "The filename to save the output as when using --fd-output.",
-  },
-  {
-    displayName: "Base Delay Ms",
-    name: "baseDelayMs",
-    type: "string",
-    default: "",
+    default: "output.csv",
     displayOptions: {
       show: {
         operation: ["prompt"],
       },
     },
     description:
-      "The base delay in milliseconds to use when opening INPUT dialog.",
+      "The filename to save the output as when using --fd-output. [default: output.csv]",
+  },
+  {
+    displayName: "Base Delay Ms",
+    name: "baseDelayMs",
+    type: "string",
+    default: "200",
+    displayOptions: {
+      show: {
+        operation: ["prompt"],
+      },
+    },
+    description:
+      "The base delay in milliseconds to use when opening INPUT dialog. This is to ensure that the INPUT dialog is shown before/over the OUTPUT dialog when using the prompt command is used in both INPUT and OUTPUT modes in a single pipeline. [default: 200]",
   },
   {
     displayName: "Quiet",

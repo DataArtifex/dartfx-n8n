@@ -41,7 +41,8 @@ export const Blake3Description: INodeProperties[] = [
         operation: ["blake3"],
       },
     },
-    description: "Use the keyed mode, reading the 32-byte key from stdin.",
+    description:
+      "Use the keyed mode, reading the 32-byte key from stdin. When using --keyed, file arguments are required (cannot also read data from stdin).",
   },
   {
     displayName: "Derive Key",
@@ -53,19 +54,21 @@ export const Blake3Description: INodeProperties[] = [
         operation: ["blake3"],
       },
     },
-    description: "Use the key derivation mode, with the given context string.",
+    description:
+      "Use the key derivation mode, with the given context string. Cannot be used with --keyed.",
   },
   {
     displayName: "Length",
     name: "length",
     type: "string",
-    default: "",
+    default: "32",
     displayOptions: {
       show: {
         operation: ["blake3"],
       },
     },
-    description: "The number of output bytes, before hex encoding.",
+    description:
+      "The number of output bytes, before hex encoding. [default: 32]",
   },
   {
     displayName: "No Mmap",
@@ -101,7 +104,8 @@ export const Blake3Description: INodeProperties[] = [
         operation: ["blake3"],
       },
     },
-    description: "Write raw output bytes to stdout, rather than hex.",
+    description:
+      "Write raw output bytes to stdout, rather than hex. Only a single input is allowed. --no-names is implied.",
   },
   {
     displayName: "Tag",
@@ -137,7 +141,8 @@ export const Blake3Description: INodeProperties[] = [
         operation: ["blake3"],
       },
     },
-    description: "The number of jobs to run in parallel for hashing.",
+    description:
+      "The number of jobs to run in parallel for hashing. When not set, uses the number of CPUs detected. Set to 1 to disable multithreading.",
   },
   {
     displayName: "Quiet",
@@ -149,6 +154,7 @@ export const Blake3Description: INodeProperties[] = [
         operation: ["blake3"],
       },
     },
-    description: "Skip printing OK for each checked file.",
+    description:
+      "Skip printing OK for each checked file. Must be used with --check.",
   },
 ];

@@ -124,6 +124,17 @@ export async function executeProfile(
   } catch {}
 
   try {
+    const val = this.getNodeParameter(
+      "allowExternalValidator",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--allow-external-validator");
+    }
+  } catch {}
+
+  try {
     const val = this.getNodeParameter("catalog", itemIndex, false) as boolean;
     if (val) {
       args.push("--catalog");

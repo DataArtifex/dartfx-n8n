@@ -41,7 +41,8 @@ export const HeadersDescription: INodeProperties[] = [
         operation: ["headers"],
       },
     },
-    description: "Only show the header names (hide column index).",
+    description:
+      "Only show the header names (hide column index). This is automatically enabled if more than one input is given.",
   },
   {
     displayName: "Just Count",
@@ -65,7 +66,7 @@ export const HeadersDescription: INodeProperties[] = [
         operation: ["headers"],
       },
     },
-    description: "Shows the union of headers across all inputs",
+    description: "Shows the union of headers across all inputs (deduplicated).",
   },
   {
     displayName: "Trim",
@@ -77,7 +78,8 @@ export const HeadersDescription: INodeProperties[] = [
         operation: ["headers"],
       },
     },
-    description: "Trim leading/trailing space, tab, and quote",
+    description:
+      "Trim leading/trailing space, tab, and quote characters from header name.",
   },
   {
     displayName: "Delimiter",
@@ -89,6 +91,7 @@ export const HeadersDescription: INodeProperties[] = [
         operation: ["headers"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

@@ -41,7 +41,8 @@ export const CleanDescription: INodeProperties[] = [
         operation: ["clean"],
       },
     },
-    description: "Only remove STALE or ORPHANED caches: a cache whose",
+    description:
+      "Only remove STALE or ORPHANED caches: a cache whose source file is newer than the cache, or whose source file no longer exists.",
   },
   {
     displayName: "Recursive",
@@ -65,7 +66,8 @@ export const CleanDescription: INodeProperties[] = [
         operation: ["clean"],
       },
     },
-    description: "Preview only; never delete. Wins over --force if both",
+    description:
+      "Preview only; never delete. Wins over --force if both are given (this is also the default when neither is set).",
   },
   {
     displayName: "Force",

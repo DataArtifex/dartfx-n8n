@@ -41,6 +41,7 @@ export const BeheadDescription: INodeProperties[] = [
         operation: ["behead"],
       },
     },
-    description: "Do not validate if the CSV has different number of",
+    description:
+      "Do not validate if the CSV has different number of fields per record, increasing performance.",
   },
 ];

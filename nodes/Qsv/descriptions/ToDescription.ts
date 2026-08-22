@@ -55,7 +55,7 @@ export const ToDescription: INodeProperties[] = [
       },
     },
     description:
-      "Create database dump file for use with `psql` or `sqlite3` command line tools",
+      "Create database dump file for use with `psql` or `sqlite3` command line tools (postgres/sqlite only).",
   },
   {
     displayName: "Stats",
@@ -117,7 +117,7 @@ export const ToDescription: INodeProperties[] = [
       },
     },
     description:
-      "The number of rows to use for schema inference (parquet only).",
+      "The number of rows to use for schema inference (parquet only). Note that even if a pschema.json file exists for an input file, explicitly specifying infer-len will cause qsv to ignore the pschema.json and infer the schema from the CSV data instead, including when set to 0. Set to 0 to infer from all rows (not recommended for large files).",
   },
   {
     displayName: "Try Parse Dates",
@@ -130,7 +130,7 @@ export const ToDescription: INodeProperties[] = [
       },
     },
     description:
-      "Attempt to parse date/datetime columns with polars' date inference logic.",
+      "Attempt to parse date/datetime columns with polars' date inference logic. This may result in more accurate date parsing, but can be slower on large files. (parquet only).",
   },
   {
     displayName: "Drop",
@@ -156,7 +156,7 @@ export const ToDescription: INodeProperties[] = [
       },
     },
     description:
-      "If loading into existing db, alter existing tables so that new data will load.",
+      "If loading into existing db, alter existing tables so that new data will load. (postgres/sqlite only).",
   },
   {
     displayName: "Pipe",
@@ -182,7 +182,7 @@ export const ToDescription: INodeProperties[] = [
       },
     },
     description:
-      "Use this as the table/sheet/file name (postgres/sqlite/xlsx/ods/parquet).",
+      'Use this as the table/sheet/file name (postgres/sqlite/xlsx/ods/parquet). Overrides the default name derived from the input filename. When reading from stdin, the default table name is "stdin". Only valid with a single input file. For postgres/sqlite: must start with a letter or underscore, contain only alphanumeric characters and underscores (max 63). For xlsx/ods: used as sheet name (max 31 chars, cannot contain \\ / * [ ] : ?).',
   },
   {
     displayName: "Separator",
@@ -195,7 +195,7 @@ export const ToDescription: INodeProperties[] = [
       },
     },
     description:
-      "For xlsx, use this character to help truncate xlsx sheet names.",
+      "For xlsx, use this character to help truncate xlsx sheet names. Defaults to space.",
   },
   {
     displayName: "Compression",
@@ -207,7 +207,8 @@ export const ToDescription: INodeProperties[] = [
         operation: ["to"],
       },
     },
-    description: "Parquet compression codec (parquet only).",
+    description:
+      "Parquet compression codec (parquet only). Valid values: zstd (default), gzip, snappy, lz4raw, uncompressed.",
   },
   {
     displayName: "Compress Level",
@@ -244,7 +245,8 @@ export const ToDescription: INodeProperties[] = [
         operation: ["to"],
       },
     },
-    description: "The number of jobs to run in parallel.",
+    description:
+      "The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.",
   },
   {
     displayName: "Delimiter",
@@ -256,6 +258,7 @@ export const ToDescription: INodeProperties[] = [
         operation: ["to"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

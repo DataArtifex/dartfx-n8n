@@ -41,7 +41,8 @@ export const SliceDescription: INodeProperties[] = [
         operation: ["slice"],
       },
     },
-    description: "The index of the record to slice from.",
+    description:
+      "The index of the record to slice from. If negative, starts from the last record.",
   },
   {
     displayName: "End",
@@ -65,7 +66,7 @@ export const SliceDescription: INodeProperties[] = [
         operation: ["slice"],
       },
     },
-    description: "The length of the slice (can be used instead",
+    description: "The length of the slice (can be used instead of --end).",
   },
   {
     displayName: "Index",
@@ -77,7 +78,8 @@ export const SliceDescription: INodeProperties[] = [
         operation: ["slice"],
       },
     },
-    description: "Slice a single record (shortcut for -s N -l 1).",
+    description:
+      "Slice a single record (shortcut for -s N -l 1). If negative, starts from the last record.",
   },
   {
     displayName: "Json",
@@ -89,7 +91,8 @@ export const SliceDescription: INodeProperties[] = [
         operation: ["slice"],
       },
     },
-    description: "Output the result as JSON. Fields are written",
+    description:
+      "Output the result as JSON. Fields are written as key-value pairs. The key is the column name. The value is the field value. The output is a JSON array. If --no-headers is set, then the keys are the column indices (zero-based).",
   },
   {
     displayName: "Invert",
@@ -113,7 +116,8 @@ export const SliceDescription: INodeProperties[] = [
         operation: ["slice"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers. Otherwise, the first row will always appear in the output as the header row.",
   },
   {
     displayName: "Delimiter",
@@ -125,6 +129,7 @@ export const SliceDescription: INodeProperties[] = [
         operation: ["slice"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

@@ -65,6 +65,7 @@ export const RenameDescription: INodeProperties[] = [
         operation: ["rename"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

@@ -93,10 +93,10 @@ export async function executeMoarstats(
     const val = this.getNodeParameter(
       "bivariateStats",
       itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--bivariate-stats");
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--bivariate-stats", val);
     }
   } catch {}
 
@@ -104,10 +104,10 @@ export async function executeMoarstats(
     const val = this.getNodeParameter(
       "cardinalityThreshold",
       itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--cardinality-threshold");
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--cardinality-threshold", val);
     }
   } catch {}
 
@@ -123,27 +123,23 @@ export async function executeMoarstats(
   } catch {}
 
   try {
-    const val = this.getNodeParameter(
-      "joinInputs",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--join-inputs");
+    const val = this.getNodeParameter("joinInputs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--join-inputs", val);
     }
   } catch {}
 
   try {
-    const val = this.getNodeParameter("joinKeys", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--join-keys");
+    const val = this.getNodeParameter("joinKeys", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--join-keys", val);
     }
   } catch {}
 
   try {
-    const val = this.getNodeParameter("joinType", itemIndex, false) as boolean;
-    if (val) {
-      args.push("--join-type");
+    const val = this.getNodeParameter("joinType", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--join-type", val);
     }
   } catch {}
 

@@ -41,7 +41,8 @@ export const FixedwidthDescription: INodeProperties[] = [
         operation: ["fixedwidth"],
       },
     },
-    description: "Comma-separated, 1-based starting byte position of",
+    description:
+      'Comma-separated, 1-based starting byte position of each column (e.g. "1,10,15"). Overrides any "#..." header comment in the input.',
   },
   {
     displayName: "Widths",
@@ -53,6 +54,7 @@ export const FixedwidthDescription: INodeProperties[] = [
         operation: ["fixedwidth"],
       },
     },
-    description: "Comma-separated width, in bytes, of each column",
+    description:
+      'Comma-separated width, in bytes, of each column (e.g. "9,5,20"). An alternative to --positions; the two are mutually exclusive.',
   },
 ];

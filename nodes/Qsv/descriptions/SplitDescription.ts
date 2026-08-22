@@ -35,13 +35,14 @@ export const SplitDescription: INodeProperties[] = [
     displayName: "Size",
     name: "size",
     type: "string",
-    default: "",
+    default: "500",
     displayOptions: {
       show: {
         operation: ["split"],
       },
     },
-    description: "The number of records to write into each chunk.",
+    description:
+      "The number of records to write into each chunk. [default: 500]",
   },
   {
     displayName: "Chunks",
@@ -53,7 +54,8 @@ export const SplitDescription: INodeProperties[] = [
         operation: ["split"],
       },
     },
-    description: "The number of chunks to split the data into.",
+    description:
+      "The number of chunks to split the data into. This option is mutually exclusive with --size. The number of rows in each chunk is determined by the number of records in the CSV data and the number of desired chunks. If the number of records is not evenly divisible by the number of chunks, the last chunk will have fewer records.",
   },
   {
     displayName: "Kb Size",
@@ -65,7 +67,8 @@ export const SplitDescription: INodeProperties[] = [
         operation: ["split"],
       },
     },
-    description: "The size of each chunk in kilobytes. The number of rows",
+    description:
+      "The size of each chunk in kilobytes. The number of rows in each chunk may vary, but the size of each chunk will not exceed the desired size. This option is mutually exclusive with --size and --chunks.",
   },
   {
     displayName: "Jobs",
@@ -77,31 +80,34 @@ export const SplitDescription: INodeProperties[] = [
         operation: ["split"],
       },
     },
-    description: "The number of splitting jobs to run in parallel.",
+    description:
+      "The number of splitting jobs to run in parallel. This only works when the given CSV data has an index already created. Note that a file handle is opened for each job. When not set, the number of jobs is set to the number of CPUs detected.",
   },
   {
     displayName: "Filename",
     name: "filename",
     type: "string",
-    default: "",
+    default: "{}.csv",
     displayOptions: {
       show: {
         operation: ["split"],
       },
     },
-    description: "A filename template to use when constructing",
+    description:
+      "A filename template to use when constructing the names of the output files.  The string '{}' will be replaced by the zero-based row number of the first row in the chunk. [default: {}.csv]",
   },
   {
     displayName: "Pad",
     name: "pad",
     type: "string",
-    default: "",
+    default: "0",
     displayOptions: {
       show: {
         operation: ["split"],
       },
     },
-    description: "The zero padding width that is used in the",
+    description:
+      "The zero padding width that is used in the generated filename. [default: 0]",
   },
   {
     displayName: "Filter",
@@ -113,7 +119,8 @@ export const SplitDescription: INodeProperties[] = [
         operation: ["split"],
       },
     },
-    description: "Run the specified command on each chunk after it is written.",
+    description:
+      "Run the specified command on each chunk after it is written. The command should use the FILE environment variable ($FILE on Linux/macOS, %FILE% on Windows), which is set to the path of the output file for each chunk. The string '{}' in the command will be replaced by the zero-based row number of the first row in the chunk.",
   },
   {
     displayName: "Filter Cleanup",
@@ -126,7 +133,7 @@ export const SplitDescription: INodeProperties[] = [
       },
     },
     description:
-      "Cleanup the original output filename AFTER the filter command",
+      "Cleanup the original output filename AFTER the filter command is run successfully for EACH chunk. If the filter command is not successful, the original filename is not removed. Only valid when --filter is used.",
   },
   {
     displayName: "Filter Ignore Errors",
@@ -138,7 +145,8 @@ export const SplitDescription: INodeProperties[] = [
         operation: ["split"],
       },
     },
-    description: "Ignore errors when running the filter command.",
+    description:
+      "Ignore errors when running the filter command. Only valid when --filter is used.",
   },
   {
     displayName: "No Headers",
@@ -150,7 +158,8 @@ export const SplitDescription: INodeProperties[] = [
         operation: ["split"],
       },
     },
-    description: "When set, the first row will NOT be interpreted",
+    description:
+      "When set, the first row will NOT be interpreted as column names. Otherwise, the first row will appear in all chunks as the header row.",
   },
   {
     displayName: "Delimiter",
@@ -162,7 +171,8 @@ export const SplitDescription: INodeProperties[] = [
         operation: ["split"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Quiet",

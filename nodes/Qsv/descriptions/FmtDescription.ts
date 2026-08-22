@@ -142,6 +142,7 @@ export const FmtDescription: INodeProperties[] = [
         operation: ["fmt"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

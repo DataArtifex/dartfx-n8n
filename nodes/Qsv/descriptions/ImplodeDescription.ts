@@ -41,7 +41,8 @@ export const ImplodeDescription: INodeProperties[] = [
         operation: ["implode"],
       },
     },
-    description: "Key column(s) to group by. Supports the usual",
+    description:
+      'Key column(s) to group by. Supports the usual selector syntax (e.g. "name", "1", "1-3", "a,c").',
   },
   {
     displayName: "Value",
@@ -53,7 +54,8 @@ export const ImplodeDescription: INodeProperties[] = [
         operation: ["implode"],
       },
     },
-    description: "The column whose values will be joined per group.",
+    description:
+      "The column whose values will be joined per group. Must resolve to exactly one column.",
   },
   {
     displayName: "Rename",
@@ -77,7 +79,8 @@ export const ImplodeDescription: INodeProperties[] = [
         operation: ["implode"],
       },
     },
-    description: "Assume input is pre-sorted by the key column(s).",
+    description:
+      "Assume input is pre-sorted by the key column(s). Streams groups as they are seen; memory is bounded by the size of the largest group.",
   },
   {
     displayName: "Skip Empty",
@@ -89,7 +92,8 @@ export const ImplodeDescription: INodeProperties[] = [
         operation: ["implode"],
       },
     },
-    description: "Skip empty values when joining. By default, empty",
+    description:
+      "Skip empty values when joining. By default, empty values are included as empty tokens so that round-tripping with `explode` is lossless.",
   },
   {
     displayName: "No Headers",
@@ -101,7 +105,7 @@ export const ImplodeDescription: INodeProperties[] = [
         operation: ["implode"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description: "When set, the first row will not be interpreted as headers.",
   },
   {
     displayName: "Delimiter",
@@ -113,6 +117,7 @@ export const ImplodeDescription: INodeProperties[] = [
         operation: ["implode"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

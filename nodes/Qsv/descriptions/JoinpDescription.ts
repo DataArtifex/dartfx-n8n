@@ -41,7 +41,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Do a 'left outer' join. This returns all rows in",
+    description:
+      "Do a 'left outer' join. This returns all rows in first CSV data set, including rows with no corresponding row in the second data set. When no corresponding row exists, it is padded out with empty fields.",
   },
   {
     displayName: "Left Anti",
@@ -53,7 +54,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "This returns only the rows in the first CSV data set",
+    description:
+      "This returns only the rows in the first CSV data set that do not have a corresponding row in the second data set. The output schema is the same as the first dataset.",
   },
   {
     displayName: "Left Semi",
@@ -65,7 +67,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "This returns only the rows in the first CSV data set",
+    description:
+      "This returns only the rows in the first CSV data set that have a corresponding row in the second data set. The output schema is the same as the first data set.",
   },
   {
     displayName: "Right",
@@ -77,7 +80,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Do a 'right outer' join. This returns all rows in",
+    description:
+      "Do a 'right outer' join. This returns all rows in second CSV data set, including rows with no corresponding row in the first data set. When no corresponding row exists, it is padded out with empty fields. (This is the reverse of 'outer left'.)",
   },
   {
     displayName: "Right Anti",
@@ -89,7 +93,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "This returns only the rows in the second CSV data set",
+    description:
+      "This returns only the rows in the second CSV data set that do not have a corresponding row in the first data set. The output schema is the same as the second dataset.",
   },
   {
     displayName: "Right Semi",
@@ -101,7 +106,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "This returns only the rows in the second CSV data set",
+    description:
+      "This returns only the rows in the second CSV data set that have a corresponding row in the first data set. The output schema is the same as the second data set.",
   },
   {
     displayName: "Full",
@@ -113,7 +119,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Do a 'full outer' join. This returns all rows in",
+    description:
+      "Do a 'full outer' join. This returns all rows in both data sets with matching records joined. If there is no match, the missing side will be padded out with empty fields.",
   },
   {
     displayName: "Cross",
@@ -125,7 +132,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "USE WITH CAUTION.",
+    description:
+      "USE WITH CAUTION. This returns the cartesian product of the CSV data sets given. The number of rows return is equal to N * M, where N and M correspond to the number of rows in the given data sets, respectively. The columns1 and columns2 arguments are ignored.",
   },
   {
     displayName: "Non Equi",
@@ -137,7 +145,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Do a non-equi join. The given expression is evaluated",
+    description:
+      'Do a non-equi join. The given expression is evaluated for each row in the left dataset and can refer to columns in the left and right dataset. If the expression evaluates to true, the row is joined with the corresponding row in the right dataset. The expression is a valid Polars SQL where clause, with each column name followed by "_left" or "_right" suffixes to indicate which data set the column belongs to. (e.g. "salary_left >= min_salary_right AND \\ salary_left <= max_salary_right AND \\ experience_left >= min_exp_right")',
   },
   {
     displayName: "Coalesce",
@@ -149,7 +158,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Force the join to coalesce columns with the same name.",
+    description:
+      "Force the join to coalesce columns with the same name. For inner joins, this is not necessary as the join columns are automatically coalesced.",
   },
   {
     displayName: "Filter Left",
@@ -161,7 +171,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Filter the left CSV data set by the given Polars SQL",
+    description:
+      "Filter the left CSV data set by the given Polars SQL expression BEFORE the join. Only rows that evaluates to true are used in the join.",
   },
   {
     displayName: "Filter Right",
@@ -173,7 +184,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Filter the right CSV data set by the given Polars SQL",
+    description:
+      "Filter the right CSV data set by the given Polars SQL expression BEFORE the join. Only rows that evaluates to true are used in the join.",
   },
   {
     displayName: "Validate",
@@ -191,14 +203,14 @@ export const JoinpDescription: INodeProperties[] = [
     displayName: "Maintain Order",
     name: "maintainOrder",
     type: "string",
-    default: "",
+    default: "none",
     displayOptions: {
       show: {
         operation: ["joinp"],
       },
     },
     description:
-      "Which row order to preserve, if any. Valid values are: none, left, right, left_right, right_left",
+      "Which row order to preserve, if any. Valid values are: none, left, right, left_right, right_left Do not rely on any observed ordering without explicitly setting this parameter. Not specifying any order can improve performance. Supported for inner, left, right and full joins. [default: none]",
   },
   {
     displayName: "Nulls",
@@ -210,7 +222,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "When set, joins will work on empty fields.",
+    description:
+      "When set, joins will work on empty fields. Otherwise, empty fields are completely ignored.",
   },
   {
     displayName: "Streaming",
@@ -222,7 +235,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "When set, the join will be done in a streaming fashion.",
+    description:
+      "When set, the join will be done in a streaming fashion. Only use this when you get out of memory errors.",
   },
   {
     displayName: "Try Parsedates",
@@ -234,20 +248,21 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "When set, will attempt to parse the columns as dates.",
+    description:
+      "When set, will attempt to parse the columns as dates. If the parse fails, columns remain as strings. This is useful when the join keys are formatted as dates with differing date formats, as the date formats will be normalized. Note that this will be automatically enabled when using asof joins.",
   },
   {
     displayName: "Infer Len",
     name: "inferLen",
     type: "string",
-    default: "",
+    default: "10000",
     displayOptions: {
       show: {
         operation: ["joinp"],
       },
     },
     description:
-      "The number of rows to scan when inferring the schema of the CSV.",
+      "The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. [default: 10000]",
   },
   {
     displayName: "Cache Schema",
@@ -259,7 +274,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Create and cache Polars schema JSON files.",
+    description:
+      "Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema.",
   },
   {
     displayName: "Low Memory",
@@ -272,7 +288,7 @@ export const JoinpDescription: INodeProperties[] = [
       },
     },
     description:
-      "Use low memory mode when parsing CSVs. This will use less memory",
+      "Use low memory mode when parsing CSVs. This will use less memory but will be slower. It will also process the join in streaming mode. Only use this when you get out of memory errors.",
   },
   {
     displayName: "No Optimizations",
@@ -285,7 +301,7 @@ export const JoinpDescription: INodeProperties[] = [
       },
     },
     description:
-      "Disable non-default join optimizations. This will make joins slower.",
+      "Disable non-default join optimizations. This will make joins slower. Only use this when you get join errors.",
   },
   {
     displayName: "Ignore Errors",
@@ -297,7 +313,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Ignore errors when parsing CSVs. If set, rows with errors",
+    description:
+      "Ignore errors when parsing CSVs. If set, rows with errors will be skipped. If not set, the query will fail. Only use this when debugging queries, as polars does batched parsing and will skip the entire batch where the error occurred. To get more detailed error messages, set the environment variable POLARS_BACKTRACE_IN_ERR=1 before running the join.",
   },
   {
     displayName: "Decimal Comma",
@@ -310,7 +327,7 @@ export const JoinpDescription: INodeProperties[] = [
       },
     },
     description:
-      "Use comma as the decimal separator when parsing & writing CSVs.",
+      "Use comma as the decimal separator when parsing & writing CSVs. Otherwise, use period as the decimal separator. Note that you'll need to set --delimiter to an alternate delimiter other than the default comma if you are using this option.",
   },
   {
     displayName: "Asof",
@@ -322,7 +339,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Do an 'asof' join. This is similar to a left inner",
+    description:
+      "Do an 'asof' join. This is similar to a left inner join, except we match on nearest key rather than equal keys (see --allow-exact-matches). Particularly useful for time series data. Note that both CSV data sets will be SORTED on the join columns by default, unless --no-sort is set.",
   },
   {
     displayName: "No Sort",
@@ -335,7 +353,7 @@ export const JoinpDescription: INodeProperties[] = [
       },
     },
     description:
-      "Do not sort the CSV data sets on the join columns by default.",
+      "Do not sort the CSV data sets on the join columns by default. Note that asof joins REQUIRE the join keys to be sorted, so this option should only be used as a performance optimization when you know the CSV join keys are already sorted. If the CSV join keys are not sorted, the asof join will fail or return incorrect results.",
   },
   {
     displayName: "Left_by",
@@ -347,7 +365,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Do an 'asof_by' join - a special implementation of the asof",
+    description:
+      "Do an 'asof_by' join - a special implementation of the asof join that searches for the nearest keys within a subgroup set by the asof_by columns. This specifies the column/s for the left CSV. Columns are referenced by name. Specify multiple columns by separating them with a comma.",
   },
   {
     displayName: "Right_by",
@@ -359,19 +378,21 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "Do an 'asof_by' join. This specifies the column/s for",
+    description:
+      "Do an 'asof_by' join. This specifies the column/s for the right CSV.",
   },
   {
     displayName: "Strategy",
     name: "strategy",
     type: "string",
-    default: "",
+    default: "backward",
     displayOptions: {
       show: {
         operation: ["joinp"],
       },
     },
-    description: "The strategy to use for the asof join:",
+    description:
+      "The strategy to use for the asof join: backward - For each row in the first CSV data set, we find the last row in the second data set whose key is less than the key in the first data set (or <= with --allow-exact-matches). forward -  For each row in the first CSV data set, we find the first row in the second data set whose key is greater than the key in the first data set (or >= with --allow-exact-matches). nearest -  selects the last row in the second data set whose value is nearest to the value in the first data set. [default: backward]",
   },
   {
     displayName: "Tolerance",
@@ -383,7 +404,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "The tolerance for the nearest asof join. This is only",
+    description:
+      "The tolerance for the nearest asof join. This is only used when the nearest strategy is used. The tolerance is a positive integer that specifies the maximum number of rows to search for a match.",
   },
   {
     displayName: "Allow Exact Matches",
@@ -408,7 +430,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "The SQL expression to apply against the join result.",
+    description:
+      'The SQL expression to apply against the join result. Used to select columns and filter rows AFTER running the join. Be sure to select from the "join_result" table when formulating the SQL expression. (e.g. "select c1, c2 as colname from join_result where c2 > 20")',
   },
   {
     displayName: "Datetime Format",
@@ -420,7 +443,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "The datetime format to use writing datetimes.",
+    description:
+      "The datetime format to use writing datetimes. See https://docs.rs/chrono/latest/chrono/format/strftime/index.html for the list of valid format specifiers.",
   },
   {
     displayName: "Date Format",
@@ -457,7 +481,7 @@ export const JoinpDescription: INodeProperties[] = [
       },
     },
     description:
-      "The number of digits of precision to use when writing floats.",
+      "The number of digits of precision to use when writing floats. (default: 6)",
   },
   {
     displayName: "Null Value",
@@ -469,7 +493,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "The string to use when writing null values.",
+    description:
+      "The string to use when writing null values. (default: <empty string>)",
   },
   {
     displayName: "Ignore Case",
@@ -493,7 +518,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "When set, joins are done ignoring leading zeros.",
+    description:
+      "When set, joins are done ignoring leading zeros. Note that this is only applied to the join keys for both numeric and string columns. Also note that Polars will automatically remove leading zeros from numeric columns when it infers the schema. To force the schema to be all String types, set --cache-schema to -1 or -2.",
   },
   {
     displayName: "Norm Unicode",
@@ -517,7 +543,8 @@ export const JoinpDescription: INodeProperties[] = [
         operation: ["joinp"],
       },
     },
-    description: "The field delimiter for reading/writing CSV data.",
+    description:
+      "The field delimiter for reading/writing CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Quiet",

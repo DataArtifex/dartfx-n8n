@@ -30,6 +30,28 @@ export async function executeValidate(
 
   // Collect options and flags
   try {
+    const val = this.getNodeParameter(
+      "-----------------------------------------------------",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("-------------------------------------------------------");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "-------------------------------------",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("---------------------------------------");
+    }
+  } catch {}
+
+  try {
     const val = this.getNodeParameter("trim", itemIndex, false) as boolean;
     if (val) {
       args.push("--trim");

@@ -53,7 +53,8 @@ export const CountDescription: INodeProperties[] = [
         operation: ["count"],
       },
     },
-    description: "Also return the estimated widths of each record.",
+    description:
+      'Also return the estimated widths of each record. Its an estimate as it doesn\'t count quotes, and will be an undercount if the record has quoted fields. The count and width are separated by a semicolon. It will return the max, avg, median, min, variance, stddev & MAD widths, separated by hyphens. If --human-readable is set, the widths will be labeled as "max", "avg", "median", "min", "stddev" & "mad" respectively, separated by spaces. Note that this option will require scanning the entire file using the "regular", single-threaded, streaming CSV reader, using the index if available for the count. If the file is very large, it may not be able to compile some stats - particularly avg, variance, stddev & MAD. In this case, it will return 0.0 for those stats.',
   },
   {
     displayName: "Width No Delims",
@@ -91,7 +92,7 @@ export const CountDescription: INodeProperties[] = [
       },
     },
     description:
-      'Use the "regular", single-threaded, streaming CSV reader instead',
+      'Use the "regular", single-threaded, streaming CSV reader instead of the much faster multithreaded, mem-mapped Polars CSV reader. Use this when you encounter memory issues when counting with the Polars CSV reader. The streaming reader is slower but can read any valid CSV file of any size.',
   },
   {
     displayName: "Low Memory",
@@ -103,7 +104,8 @@ export const CountDescription: INodeProperties[] = [
         operation: ["count"],
       },
     },
-    description: "Use the Polars CSV Reader's low-memory mode. This mode",
+    description:
+      "Use the Polars CSV Reader's low-memory mode. This mode is slower but uses less memory. If counting still fails, use --no-polars instead to use the streaming CSV reader.",
   },
   {
     displayName: "Flexible",
@@ -115,7 +117,8 @@ export const CountDescription: INodeProperties[] = [
         operation: ["count"],
       },
     },
-    description: "Do not validate if the CSV has different number of",
+    description:
+      "Do not validate if the CSV has different number of fields per record, increasing performance when counting without an index.",
   },
   {
     displayName: "No Headers",
@@ -127,18 +130,19 @@ export const CountDescription: INodeProperties[] = [
         operation: ["count"],
       },
     },
-    description: "When set, the first row will be included in",
+    description: "When set, the first row will be included in the count.",
   },
   {
     displayName: "Delimiter",
     name: "delimiter",
     type: "string",
-    default: "",
+    default: ",",
     displayOptions: {
       show: {
         operation: ["count"],
       },
     },
-    description: "The delimiter to use when reading CSV data.",
+    description:
+      "The delimiter to use when reading CSV data. Must be a single character. [default: ,]",
   },
 ];

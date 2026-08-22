@@ -41,7 +41,8 @@ export const ColorDescription: INodeProperties[] = [
         operation: ["color"],
       },
     },
-    description: "Force color on, even in situations where colors",
+    description:
+      "Force color on, even in situations where colors would normally be disabled.",
   },
   {
     displayName: "Row Numbers",
@@ -77,7 +78,8 @@ export const ColorDescription: INodeProperties[] = [
         operation: ["color"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Memcheck",
@@ -89,6 +91,7 @@ export const ColorDescription: INodeProperties[] = [
         operation: ["color"],
       },
     },
-    description: "Check if there is enough memory to load the entire",
+    description:
+      "Check if there is enough memory to load the entire CSV into memory using CONSERVATIVE heuristics.",
   },
 ];

@@ -41,7 +41,8 @@ export const ReplaceDescription: INodeProperties[] = [
         operation: ["replace"],
       },
     },
-    description: "Case insensitive search. This is equivalent to",
+    description:
+      "Case insensitive search. This is equivalent to prefixing the regex with '(?i)'.",
   },
   {
     displayName: "Literal",
@@ -53,7 +54,8 @@ export const ReplaceDescription: INodeProperties[] = [
         operation: ["replace"],
       },
     },
-    description: "Treat the regex pattern as a literal string. This allows you",
+    description:
+      "Treat the regex pattern as a literal string. This allows you to search for matches that contain regex special characters.",
   },
   {
     displayName: "Exact",
@@ -65,7 +67,8 @@ export const ReplaceDescription: INodeProperties[] = [
         operation: ["replace"],
       },
     },
-    description: "Match the ENTIRE field exactly. Treats the pattern",
+    description:
+      "Match the ENTIRE field exactly. Treats the pattern as a literal string (like --literal) and automatically anchors it to match the complete field value (^pattern$).",
   },
   {
     displayName: "Select",
@@ -77,7 +80,8 @@ export const ReplaceDescription: INodeProperties[] = [
         operation: ["replace"],
       },
     },
-    description: "Select the columns to search. See 'qsv select -h'",
+    description:
+      "Select the columns to search. See 'qsv select -h' for the full syntax.",
   },
   {
     displayName: "Unicode",
@@ -89,32 +93,34 @@ export const ReplaceDescription: INodeProperties[] = [
         operation: ["replace"],
       },
     },
-    description: "Enable unicode support. When enabled, character classes",
+    description:
+      "Enable unicode support. When enabled, character classes will match all unicode word characters instead of only ASCII word characters. Decreases performance.",
   },
   {
     displayName: "Size Limit",
     name: "sizeLimit",
     type: "string",
-    default: "",
-    displayOptions: {
-      show: {
-        operation: ["replace"],
-      },
-    },
-    description: "Set the approximate size limit (MB) of the compiled",
-  },
-  {
-    displayName: "Dfa Size Limit",
-    name: "dfaSizeLimit",
-    type: "string",
-    default: "",
+    default: "50",
     displayOptions: {
       show: {
         operation: ["replace"],
       },
     },
     description:
-      "Set the approximate size of the cache (MB) used by the regular",
+      "Set the approximate size limit (MB) of the compiled regular expression. If the compiled expression exceeds this number, then a compilation error is returned. [default: 50]",
+  },
+  {
+    displayName: "Dfa Size Limit",
+    name: "dfaSizeLimit",
+    type: "string",
+    default: "10",
+    displayOptions: {
+      show: {
+        operation: ["replace"],
+      },
+    },
+    description:
+      "Set the approximate size of the cache (MB) used by the regular expression engine's Discrete Finite Automata. [default: 10]",
   },
   {
     displayName: "Not One",
@@ -139,7 +145,7 @@ export const ReplaceDescription: INodeProperties[] = [
       },
     },
     description:
-      "The number of jobs to run in parallel when the given CSV data has",
+      "The number of jobs to run in parallel when the given CSV data has an index. Note that a file handle is opened for each job. When not set, defaults to the number of CPUs detected.",
   },
   {
     displayName: "No Headers",
@@ -151,7 +157,8 @@ export const ReplaceDescription: INodeProperties[] = [
         operation: ["replace"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers. (i.e., They are not searched, analyzed, sliced, etc.)",
   },
   {
     displayName: "Delimiter",
@@ -163,7 +170,8 @@ export const ReplaceDescription: INodeProperties[] = [
         operation: ["replace"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Progressbar",

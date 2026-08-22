@@ -41,19 +41,20 @@ export const SnappyDescription: INodeProperties[] = [
         operation: ["snappy"],
       },
     },
-    description: "Specify custom user agent to use when the input is a URL.",
+    description:
+      "Specify custom user agent to use when the input is a URL. It supports the following variables - $QSV_VERSION, $QSV_TARGET, $QSV_BIN_NAME, $QSV_KIND and $QSV_COMMAND. Try to follow the syntax here - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent",
   },
   {
     displayName: "Timeout",
     name: "timeout",
     type: "string",
-    default: "",
+    default: "60",
     displayOptions: {
       show: {
         operation: ["snappy"],
       },
     },
-    description: "Timeout for downloading URLs in seconds.",
+    description: "Timeout for downloading URLs in seconds. [default: 60]",
   },
   {
     displayName: "Jobs",
@@ -65,7 +66,8 @@ export const SnappyDescription: INodeProperties[] = [
         operation: ["snappy"],
       },
     },
-    description: "The number of jobs to run in parallel when compressing.",
+    description:
+      "The number of jobs to run in parallel when compressing. When not set, its set to the number of CPUs - 1",
   },
   {
     displayName: "Quiet",

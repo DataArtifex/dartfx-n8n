@@ -41,19 +41,21 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Select a subset of columns to compute frequencies",
+    description:
+      "Select a subset of columns to compute frequencies for. See 'qsv select --help' for the format details. This is provided here because piping 'qsv select' into 'qsv frequency' will disable the use of indexing.",
   },
   {
     displayName: "Limit",
     name: "limit",
     type: "string",
-    default: "",
+    default: "10",
     displayOptions: {
       show: {
         operation: ["frequency"],
       },
     },
-    description: "Limit the frequency table to the N most common",
+    description:
+      "Limit the frequency table to the N most common items. Set to '0' to disable a limit. If negative, only return values with an occurrence count >= absolute value of the negative limit. e.g. --limit -2 will only return values with an occurrence count >= 2. [default: 10]",
   },
   {
     displayName: "Sketch Method",
@@ -65,43 +67,47 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Algorithm used to compute the frequency table.",
+    description:
+      "Algorithm used to compute the frequency table. Choices: 'exact' (default) tracks every distinct value in a HashMap; 'frequent_items' uses the Apache DataSketches Frequent Items (Misra-Gries) sketch to track top-K heavy hitters with bounded error and constant memory. The frequent_items mode rejects asc, weight, ignore-case, no-trim, other-sorted, null-sorted, frequency-jsonl, stats-filter, and json/pretty-json/toon output; the frequency cache is bypassed. Counts are estimates. The flags rank-strategy, lmt-threshold, and unq-limit are silently ignored under this mode (the sketch's natural ordering is top-K by estimate descending; tied counts use the sketch's hash-table iteration",
   },
   {
     displayName: "Sketch Map Size",
     name: "sketchMapSize",
     type: "string",
-    default: "",
+    default: "4096",
     displayOptions: {
       show: {
         operation: ["frequency"],
       },
     },
-    description: "Maximum map size for the Frequent Items sketch.",
+    description:
+      "Maximum map size for the Frequent Items sketch. Must be a power of two and at least 8. Larger values tighten error bounds at the cost of more memory. Only used when sketch-method is frequent_items. [default: 4096]",
   },
   {
     displayName: "Unq Limit",
     name: "unqLimit",
     type: "string",
-    default: "",
+    default: "10",
     displayOptions: {
       show: {
         operation: ["frequency"],
       },
     },
-    description: "If a column has all unique values, limit the",
+    description:
+      "If a column has all unique values, limit the frequency table to a sample of N unique items. Set to '0' to disable a unique_limit. Only applies in unweighted mode; ignored when --weight is set. [default: 10]",
   },
   {
     displayName: "Lmt Threshold",
     name: "lmtThreshold",
     type: "string",
-    default: "",
+    default: "0",
     displayOptions: {
       show: {
         operation: ["frequency"],
       },
     },
-    description: "The threshold for which --limit and --unq-limit",
+    description:
+      "The threshold for which --limit and --unq-limit will be applied. If the number of unique items in a column >= threshold, the limits will be applied. Set to '0' to disable the threshold and always apply limits. [default: 0]",
   },
   {
     displayName: "Rank Strategy",
@@ -114,19 +120,20 @@ export const FrequencyDescription: INodeProperties[] = [
       },
     },
     description:
-      "The strategy to use when there are count-tied values in the frequency table.",
+      "The strategy to use when there are count-tied values in the frequency table. See https://en.wikipedia.org/wiki/Ranking for more info.",
   },
   {
     displayName: "Pct Dec Places",
     name: "pctDecPlaces",
     type: "string",
-    default: "",
+    default: "-5",
     displayOptions: {
       show: {
         operation: ["frequency"],
       },
     },
-    description: "The number of decimal places to round the percentage to.",
+    description:
+      "The number of decimal places to round the percentage to. If negative, the number of decimal places will be set automatically to the minimum number of decimal places needed to represent the percentage accurately, up to the absolute value of the negative number. [default: -5]",
   },
   {
     displayName: "Other Sorted",
@@ -138,19 +145,21 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: 'By default, the "Other" category is placed at the',
+    description:
+      'By default, the "Other" category is placed at the end of the frequency table for a field. If this is enabled, the "Other" category will be sorted with the rest of the values by count.',
   },
   {
     displayName: "Other Text",
     name: "otherText",
     type: "string",
-    default: "",
+    default: "Other",
     displayOptions: {
       show: {
         operation: ["frequency"],
       },
     },
-    description: 'The text to use for the "Other" category. If set to the',
+    description:
+      'The text to use for the "Other" category. If set to the literal string "<NONE>" (case-sensitive, exact match), the "Other" category will not be included in the frequency table. [default: Other]',
   },
   {
     displayName: "No Other",
@@ -162,7 +171,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: 'Don\'t include the "Other" category in the frequency table.',
+    description:
+      'Don\'t include the "Other" category in the frequency table. This is equivalent to --other-text "<NONE>".',
   },
   {
     displayName: "Null Sorted",
@@ -174,7 +184,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "By default, the NULL category (controlled by --null-text)",
+    description:
+      'By default, the NULL category (controlled by --null-text) is placed at the end of the frequency table for a field, after "Other" if present. If this is enabled, the NULL category will be sorted with the rest of the values by count.',
   },
   {
     displayName: "Asc",
@@ -186,7 +197,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Sort the frequency tables in ascending order by count.",
+    description:
+      "Sort the frequency tables in ascending order by count. The default is descending order. Note that this option will also reverse ranking - i.e. the LEAST frequent values will have a rank of 1.",
   },
   {
     displayName: "No Trim",
@@ -199,19 +211,20 @@ export const FrequencyDescription: INodeProperties[] = [
       },
     },
     description:
-      "Don't trim whitespace from values when computing frequencies.",
+      "Don't trim whitespace from values when computing frequencies. The default is to trim leading and trailing whitespaces.",
   },
   {
     displayName: "Null Text",
     name: "nullText",
     type: "string",
-    default: "",
+    default: "(NULL)",
     displayOptions: {
       show: {
         operation: ["frequency"],
       },
     },
-    description: "The text to use for NULL values. If set to the literal",
+    description:
+      'The text to use for NULL values. If set to the literal string "<NONE>" (case-sensitive, exact match), NULLs will not be included in the frequency table (equivalent to --no-nulls). [default: (NULL)]',
   },
   {
     displayName: "No Nulls",
@@ -223,7 +236,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Don't include NULLs in the frequency table.",
+    description:
+      'Don\'t include NULLs in the frequency table. This is equivalent to --null-text "<NONE>".',
   },
   {
     displayName: "Pct Nulls",
@@ -235,7 +249,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Include NULL values in percentage and rank calculations.",
+    description:
+      'Include NULL values in percentage and rank calculations. When disabled (default), percentages are "valid percentages" calculated with NULLs excluded from the denominator, and NULL entries display empty percentage and rank values. When enabled, NULLs are included in the denominator (original behavior). Has no effect when --no-nulls is set.',
   },
   {
     displayName: "Ignore Case",
@@ -259,7 +274,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Exclude Float columns from frequency analysis.",
+    description:
+      'Exclude Float columns from frequency analysis. Floats typically contain continuous values where frequency tables are not meaningful. To exclude ALL Float columns, use --no-float "*" To exclude Floats except specific columns, specify a comma-separated list of Float columns to INCLUDE. e.g. "--no-float *" excludes all Floats "--no-float price,rate" excludes Floats except \'price\' and \'rate\' Requires stats cache for type detection.',
   },
   {
     displayName: "Stats Filter",
@@ -272,19 +288,20 @@ export const FrequencyDescription: INodeProperties[] = [
       },
     },
     description:
-      "Filter columns based on their statistics using a Luau expression.",
+      'Filter columns based on their statistics using a Luau expression. Columns where the expression evaluates to `true` are EXCLUDED. Available fields: field, type, is_ascii, cardinality, nullcount, sum, min, max, range, sort_order, min_length, max_length, mean, stddev, variance, cv, sparsity, q1, q2_median, q3, iqr, mad, skewness, mode, antimode, n_negative, n_zero, n_positive, etc. e.g. "nullcount > 1000" - exclude columns with many nulls "type == \'Float\'" - exclude Float columns "cardinality > 500 and nullcount > 0" - compound expression Requires stats cache and the "luau" feature.',
   },
   {
     displayName: "All Unique Text",
     name: "allUniqueText",
     type: "string",
-    default: "",
+    default: "<ALL_UNIQUE>",
     displayOptions: {
       show: {
         operation: ["frequency"],
       },
     },
-    description: 'The text to use for the "<ALL_UNIQUE>" category.',
+    description:
+      'The text to use for the "<ALL_UNIQUE>" category. [default: <ALL_UNIQUE>]',
   },
   {
     displayName: "Vis Whitespace",
@@ -296,7 +313,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Visualize whitespace characters in the output. See",
+    description:
+      "Visualize whitespace characters in the output. See https://github.com/dathere/qsv/wiki/Aggregation-and-Statistics#whitespace-markers for the list of whitespace markers.",
   },
   {
     displayName: "Jobs",
@@ -309,7 +327,7 @@ export const FrequencyDescription: INodeProperties[] = [
       },
     },
     description:
-      "The number of jobs to run in parallel when the given CSV data has",
+      "The number of jobs to run in parallel when the given CSV data has an index. Note that a file handle is opened for each job. When not set, defaults to the number of CPUs detected.",
   },
   {
     displayName: "Frequency Jsonl",
@@ -321,7 +339,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Write the complete frequency distribution as a",
+    description:
+      "Write the complete frequency distribution as a JSONL cache file (FILESTEM.freq.csv.data.jsonl). Requires a non-stdin input file. The cache contains metadata and per-column frequency data. ALL_UNIQUE columns (rowcount == cardinality) get a single ALL_UNIQUE sentinel. HIGH_CARDINALITY columns (cardinality exceeds the smaller of --high-card-threshold/--high-card-pct of rowcount) get a single HIGH_CARDINALITY sentinel. When a valid (fresh) cache already exists, frequency will automatically reuse it instead of recomputing from the CSV. Use --force to regenerate the cache even when it is valid. Cache is NOT used when --ignore-case, --no-trim, or --weight are active, as these change how values are computed.",
   },
   {
     displayName: "High Card Threshold",
@@ -340,13 +359,14 @@ export const FrequencyDescription: INodeProperties[] = [
     displayName: "High Card Pct",
     name: "highCardPct",
     type: "string",
-    default: "",
+    default: "90",
     displayOptions: {
       show: {
         operation: ["frequency"],
       },
     },
-    description: "Percentage of rowcount threshold for HIGH_CARDINALITY",
+    description:
+      "Percentage of rowcount threshold for HIGH_CARDINALITY classification in the frequency cache. Must be between 1 and 100. Can also be set with QSV_FREQ_HIGH_CARD_PCT env var (env var takes precedence when CLI value equals the default). Only used with --frequency-jsonl. [default: 90]",
   },
   {
     displayName: "Force",
@@ -358,7 +378,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Force recomputation even when a valid frequency cache",
+    description:
+      "Force recomputation even when a valid frequency cache exists, bypassing the auto-reuse path. Also regenerates the cache when combined with --frequency-jsonl.",
   },
   {
     displayName: "Json",
@@ -370,7 +391,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Output frequency table as nested JSON instead of CSV.",
+    description:
+      "Output frequency table as nested JSON instead of CSV. The JSON output includes additional metadata: row count, field count, data type, cardinality, null count, sparsity, uniqueness_ratio and 17 additional stats (e.g. sum, min, max, range, sort_order, mean, sem, etc.).",
   },
   {
     displayName: "Pretty Json",
@@ -395,7 +417,7 @@ export const FrequencyDescription: INodeProperties[] = [
       },
     },
     description:
-      "Output frequency table and select stats in TOON format instead of CSV.",
+      "Output frequency table and select stats in TOON format instead of CSV. TOON is a compact, human-readable encoding of the JSON data model for LLM prompts. See https://toonformat.dev/ for more info.",
   },
   {
     displayName: "No Stats",
@@ -421,7 +443,7 @@ export const FrequencyDescription: INodeProperties[] = [
       },
     },
     description:
-      "Compute weighted frequencies using the specified column as weights.",
+      "Compute weighted frequencies using the specified column as weights. The weight column must be numeric. When specified, frequency counts are multiplied by the weight value for each row. The weight column is automatically excluded from frequency computation. Missing or unparsable weights default to 1.0. Zero, negative, NaN and infinite weights are ignored and do not contribute to frequencies.",
   },
   {
     displayName: "No Headers",
@@ -433,7 +455,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "When set, the first row will NOT be included",
+    description:
+      "When set, the first row will NOT be included in the frequency table. Additionally, the 'field' column will be 1-based indices instead of header names.",
   },
   {
     displayName: "Delimiter",
@@ -445,7 +468,8 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Memcheck",
@@ -457,6 +481,7 @@ export const FrequencyDescription: INodeProperties[] = [
         operation: ["frequency"],
       },
     },
-    description: "Use CONSERVATIVE heuristics for the in-memory load",
+    description:
+      "Use CONSERVATIVE heuristics for the in-memory load check (file size vs. available + free_swap × platform factor − headroom), instead of the default NORMAL check (file size vs. total memory − headroom). The CONSERVATIVE check is stricter and trips OOM far more readily. (See also: QSV_MEMORY_CHECK env var, equivalent to passing --memcheck.) Independently of this flag, the in-memory load check runs whenever frequency takes the non-parallel path. On OOM (in either NORMAL or CONSERVATIVE mode), qsv auto-creates an index when no index exists (skipped for stdin) AND switches to the Frequent Items sketch (Apache DataSketches Misra-Gries, equivalent to `--sketch-method frequent_items`) where compatible. The sketch fallback can also fire when an index is already present and the OOM still trips (e.g., when jobs is pinned to 1 on a pre-indexed file). A wwarn is emitted when the sketch fallback engages.",
   },
 ];

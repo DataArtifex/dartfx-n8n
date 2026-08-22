@@ -131,7 +131,7 @@ function parseHelpText(cmdName: string, helpText: string): ParsedCommand {
 
   // Parse flags/options
   const optionRegex =
-    /^\s*(?:-([a-zA-Z0-9]),\s+)?--([a-zA-Z0-9_-]+)(?:\s+<([^>]+)>|\s+\[([^\]]+)\])?\s+(.*)$/;
+    /^\s*(?:-([a-zA-Z0-9]),\s+)?--([a-zA-Z0-9_-]+)(?:\s+<([^>]+)>|\s+\[([^\]]+)\])?\s*(.*)$/;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -147,13 +147,37 @@ function parseHelpText(cmdName: string, helpText: string): ParsedCommand {
 
       let fullDesc = descPart.trim();
       let j = i + 1;
-      while (
-        j < lines.length &&
-        (lines[j].startsWith("                              ") ||
-          lines[j].startsWith("\t\t\t\t"))
-      ) {
-        fullDesc += " " + lines[j].trim();
-        j++;
+
+      while (j < lines.length) {
+        const nextLine = lines[j];
+        const trimmed = nextLine.trim();
+
+        // Empty line ends continuation block
+        if (trimmed.length === 0) {
+          break;
+        }
+
+        // If next line is a new option, stop
+        if (nextLine.match(optionRegex)) {
+          break;
+        }
+
+        // If next line is a section header (e.g. "Common options:", "WIDTH OPTIONS:", etc.)
+        if (
+          trimmed.endsWith(":") ||
+          trimmed.toLowerCase().startsWith("usage:") ||
+          /^[A-Z0-9\s_-]+:$/.test(trimmed)
+        ) {
+          break;
+        }
+
+        // Must be indented (at least 4 spaces or tab) to be part of description
+        if (nextLine.startsWith("    ") || nextLine.startsWith("\t")) {
+          fullDesc += (fullDesc ? " " : "") + trimmed;
+          j++;
+        } else {
+          break;
+        }
       }
 
       // Check default value

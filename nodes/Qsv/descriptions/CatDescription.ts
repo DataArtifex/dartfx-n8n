@@ -41,7 +41,8 @@ export const CatDescription: INodeProperties[] = [
         operation: ["cat"],
       },
     },
-    description: "When concatenating columns, this flag will cause",
+    description:
+      "When concatenating columns, this flag will cause all records to appear. It will pad each row if other CSV data isn't long enough.",
   },
   {
     displayName: "Flexible",
@@ -53,32 +54,34 @@ export const CatDescription: INodeProperties[] = [
         operation: ["cat"],
       },
     },
-    description: "When concatenating rows, this flag turns off validation",
+    description:
+      "When concatenating rows, this flag turns off validation that the input and output CSVs have the same number of columns. This is faster, but may result in invalid CSV data.",
   },
   {
     displayName: "Group",
     name: "group",
     type: "string",
-    default: "",
+    default: "none",
     displayOptions: {
       show: {
         operation: ["cat"],
       },
     },
     description:
-      "When concatenating with rowskey, you can specify a grouping value",
+      "When concatenating with rowskey, you can specify a grouping value which will be used as the first column in the output. This is useful when you want to know which file a row came from. Valid values are 'fullpath', 'parentdirfname', 'parentdirfstem', 'fname', 'fstem' and 'none'. A new column will be added to the beginning of each row using --group-name. If 'none' is specified, no grouping column will be added. [default: none]",
   },
   {
     displayName: "Group Name",
     name: "groupName",
     type: "string",
-    default: "",
+    default: "file",
     displayOptions: {
       show: {
         operation: ["cat"],
       },
     },
-    description: "When concatenating with rowskey, this flag provides the name",
+    description:
+      "When concatenating with rowskey, this flag provides the name for the new grouping column. [default: file]",
   },
   {
     displayName: "No Headers",
@@ -90,7 +93,8 @@ export const CatDescription: INodeProperties[] = [
         operation: ["cat"],
       },
     },
-    description: "When set, the first row will NOT be interpreted",
+    description:
+      "When set, the first row will NOT be interpreted as column names. Note that this has no effect when concatenating columns.",
   },
   {
     displayName: "Delimiter",
@@ -102,6 +106,7 @@ export const CatDescription: INodeProperties[] = [
         operation: ["cat"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

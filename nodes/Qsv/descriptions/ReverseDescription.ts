@@ -41,7 +41,8 @@ export const ReverseDescription: INodeProperties[] = [
         operation: ["reverse"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers. Namely, it will be reversed with the rest of the rows. Otherwise, the first row will always appear as the header row in the output.",
   },
   {
     displayName: "Delimiter",
@@ -53,7 +54,8 @@ export const ReverseDescription: INodeProperties[] = [
         operation: ["reverse"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Memcheck",
@@ -65,6 +67,7 @@ export const ReverseDescription: INodeProperties[] = [
         operation: ["reverse"],
       },
     },
-    description: "Check if there is enough memory to load the entire",
+    description:
+      "Check if there is enough memory to load the entire CSV into memory using CONSERVATIVE heuristics.",
   },
 ];

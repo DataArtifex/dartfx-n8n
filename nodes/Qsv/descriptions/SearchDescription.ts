@@ -41,7 +41,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Case insensitive search. This is equivalent to",
+    description:
+      "Case insensitive search. This is equivalent to prefixing the regex with '(?i)'.",
   },
   {
     displayName: "Literal",
@@ -53,7 +54,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Treat the regex as a literal string. This allows you to",
+    description:
+      "Treat the regex as a literal string. This allows you to search for matches that contain regex special characters.",
   },
   {
     displayName: "Exact",
@@ -65,7 +67,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Match the ENTIRE field exactly. Treats the pattern",
+    description:
+      "Match the ENTIRE field exactly. Treats the pattern as a literal string (like --literal) and automatically anchors it to match the complete field value (^pattern$).",
   },
   {
     displayName: "Select",
@@ -77,7 +80,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Select the columns to search. See 'qsv select -h'",
+    description:
+      "Select the columns to search. See 'qsv select -h' for the full syntax.",
   },
   {
     displayName: "Invert Match",
@@ -101,7 +105,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Enable unicode support. When enabled, character classes",
+    description:
+      "Enable unicode support. When enabled, character classes will match all unicode word characters instead of only ASCII word characters. Decreases performance.",
   },
   {
     displayName: "Flag",
@@ -113,7 +118,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "If given, the command will not filter rows",
+    description:
+      'If given, the command will not filter rows but will instead flag every row in a new column named <column>, set to the row number for matched rows and "0" for non-matched rows. SPECIAL: if <column> is exactly "M", only matched rows are returned AND only the M column is written (all other columns are dropped). To use a literal column name "M" without this behavior, rename it afterward (e.g., with `qsv rename`).',
   },
   {
     displayName: "Quick",
@@ -125,7 +131,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Return on first match with an exitcode of 0, returning",
+    description:
+      "Return on first match with an exitcode of 0, returning the row number of the first match to stderr. Return exit code 1 if no match is found. No output is produced.",
   },
   {
     displayName: "Preview Match",
@@ -137,7 +144,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Preview the first N matches OR all matches found",
+    description:
+      'Preview the first N matches OR all matches found within N milliseconds, whichever occurs first. NOTE: the same numeric value is used for BOTH the match count AND the millisecond timeout - choose a value where one bound effectively dominates (e.g., a small count for "first N" preview, or a large count for "all within N ms"). Returns the preview to stderr; output is still written to stdout or --output as usual. Forces a sequential search, even if the CSV is indexed.',
   },
   {
     displayName: "Count",
@@ -149,32 +157,34 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Write the number of matches to stderr.",
+    description:
+      "Write the number of matches to stderr. Suppressed by --quiet and --json.",
   },
   {
     displayName: "Size Limit",
     name: "sizeLimit",
     type: "string",
-    default: "",
-    displayOptions: {
-      show: {
-        operation: ["search"],
-      },
-    },
-    description: "Set the approximate size limit (MB) of the compiled",
-  },
-  {
-    displayName: "Dfa Size Limit",
-    name: "dfaSizeLimit",
-    type: "string",
-    default: "",
+    default: "50",
     displayOptions: {
       show: {
         operation: ["search"],
       },
     },
     description:
-      "Set the approximate size of the cache (MB) used by the regular",
+      "Set the approximate size limit (MB) of the compiled regular expression. If the compiled expression exceeds this number, then a compilation error is returned. Modify this only if you're getting regular expression compilation errors. [default: 50]",
+  },
+  {
+    displayName: "Dfa Size Limit",
+    name: "dfaSizeLimit",
+    type: "string",
+    default: "10",
+    displayOptions: {
+      show: {
+        operation: ["search"],
+      },
+    },
+    description:
+      "Set the approximate size of the cache (MB) used by the regular expression engine's Discrete Finite Automata. Modify this only if you're getting regular expression compilation errors. [default: 10]",
   },
   {
     displayName: "Json",
@@ -186,7 +196,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Output the result as JSON. Fields are written",
+    description:
+      "Output the result as JSON. Fields are written as key-value pairs. The key is the column name. The value is the field value. The output is a JSON array. If --no-headers is set, then the keys are the column indices (zero-based). Automatically sets --quiet (also suppresses --count).",
   },
   {
     displayName: "Not One",
@@ -211,7 +222,7 @@ export const SearchDescription: INodeProperties[] = [
       },
     },
     description:
-      "The number of jobs to run in parallel when the given CSV data has",
+      "The number of jobs to run in parallel when the given CSV data has an index. Note that a file handle is opened for each job. When not set, defaults to the number of CPUs detected.",
   },
   {
     displayName: "No Headers",
@@ -223,7 +234,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers. (i.e., They are not searched, analyzed, sliced, etc.)",
   },
   {
     displayName: "Delimiter",
@@ -235,7 +247,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Progressbar",
@@ -247,7 +260,8 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Show progress bars. Not valid for stdin.",
+    description:
+      "Show progress bars. Not valid for stdin. Disabled when running parallel search (i.e., when the CSV is indexed and --jobs > 1). Sequential search on an indexed CSV (--jobs 1) still shows the progress bar.",
   },
   {
     displayName: "Quiet",
@@ -259,6 +273,7 @@ export const SearchDescription: INodeProperties[] = [
         operation: ["search"],
       },
     },
-    description: "Do not write the match count (--count) or the",
+    description:
+      "Do not write the match count (--count) or the first match row number reported by --quick to stderr.",
   },
 ];

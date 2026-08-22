@@ -53,7 +53,8 @@ export const ExcludeDescription: INodeProperties[] = [
         operation: ["exclude"],
       },
     },
-    description: "When set, matching rows will be the only ones included,",
+    description:
+      "When set, matching rows will be the only ones included, forming set intersection, instead of the ones discarded.",
   },
   {
     displayName: "No Headers",
@@ -65,7 +66,8 @@ export const ExcludeDescription: INodeProperties[] = [
         operation: ["exclude"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers. (i.e., They are not searched, analyzed, sliced, etc.)",
   },
   {
     displayName: "Delimiter",
@@ -77,7 +79,8 @@ export const ExcludeDescription: INodeProperties[] = [
         operation: ["exclude"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Memcheck",
@@ -89,6 +92,7 @@ export const ExcludeDescription: INodeProperties[] = [
         operation: ["exclude"],
       },
     },
-    description: "Check if there is enough memory to load <input2>",
+    description:
+      "Check if there is enough memory to load <input2> into memory using CONSERVATIVE heuristics.",
   },
 ];

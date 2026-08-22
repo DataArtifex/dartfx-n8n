@@ -32,16 +32,42 @@ export const ApplyDescription: INodeProperties[] = [
       "Path where the output will be saved. If empty, result may be returned in stdout/JSON.",
   },
   {
-    displayName: "New Column",
-    name: "newColumn",
-    type: "string",
-    default: "",
+    displayName: "Replacement",
+    name: "replacement",
+    type: "boolean",
+    default: false,
     displayOptions: {
       show: {
         operation: ["apply"],
       },
     },
-    description: "Put the transformed values in a new column instead.",
+    description:
+      "=<string>      The string to use to replace empty values. <column>                    The column/s to check for emptiness.",
+  },
+  {
+    displayName: "Formatstr",
+    name: "formatstr",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["apply"],
+      },
+    },
+    description:
+      "=<string>        The template to use for the dynfmt operation. See DYNFMT example above for more details.",
+  },
+  {
+    displayName: "New Column",
+    name: "newColumn",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["apply"],
+      },
+    },
+    description: "=<name>         Put the generated values in a new column.",
   },
   {
     displayName: "Rename",
@@ -54,6 +80,19 @@ export const ApplyDescription: INodeProperties[] = [
       },
     },
     description: "New name for the transformed column.",
+  },
+  {
+    displayName: "Comparand",
+    name: "comparand",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["apply"],
+      },
+    },
+    description:
+      "=<string>    The string to compare against for replace & similarity operations. Also used with numtocurrency operation to specify currency symbol.",
   },
   {
     displayName: "Jobs",

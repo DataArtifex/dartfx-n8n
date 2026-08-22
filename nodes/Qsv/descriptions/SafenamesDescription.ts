@@ -41,33 +41,34 @@ export const SafenamesDescription: INodeProperties[] = [
         operation: ["safenames"],
       },
     },
-    description: 'Rename header names to "safe" names — guaranteed',
+    description:
+      'Rename header names to "safe" names — guaranteed "database-ready" names. Mode is selected by the FIRST character: c/C conditional, a/A always, s safer, S Safer (unicode), v verify, V Verbose, j JSON, J pretty JSON (case matters for s vs S, v vs V and j vs J; --mode verbose maps to \'v\', NOT V).',
   },
   {
     displayName: "Reserved",
     name: "reserved",
     type: "string",
-    default: "",
+    default: "_id",
     displayOptions: {
       show: {
         operation: ["safenames"],
       },
     },
     description:
-      "Comma-delimited list of additional case-insensitive reserved names",
+      'Comma-delimited list of additional case-insensitive reserved names that should be considered "unsafe." If a header name is found in the reserved list, it will be prefixed with "reserved_". [default: _id]',
   },
   {
     displayName: "Prefix",
     name: "prefix",
     type: "string",
-    default: "",
+    default: "unsafe_",
     displayOptions: {
       show: {
         operation: ["safenames"],
       },
     },
     description:
-      'Certain systems do not allow header names to start with "_" (e.g. CKAN Datastore).',
+      'Certain systems do not allow header names to start with "_" (e.g. CKAN Datastore). This option allows the specification of the unsafe prefix to use when a header starts with "_". [default: unsafe_]',
   },
   {
     displayName: "Collapse",
@@ -80,7 +81,7 @@ export const SafenamesDescription: INodeProperties[] = [
       },
     },
     description:
-      "Collapse consecutive runs of non-alphanumeric characters into a",
+      "Collapse consecutive runs of non-alphanumeric characters into a single _. Composes with ALL modes (including verify & JSON modes). Implied by --mode s and --mode S.",
   },
   {
     displayName: "Unicode",
@@ -93,7 +94,7 @@ export const SafenamesDescription: INodeProperties[] = [
       },
     },
     description:
-      "Preserve unicode letters & numbers instead of stripping to ASCII.",
+      "Preserve unicode letters & numbers instead of stripping to ASCII. Composes with ALL modes (including verify & JSON modes). Implied by --mode S.",
   },
   {
     displayName: "Delimiter",
@@ -105,6 +106,7 @@ export const SafenamesDescription: INodeProperties[] = [
         operation: ["safenames"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
 ];

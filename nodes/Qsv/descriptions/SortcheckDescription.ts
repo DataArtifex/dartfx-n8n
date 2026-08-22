@@ -41,7 +41,8 @@ export const SortcheckDescription: INodeProperties[] = [
         operation: ["sortcheck"],
       },
     },
-    description: "Select a subset of columns to check for sort.",
+    description:
+      "Select a subset of columns to check for sort. See 'qsv select --help' for the format details.",
   },
   {
     displayName: "Numeric",
@@ -66,7 +67,7 @@ export const SortcheckDescription: INodeProperties[] = [
       },
     },
     description:
-      "Compare using natural sort order (e.g. item1 < item2 < item10).",
+      "Compare using natural sort order (e.g. item1 < item2 < item10). Takes precedence over --numeric. Composes with --ignore-case.",
   },
   {
     displayName: "Ignore Case",
@@ -78,7 +79,8 @@ export const SortcheckDescription: INodeProperties[] = [
         operation: ["sortcheck"],
       },
     },
-    description: "Compare strings disregarding case. Ignored under pure",
+    description:
+      "Compare strings disregarding case. Ignored under pure numeric comparison (i.e. --numeric without --natural), since numeric comparison is case-insensitive by definition.",
   },
   {
     displayName: "All",
@@ -90,7 +92,8 @@ export const SortcheckDescription: INodeProperties[] = [
         operation: ["sortcheck"],
       },
     },
-    description: "Check all records. Do not stop/short-circuit the check",
+    description:
+      "Check all records. Do not stop/short-circuit the check on the first unsorted record.",
   },
   {
     displayName: "Json",
@@ -102,7 +105,8 @@ export const SortcheckDescription: INodeProperties[] = [
         operation: ["sortcheck"],
       },
     },
-    description: "Return results in JSON format, scanning --all records.",
+    description:
+      "Return results in JSON format, scanning --all records. The JSON result has the following properties - sorted (boolean), record_count (number), unsorted_breaks (number) & dupe_count (number). Unsorted breaks count the number of times two consecutive rows are unsorted (i.e. n row > n+1 row). Dupe count is the number of times two consecutive rows are equal. Note that dupe count does not apply if the file is not sorted and is set to -1.",
   },
   {
     displayName: "Pretty Json",
@@ -126,7 +130,8 @@ export const SortcheckDescription: INodeProperties[] = [
         operation: ["sortcheck"],
       },
     },
-    description: "When set, the first row will not be interpreted",
+    description:
+      "When set, the first row will not be interpreted as headers. That is, it will be sorted with the rest of the rows. Otherwise, the first row will always appear as the header row in the output.",
   },
   {
     displayName: "Delimiter",
@@ -138,7 +143,8 @@ export const SortcheckDescription: INodeProperties[] = [
         operation: ["sortcheck"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Progressbar",

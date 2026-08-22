@@ -41,7 +41,8 @@ export const TojsonlDescription: INodeProperties[] = [
         operation: ["tojsonl"],
       },
     },
-    description: "Trim leading and trailing whitespace from fields",
+    description:
+      "Trim leading and trailing whitespace from fields before converting to JSON.",
   },
   {
     displayName: "No Boolean",
@@ -65,19 +66,21 @@ export const TojsonlDescription: INodeProperties[] = [
         operation: ["tojsonl"],
       },
     },
-    description: "The number of jobs to run in parallel.",
+    description:
+      "The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.",
   },
   {
     displayName: "Batch",
     name: "batch",
     type: "string",
-    default: "",
+    default: "50000",
     displayOptions: {
       show: {
         operation: ["tojsonl"],
       },
     },
-    description: "The number of rows per batch to load into memory,",
+    description:
+      "The number of rows per batch to load into memory, before running in parallel. Automatically determined for CSV files with more than 50000 rows. Set to 0 to load all rows in one batch. Set to 1 to force batch optimization even for files with less than 50000 rows. [default: 50000]",
   },
   {
     displayName: "Delimiter",
@@ -89,7 +92,8 @@ export const TojsonlDescription: INodeProperties[] = [
         operation: ["tojsonl"],
       },
     },
-    description: "The field delimiter for reading CSV data.",
+    description:
+      "The field delimiter for reading CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Memcheck",
@@ -101,7 +105,8 @@ export const TojsonlDescription: INodeProperties[] = [
         operation: ["tojsonl"],
       },
     },
-    description: "Check if there is enough memory to load the entire",
+    description:
+      "Check if there is enough memory to load the entire CSV into memory using CONSERVATIVE heuristics.",
   },
   {
     displayName: "Quiet",

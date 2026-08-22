@@ -41,44 +41,46 @@ export const GetDescription: INodeProperties[] = [
         operation: ["get"],
       },
     },
-    description: "Logical cache name (the `dc:` handle) for the fetched",
+    description:
+      "Logical cache name (the `dc:` handle) for the fetched entry. Defaults to the source's terminal path segment. Ignored when multiple sources are given.",
   },
   {
     displayName: "Ttl",
     name: "ttl",
     type: "string",
-    default: "",
-    displayOptions: {
-      show: {
-        operation: ["get"],
-      },
-    },
-    description: "Per-entry time-to-live in seconds. -1 = never expire.",
-  },
-  {
-    displayName: "Refresh",
-    name: "refresh",
-    type: "string",
-    default: "",
+    default: "2419200",
     displayOptions: {
       show: {
         operation: ["get"],
       },
     },
     description:
-      "Revalidation policy for `dc:` use: on-stale, always or never.",
+      "Per-entry time-to-live in seconds. -1 = never expire. Also the value applied by cache-set-ttl. [default: 2419200]",
   },
   {
-    displayName: "Compress",
-    name: "compress",
+    displayName: "Refresh",
+    name: "refresh",
     type: "string",
-    default: "",
+    default: "on-stale",
     displayOptions: {
       show: {
         operation: ["get"],
       },
     },
-    description: "Transparent blob compression: zstd or none.",
+    description:
+      "Revalidation policy for `dc:` use: on-stale, always or never. A `dc:` input re-fetches only past TTL; `always` does not change that - it only makes that fetch unconditional, skipping If-None-Match/If-Modified-Since revalidation. Also the value applied by cache-set-policy. [default: on-stale]",
+  },
+  {
+    displayName: "Compress",
+    name: "compress",
+    type: "string",
+    default: "zstd",
+    displayOptions: {
+      show: {
+        operation: ["get"],
+      },
+    },
+    description: "Transparent blob compression: zstd or none. [default: zstd]",
   },
   {
     displayName: "Force",
@@ -102,7 +104,8 @@ export const GetDescription: INodeProperties[] = [
         operation: ["get"],
       },
     },
-    description: "PREVIEW: stream the first N data records of <source> to",
+    description:
+      "PREVIEW: stream the first N data records of <source> to stdout (or the --output file) WITHOUT caching. No `dc:` entry is created. The sniffed header row is re-attached. Single <source> only.",
   },
   {
     displayName: "Offset",
@@ -114,7 +117,8 @@ export const GetDescription: INodeProperties[] = [
         operation: ["get"],
       },
     },
-    description: "PREVIEW: skip ~<mb> megabytes (via an HTTP Range request)",
+    description:
+      "PREVIEW: skip ~<mb> megabytes (via an HTTP Range request) before sampling, realigning to the next record boundary. Implies --sample. Requires a Range-capable source.",
   },
   {
     displayName: "Random",
@@ -126,7 +130,8 @@ export const GetDescription: INodeProperties[] = [
         operation: ["get"],
       },
     },
-    description: "PREVIEW: random (reservoir) sampling. Streams the full",
+    description:
+      "PREVIEW: random (reservoir) sampling. Streams the full source and parses it from the start, so quoted multi-line records stay intact. Slower than --sample (which only reads the head); use it when you need a uniform sample.",
   },
   {
     displayName: "Cloud Opt",
@@ -138,19 +143,21 @@ export const GetDescription: INodeProperties[] = [
         operation: ["get"],
       },
     },
-    description: "Extra cloud object-store config as a `key=value` pair",
+    description:
+      "Extra cloud object-store config as a `key=value` pair (repeatable), e.g. region=us-east-1 or skip_signature=true. Overrides the AWS_*/AZURE_*/GOOGLE_* environment. (get_cloud only)",
   },
   {
     displayName: "Ckan Api",
     name: "ckanApi",
     type: "string",
-    default: "",
+    default: "https://data.dathere.com/api/3/action",
     displayOptions: {
       show: {
         operation: ["get"],
       },
     },
-    description: "CKAN Action API base URL. Overrides the QSV_CKAN_API",
+    description:
+      "CKAN Action API base URL. Overrides the QSV_CKAN_API env var. [default: https://data.dathere.com/api/3/action]",
   },
   {
     displayName: "Ckan Token",
@@ -168,14 +175,14 @@ export const GetDescription: INodeProperties[] = [
     displayName: "Timeout",
     name: "timeout",
     type: "string",
-    default: "",
+    default: "60",
     displayOptions: {
       show: {
         operation: ["get"],
       },
     },
     description:
-      "HTTP timeout in seconds. For cache downloads this is an INACTIVITY",
+      "HTTP timeout in seconds. For cache downloads this is an INACTIVITY timeout: the transfer aborts only if no data is received from the server for this long, so a slow-but-steady download is NOT cut off. Preview mode (--sample / --offset / --random) instead uses it as a total-request timeout. 0 = no timeout. [default: 60]",
   },
   {
     displayName: "Older Than",
@@ -187,7 +194,8 @@ export const GetDescription: INodeProperties[] = [
         operation: ["get"],
       },
     },
-    description: "For cache-prune: remove entries older than this age.",
+    description:
+      "For cache-prune: remove entries older than this age. Accepts seconds, or a value with an s/m/h/d/w suffix (e.g. 3600, 90m, 30d, 2w).",
   },
   {
     displayName: "Json",
@@ -211,19 +219,21 @@ export const GetDescription: INodeProperties[] = [
         operation: ["get"],
       },
     },
-    description: "For cache-list: recompute each cached blob's BLAKE3 and",
+    description:
+      "For cache-list: recompute each cached blob's BLAKE3 and report OK/FAIL per name (exits non-zero on any failure).",
   },
   {
     displayName: "Cache Dir",
     name: "cacheDir",
     type: "string",
-    default: "",
+    default: "~/.qsv-cache",
     displayOptions: {
       show: {
         operation: ["get"],
       },
     },
-    description: "The qsv cache directory. Overrides the QSV_CACHE_DIR",
+    description:
+      "The qsv cache directory. Overrides the QSV_CACHE_DIR env var. [default: ~/.qsv-cache]",
   },
   {
     displayName: "Quiet",

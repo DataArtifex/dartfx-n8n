@@ -32,6 +32,19 @@ export const DatefmtDescription: INodeProperties[] = [
       "Path where the output will be saved. If empty, result may be returned in stdout/JSON.",
   },
   {
+    displayName: "Formatstr",
+    name: "formatstr",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["datefmt"],
+      },
+    },
+    description:
+      '=<string>        The date format to use for the datefmt operation. The date format to use. For formats, see https://docs.rs/chrono/latest/chrono/format/strftime/ Default to ISO 8601 / RFC 3339 date & time format - "%Y-%m-%dT%H:%M:%S%z" - e.g. 2001-07-08T00:34:60.026490+09:30 [default: %+]',
+  },
+  {
     displayName: "New Column",
     name: "newColumn",
     type: "string",
@@ -81,6 +94,45 @@ export const DatefmtDescription: INodeProperties[] = [
     },
     description:
       'If a formatted date ends with "T00:00:00+00:00", keep the time instead of removing it.',
+  },
+  {
+    displayName: "Input Tz",
+    name: "inputTz",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["datefmt"],
+      },
+    },
+    description:
+      '=<string>         The timezone to use for the input date if the date does not have timezone specified. The timezone must be a valid IANA timezone name or the string "local" for the local timezone. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for a list of valid timezone names. [default: UTC]',
+  },
+  {
+    displayName: "Output Tz",
+    name: "outputTz",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["datefmt"],
+      },
+    },
+    description:
+      '=<string>        The timezone to use for the output date. The timezone must be a valid IANA timezone name or the string "local". [default: UTC]',
+  },
+  {
+    displayName: "Default Tz",
+    name: "defaultTz",
+    type: "boolean",
+    default: false,
+    displayOptions: {
+      show: {
+        operation: ["datefmt"],
+      },
+    },
+    description:
+      '=<string>       Fallback timezone consulted only when --input-tz or --output-tz is set to "local" but local-timezone detection fails. Defaults to UTC. Does NOT override the --input-tz / --output-tz defaults — use --utc to force both input and output to UTC. The timezone must be a valid IANA timezone name or the string "local".',
   },
   {
     displayName: "Utc",

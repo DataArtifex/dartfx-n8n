@@ -276,10 +276,10 @@ export async function executeViz(
     const val = this.getNodeParameter(
       "denominatorUnit",
       itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--denominator-unit");
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--denominator-unit", val);
     }
   } catch {}
 
@@ -301,21 +301,17 @@ export async function executeViz(
     const val = this.getNodeParameter(
       "geocodeCountry",
       itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--geocode-country");
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--geocode-country", val);
     }
   } catch {}
 
   try {
-    const val = this.getNodeParameter(
-      "geocodeAdmin1",
-      itemIndex,
-      false,
-    ) as boolean;
-    if (val) {
-      args.push("--geocode-admin1");
+    const val = this.getNodeParameter("geocodeAdmin1", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--geocode-admin1", val);
     }
   } catch {}
 

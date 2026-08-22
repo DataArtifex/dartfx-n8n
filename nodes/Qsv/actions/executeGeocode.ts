@@ -118,6 +118,13 @@ export async function executeGeocode(
   } catch {}
 
   try {
+    const val = this.getNodeParameter("formatstr", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--formatstr");
+    }
+  } catch {}
+
+  try {
     const val = this.getNodeParameter("language", itemIndex, "") as string;
     if (val !== undefined && val !== "") {
       args.push("--language", val);

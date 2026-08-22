@@ -203,40 +203,39 @@ export const StatsDescription: INodeProperties[] = [
     displayName: "Quantile Method",
     name: "quantileMethod",
     type: "string",
-    default: "exact",
+    default: "",
     displayOptions: {
       show: {
         operation: ["stats"],
       },
     },
-    description:
-      "Algorithm used to compute the median, quartiles and custom percentiles. Choices: exact  - load all values into memory and sort (current behavior). O(N) memory per numeric column, exact deterministic results. approx - use t-digest (Apache DataSketches port, based on Dunning's MergingDigest). O(K) memory per numeric column (K~200 centroids), O(1) quantile reads. Approximate (~1% rank error, more accurate at the tails). Restrictions: * --mad is disabled with a warning under approx. * --weight is rejected; the upstream datasketches crate does not expose weighted-update. * Results may differ slightly across runs with different --jobs values. * Requires a little-endian target. Apache DataSketches does not support big-endian platforms (e.g., s390x); on those builds, this choice is rejected. [default: exact]",
+    description: "Algorithm used to compute the median, quartiles and custom",
   },
   {
     displayName: "Cardinality Method",
     name: "cardinalityMethod",
     type: "string",
-    default: "exact",
+    default: "",
     displayOptions: {
       show: {
         operation: ["stats"],
       },
     },
     description:
-      'Algorithm used to compute the --cardinality column. Choices: exact  - track every unique value in a frequency map (current behavior). O(cardinality) memory per column. Subject to --mode-cardinality-cap, which emits the ">=<n>" sentinel on overflow. approx - use HyperLogLog (Apache DataSketches port, lg_k=12). O(1) memory per column (~5KB), ~1.5% relative standard error. Notes: * --mode-cardinality-cap no longer affects the cardinality column under approx; the ">=<n>" sentinel is never emitted. * The cap STILL governs mode/antimode tracking (mode columns still emit "*HIGH_CARDINALITY" on overflow). * --infer-boolean forces exact (boolean inference needs cardinality == 2 exactness); a one-time warning is emitted. * Reproducible across --jobs values: the HLL union used at merge time is associative and order-invariant, so chunk completion order does not affect the final estimate. * Requires a little-endian target. Apache DataSketches does not support big-endian platforms (e.g., s390x); on those builds, this choice is rejected. [default: exact]',
+      'Algorithm used to compute the --cardinality column. Choices: exact  - track every unique value in a frequency map (current behavior). O(cardinality) memory per column. Subject to --mode-cardinality-cap, which emits the ">=<n>" sentinel on overflow. approx - use HyperLogLog (Apache DataSketches port, lg_k=12). O(1) memory per column (~5KB), ~1.5% relative standard error.',
   },
   {
     displayName: "Mode Cardinality Cap",
     name: "modeCardinalityCap",
     type: "string",
-    default: "0",
+    default: "",
     displayOptions: {
       show: {
         operation: ["stats"],
       },
     },
     description:
-      'Bound mode-tracking memory on high-cardinality columns. When > 0, if a column\'s mode tracker grows past <n> UNIQUE values (true cardinality, for both unweighted and weighted runs), qsv drops it and emits sentinel values instead of exact modes and cardinality. The cap is a direct memory bound on the tracker, which stores one entry per unique value. Sentinel output: * mode columns: "*HIGH_CARDINALITY" * cardinality column: ">=<n>" (the ">=" prefix DOES break downstream parsers expecting a plain integer; cap is opt-in only). Under --cardinality-method approx, the cardinality column ignores this cap (HLL gives an approximate estimate at fixed memory, ~1.5% RSE) — only mode/antimode columns are gated. Useful on wide tables with many ID/UUID/timestamp columns where tracking exact cardinality is wasted work. [default: 0]',
+      "Bound mode-tracking memory on high-cardinality columns. When > 0, if a column's mode tracker grows past <n> UNIQUE values (true cardinality, for both unweighted and weighted runs), qsv drops it and emits sentinel values instead of exact modes and cardinality. The cap is a direct memory bound on the tracker, which stores one entry per unique value.",
   },
   {
     displayName: "Round",
@@ -417,7 +416,8 @@ export const StatsDescription: INodeProperties[] = [
         operation: ["stats"],
       },
     },
-    description: "When set, the first row will NOT be interpreted",
+    description:
+      "When set, the first row will NOT be interpreted as column names. i.e., They will be included in statistics.",
   },
   {
     displayName: "Delimiter",
@@ -429,7 +429,8 @@ export const StatsDescription: INodeProperties[] = [
         operation: ["stats"],
       },
     },
-    description: "The field delimiter for READING CSV data.",
+    description:
+      "The field delimiter for READING CSV data. Must be a single character. (default: ,)",
   },
   {
     displayName: "Memcheck",
@@ -441,6 +442,7 @@ export const StatsDescription: INodeProperties[] = [
         operation: ["stats"],
       },
     },
-    description: "Use CONSERVATIVE heuristics for the in-memory load",
+    description:
+      "Use CONSERVATIVE heuristics for the in-memory load check (file size vs. available + free_swap × platform factor − headroom), instead of the default NORMAL check (file size vs. total memory − headroom). The CONSERVATIVE check is stricter and trips OOM far more readily. Ignored when computing default, streaming statistics. (See also: QSV_MEMORY_CHECK env var, equivalent to passing --memcheck.) Independently of this flag, the in-memory load check runs whenever stats takes the non-parallel path with non-streaming columns. On OOM (in either NORMAL or CONSERVATIVE mode), qsv auto-creates an index when no index exists (skipped for stdin) AND switches to approx quantile + approx cardinality methods (DataSketches t-digest and HyperLogLog) where compatible. The sketch fallback can also fire when an index is already present and the OOM still trips (e.g., when jobs is pinned to 1 on a pre-indexed file). A wwarn is emitted listing the auto-enabled estimators.",
   },
 ];
