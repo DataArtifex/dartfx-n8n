@@ -38,10 +38,46 @@ Follow the [n8n Community Nodes installation guide](https://docs.n8n.io/integrat
 
 ---
 
-## 🛠 Prerequisites
+## 🛠 System Prerequisites
 
-- **[QSV CLI](https://github.com/dathere/qsv)**: The `qsv` binary must be installed and accessible in the system `$PATH` where n8n is running.
-- **Node.js**: v20+
+This community node executes the high-performance **[QSV CLI](https://github.com/dathere/qsv)** under the hood. The `qsv` binary **must be installed and accessible in the system `$PATH`** where n8n is running.
+
+### 1. Host Installation
+- **macOS (Homebrew)**:
+  ```bash
+  brew install qsv
+  ```
+- **Debian / Ubuntu / Linux**:
+  Download pre-compiled binaries from [QSV GitHub Releases](https://github.com/dathere/qsv/releases) or build via Cargo:
+  ```bash
+  cargo install qsv --locked --bin qsv --features all_features
+  ```
+- **Windows**:
+  ```powershell
+  scoop install qsv
+  # or
+  choco install qsv
+  ```
+
+### 2. Docker / Self-Hosted n8n Container
+If you run n8n using Docker, create a custom image that includes the `qsv` binary:
+
+```dockerfile
+FROM docker.n8n.io/n8nio/n8n:latest
+
+USER root
+# Install QSV pre-compiled binary for musl/alpine
+RUN apk add --no-cache curl tar \
+    && ARCH=$(uname -m) \
+    && if [ "$ARCH" = "x86_64" ]; then QSV_ARCH="x86_64-unknown-linux-musl"; \
+       elif [ "$ARCH" = "aarch64" ]; then QSV_ARCH="aarch64-unknown-linux-musl"; fi \
+    && curl -fsSL "https://github.com/dathere/qsv/releases/latest/download/qsv-latest-${QSV_ARCH}.tar.gz" | tar -xz -C /usr/local/bin \
+    && chmod +x /usr/local/bin/qsv
+
+USER node
+```
+
+- **Node.js**: v20+ (for local development & building)
 
 ---
 

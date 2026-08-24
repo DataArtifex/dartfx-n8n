@@ -395,6 +395,13 @@ export async function execute${capitalized}(
       },
     ];
   } catch (error: any) {
+    if (error.code === 'ENOENT') {
+      throw new NodeOperationError(
+        this.getNode(),
+        "The 'qsv' CLI binary was not found in the system PATH. Please ensure QSV is installed on the host running n8n (e.g. 'brew install qsv' or add to Docker image). See: https://github.com/dathere/qsv",
+        { itemIndex },
+      );
+    }
     throw new NodeOperationError(
       this.getNode(),
       \`Failed executing 'qsv ${opName}': \${error.stderr || error.message}\`,
@@ -468,13 +475,19 @@ export class Qsv implements INodeType {
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter["operation"]}}',
-    description: 'Ultra-fast tabular data wrangling, stats, transformations, and indexing via QSV',
+    description: 'Ultra-fast tabular data wrangling, stats, and transformations via QSV (requires qsv CLI on host)',
     defaults: {
       name: 'QSV',
     },
     inputs: ['main'],
     outputs: ['main'],
     properties: [
+      {
+        displayName: 'Host Requirement Notice',
+        name: 'qsvHostNotice',
+        type: 'notice',
+        default: 'This node executes the <b>qsv</b> binary directly on the host machine. Ensure <b>qsv</b> is installed and available in the system PATH of your n8n instance.',
+      },
       {
         displayName: 'Operation',
         name: 'operation',

@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-dartfx",
   "version": "0.1.0",
-  "description": "n8n community nodes for Data Artifex FAIRification and QSV high-performance data wrangling operations",
+  "description": "n8n community nodes for Data Artifex FAIRification and QSV high-performance tabular data wrangling (requires 'qsv' CLI on host)",
   "keywords": [
     "n8n-community-node-package",
     "n8n-nodes",

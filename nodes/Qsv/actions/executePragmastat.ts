@@ -166,6 +166,13 @@ export async function executePragmastat(
       },
     ];
   } catch (error: any) {
+    if (error.code === 'ENOENT') {
+      throw new NodeOperationError(
+        this.getNode(),
+        "The 'qsv' CLI binary was not found in the system PATH. Please ensure QSV is installed on the host running n8n (e.g. 'brew install qsv' or add to Docker image). See: https://github.com/dathere/qsv",
+        { itemIndex },
+      );
+    }
     throw new NodeOperationError(
       this.getNode(),
       `Failed executing 'qsv pragmastat': ${error.stderr || error.message}`,

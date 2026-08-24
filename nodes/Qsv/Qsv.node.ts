@@ -170,13 +170,19 @@ export class Qsv implements INodeType {
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter["operation"]}}',
-    description: 'Ultra-fast tabular data wrangling, stats, transformations, and indexing via QSV',
+    description: 'Ultra-fast tabular data wrangling, stats, and transformations via QSV (requires qsv CLI on host)',
     defaults: {
       name: 'QSV',
     },
     inputs: ['main'],
     outputs: ['main'],
     properties: [
+      {
+        displayName: 'Host Requirement Notice',
+        name: 'qsvHostNotice',
+        type: 'notice',
+        default: 'This node executes the <b>qsv</b> binary directly on the host machine. Ensure <b>qsv</b> is installed and available in the system PATH of your n8n instance.',
+      },
       {
         displayName: 'Operation',
         name: 'operation',
