@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+# Least-privilege default for this workflow
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -14,6 +18,7 @@ jobs:
   test:
     name: Test (Node ${{ matrix.node-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -24,29 +29,49 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache QSV Binary
+        id: cache-qsv
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.os == 'Windows' && 'C:\qsv' || '/usr/local/bin/qsv' }}
+          key: qsv-bin-${{ runner.os }}-${{ runner.arch }}-v22.0.1
+
       - name: Install QSV binary (Linux)
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && steps.cache-qsv.outputs.cache-hit != 'true'
         run: |
-          curl -fsSL https://github.com/dathere/qsv/releases/latest/download/qsv-latest-x86_64-unknown-linux-musl.tar.gz | tar -xz -C /usr/local/bin
-          qsv --version
+          curl -fsSL https://github.com/dathere/qsv/releases/download/22.0.1/qsv-22.0.1-x86_64-unknown-linux-musl.tar.gz | sudo tar -xz -C /usr/local/bin
+          sudo chmod +x /usr/local/bin/qsv
 
       - name: Install QSV binary (macOS)
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && steps.cache-qsv.outputs.cache-hit != 'true'
         run: |
-          brew install qsv
-          qsv --version
+          ARCH=$(uname -m)
+          if [ "$ARCH" = "arm64" ]; then QSV_ARCH="aarch64-apple-darwin"; else QSV_ARCH="x86_64-apple-darwin"; fi
+          curl -fsSL "https://github.com/dathere/qsv/releases/download/22.0.1/qsv-22.0.1-${QSV_ARCH}.tar.gz" | sudo tar -xz -C /usr/local/bin
+          sudo chmod +x /usr/local/bin/qsv
 
       - name: Install QSV binary (Windows)
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && steps.cache-qsv.outputs.cache-hit != 'true'
         shell: pwsh
         run: |
-          choco install qsv -y
-          qsv --version
+          New-Item -ItemType Directory -Force -Path C:\qsv
+          Invoke-WebRequest -Uri "https://github.com/dathere/qsv/releases/download/22.0.1/qsv-22.0.1-x86_64-pc-windows-msvc.zip" -OutFile C:\qsv\qsv.zip
+          Expand-Archive -Path C:\qsv\qsv.zip -DestinationPath C:\qsv -Force
+          Remove-Item C:\qsv\qsv.zip
+
+      - name: Add QSV to Windows PATH
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: echo "C:\qsv" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Verify QSV installation
+        run: qsv --version
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 9
+          # Pin exact version for reproducibility
+          version: 9.12.3
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
