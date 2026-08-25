@@ -1,10 +1,14 @@
 # n8n Community Nodes for Data Artifex (`n8n-nodes-dartfx`)
 
 [![npm version](https://img.shields.io/npm/v/n8n-nodes-dartfx.svg)](https://www.npmjs.com/package/n8n-nodes-dartfx)
+[![CI](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/ci.yml/badge.svg)](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/ci.yml)
+[![Docs](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/sphinx.yaml/badge.svg)](https://dataartifex.github.io/dartfx-n8n/)
+[![n8n Community Node](https://img.shields.io/badge/n8n-community--node-ea4b71.svg)](https://docs.n8n.io/integrations/community-nodes/)
+[![Powered by QSV](https://img.shields.io/badge/powered%20by-QSV-orange.svg)](https://github.com/dathere/qsv)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> [!WARNING]
-> **Experimental / Early-Stage Project**: This project is under active development. Node APIs, parameters, and operation interfaces may change between versions.
+> [!NOTE]
+> **Initial Release (`v0.1.0`)**: This is the initial public release of `n8n-nodes-dartfx`. Node APIs, parameters, and operation interfaces are actively expanding. Please report any issues or feature requests on [GitHub Issues](https://github.com/DataArtifex/dartfx-n8n/issues).
 
 A collection of custom [n8n](https://n8n.io/) community nodes to support **data FAIRification** pipelines and high-performance tabular data wrangling using [datHere QSV](https://github.com/dathere/qsv), Data Artifex packages, and other tools.
 
@@ -43,6 +47,7 @@ Follow the [n8n Community Nodes installation guide](https://docs.n8n.io/integrat
 This community node executes the high-performance **[QSV CLI](https://github.com/dathere/qsv)** under the hood. The `qsv` binary **must be installed and accessible in the system `$PATH`** where n8n is running.
 
 ### 1. Host Installation
+
 - **macOS (Homebrew)**:
   ```bash
   brew install qsv
@@ -60,6 +65,7 @@ This community node executes the high-performance **[QSV CLI](https://github.com
   ```
 
 ### 2. Docker / Self-Hosted n8n Container
+
 If you run n8n using Docker, create a custom image that includes the `qsv` binary:
 
 ```dockerfile
@@ -80,20 +86,22 @@ USER node
 ```
 
 ### 3. Environment Variables (Custom Binary Path)
+
 If `qsv` is installed in a non-standard location or outside your default `$PATH`, configure one of the following environment variables on your n8n instance:
 
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `DARTFX_QSV_BIN_PATH` | Primary override for the QSV binary path used by DartFX nodes | — |
-| `QSV_BIN_PATH` / `QSV_PATH` | Generic fallback QSV binary path | — |
-| _(Fallback)_ | System `$PATH` resolution | `qsv` |
+| Variable                    | Description                                                   | Default |
+| :-------------------------- | :------------------------------------------------------------ | :------ |
+| `DARTFX_QSV_BIN_PATH`       | Primary override for the QSV binary path used by DartFX nodes | —       |
+| `QSV_BIN_PATH` / `QSV_PATH` | Generic fallback QSV binary path                              | —       |
+| _(Fallback)_                | System `$PATH` resolution                                     | `qsv`   |
 
 **Example in `.env` / Docker Compose:**
+
 ```env
 DARTFX_QSV_BIN_PATH=/opt/custom/bin/qsv
 ```
 
-- **Node.js**: v20+ (for local development & building)
+- **Node.js**: v22+ (for local development & building)
 
 ---
 
