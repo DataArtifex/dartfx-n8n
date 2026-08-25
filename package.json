@@ -15,12 +15,23 @@
     "unf"
   ],
   "license": "MIT",
+  "author": {
+    "name": "Data Artifex",
+    "url": "https://github.com/DataArtifex"
+  },
   "homepage": "https://github.com/DataArtifex/dartfx-n8n",
   "repository": {
     "type": "git",
     "url": "https://github.com/DataArtifex/dartfx-n8n.git"
   },
+  "bugs": {
+    "url": "https://github.com/DataArtifex/dartfx-n8n/issues"
+  },
   "main": "index.js",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
   "scripts": {
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
@@ -33,7 +44,8 @@
     "prepublishOnly": "pnpm run build"
   },
   "files": [
-    "dist"
+    "dist",
+    "index.js"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
