@@ -45,10 +45,11 @@ Primary components:
   - Dynamic parameter collection and compilation in action handlers.
   - Full synchronization of `nodes/Qsv/Qsv.node.ts` dropdowns, properties, and execute switch-cases.
 
-### 3. Version Compatibility & Graceful Degradation
+### 3. Versioning & External Dependency Decoupling
 
-- Nodes check for the presence and minimum version of `qsv` upon execution.
-- If `qsv` is missing or fails, helpful actionable error messages are returned with installation instructions.
+- **Package SemVer (`n8n-nodes-dartfx`)**: The package adheres strictly to Semantic Versioning starting at `0.1.0`. It is intentionally decoupled from any specific tool's versioning numbers because it contains multiple node collections.
+- **Node-level Dependency Binding**: Dynamic wrappers like QSV inspect the installed binary during `pnpm run generate:qsv` to capture the target CLI version (e.g. `22.0.1`) and embed it in node notices and descriptions.
+- **Graceful Error Handling**: If a host binary is missing (`ENOENT`), clear actionable guidance pointing to binary installation paths and environment variables (`DARTFX_QSV_BIN_PATH`) is returned.
 
 ---
 

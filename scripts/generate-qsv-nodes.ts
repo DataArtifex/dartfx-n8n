@@ -25,6 +25,30 @@ const QSV_BIN =
   "qsv";
 
 /**
+ * Extracts target QSV binary version dynamically by running `qsv --version`.
+ */
+function getQsvVersion(): string {
+  try {
+    const versionOutput = execSync(`${QSV_BIN} --version`, {
+      encoding: "utf8",
+    }).trim();
+    const match = versionOutput.match(
+      /^qsv\s+([0-9]+\.[0-9]+(?:\.[0-9]+)?)/i,
+    );
+    if (match) {
+      return match[1];
+    }
+    const firstLine = versionOutput.split("\n")[0];
+    return firstLine.replace(/^qsv\s*/i, "").trim() || "unknown";
+  } catch (error: any) {
+    console.warn(
+      `Warning: Could not get QSV version via '${QSV_BIN} --version': ${error.message}`,
+    );
+    return "unknown";
+  }
+}
+
+/**
  * Discovers available QSV commands dynamically by running `qsv --list`.
  */
 function getAvailableCommands(): string[] {
@@ -118,86 +142,55 @@ function parseHelpText(cmdName: string, helpText: string): ParsedCommand {
     if (
       line.trim().startsWith("Usage:") ||
       line.trim().startsWith("Common options:") ||
-      line.trim().startsWith("Options:")
+      line.trim().startsWith("options:")
     ) {
       break;
     }
-    if (
-      line.trim().length > 0 &&
-      !line.startsWith(" ") &&
-      !line.startsWith("\t")
-    ) {
+    if (line.trim().length > 0 && !line.toLowerCase().startsWith("qsv")) {
       description += (description ? " " : "") + line.trim();
     }
   }
 
-  if (!description) {
-    description = `Executes the qsv ${cmdName} command.`;
-  }
+  // Extract options
+  let inOptions = false;
+  for (const line of lines) {
+    if (
+      line.trim().toLowerCase().startsWith("options:") ||
+      line.trim().toLowerCase().startsWith("common options:")
+    ) {
+      inOptions = true;
+      continue;
+    }
 
-  // Parse flags/options
-  const optionRegex =
-    /^\s*(?:-([a-zA-Z0-9]),\s+)?--([a-zA-Z0-9_-]+)(?:\s+<([^>]+)>|\s+\[([^\]]+)\])?\s*(.*)$/;
+    if (inOptions) {
+      // Match option lines like: "    -s, --select <arg>  Select columns" or "    --delimiter <arg>  Field delimiter"
+      const optMatch = line.match(
+        /^\s*(?:-([a-zA-Z0-9]),\s+)?--([a-zA-Z0-9_-]+)(?:\s+(<[^>]+>|\[[^\]]+\]|[A-Z_]+))?\s*(.*)$/,
+      );
+      if (optMatch) {
+        const shortFlag = optMatch[1];
+        const flag = optMatch[2];
+        const argType = optMatch[3];
+        let desc = optMatch[4] ? optMatch[4].trim() : "";
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const match = line.match(optionRegex);
-    if (match) {
-      const shortFlag = match[1];
-      const flag = match[2];
-      const argName = match[3] || match[4];
-      const descPart = match[5] || "";
-
-      // Skip generic help
-      if (flag === "help") continue;
-
-      let fullDesc = descPart.trim();
-      let j = i + 1;
-
-      while (j < lines.length) {
-        const nextLine = lines[j];
-        const trimmed = nextLine.trim();
-
-        // Empty line ends continuation block
-        if (trimmed.length === 0) {
-          break;
+        // Filter out options that n8n handles automatically or are irrelevant for automated node
+        if (["help", "version"].includes(flag)) {
+          continue;
         }
 
-        // If next line is a new option, stop
-        if (nextLine.match(optionRegex)) {
-          break;
+        // Try to detect default value if mentioned in desc: "[default: 10]"
+        let defaultValue: string | undefined;
+        const defaultMatch = desc.match(/\[default:\s*([^\]]+)\]/i);
+        if (defaultMatch) {
+          defaultValue = defaultMatch[1].trim();
         }
 
-        // If next line is a section header (e.g. "Common options:", "WIDTH OPTIONS:", etc.)
-        if (
-          trimmed.endsWith(":") ||
-          trimmed.toLowerCase().startsWith("usage:") ||
-          /^[A-Z0-9\s_-]+:$/.test(trimmed)
-        ) {
-          break;
-        }
-
-        // Must be indented (at least 4 spaces or tab) to be part of description
-        if (nextLine.startsWith("    ") || nextLine.startsWith("\t")) {
-          fullDesc += (fullDesc ? " " : "") + trimmed;
-          j++;
-        } else {
-          break;
-        }
-      }
-
-      // Check default value
-      const defaultMatch = fullDesc.match(/\[default:\s*([^\]]+)\]/i);
-      const defaultValue = defaultMatch ? defaultMatch[1].trim() : undefined;
-
-      // Avoid duplicates
-      if (!options.some((o) => o.flag === flag)) {
         options.push({
           flag,
           shortFlag,
-          hasArg: Boolean(argName),
-          argName,
-          description: fullDesc,
+          hasArg: !!argType,
+          argName: argType ? argType.replace(/[<>\[\]]/g, "") : undefined,
+          description: desc,
           defaultValue,
         });
       }
@@ -206,140 +199,142 @@ function parseHelpText(cmdName: string, helpText: string): ParsedCommand {
 
   return {
     name: cmdName,
-    description,
+    description: description || `Execute qsv ${cmdName}`,
     usage,
     options,
   };
 }
 
-function escapeJsString(str: string): string {
-  return str.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\r?\n/g, " ");
-}
+function generateDescriptionFile(cmd: ParsedCommand): string {
+  const capitalized = toCapitalized(cmd.name);
+  const properties: string[] = [];
 
-function generateDescriptionFile(parsed: ParsedCommand): string {
-  const opName = parsed.name;
-  const capitalized = toCapitalized(opName);
-
-  let propertiesCode = "";
-
-  // Input path parameter (primary)
-  propertiesCode += `
-    {
-      displayName: 'Input CSV File Path',
-      name: 'inputPath',
-      type: 'string',
-      default: '',
-      required: true,
-      displayOptions: {
-        show: {
-          operation: ['${opName}'],
-        },
-      },
-      description: 'The absolute or relative file path to the input CSV file',
-    },`;
-
-  // Output path parameter (optional if command supports output or redirection)
-  propertiesCode += `
-    {
-      displayName: 'Output File Path',
-      name: 'outputPath',
-      type: 'string',
-      default: '',
-      displayOptions: {
-        show: {
-          operation: ['${opName}'],
-        },
-      },
-      description: 'Path where the output will be saved. If empty, result may be returned in stdout/JSON.',
-    },`;
-
-  // Parse options into INodeProperties
-  for (const opt of parsed.options) {
-    if (opt.flag === "output") continue; // Handled by outputPath above
-
+  for (const opt of cmd.options) {
     const propName = toSafePropName(opt.flag);
     const displayName = opt.flag
       .split("-")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
-
-    const cleanDesc = escapeJsString(opt.description);
-    const cleanDefault = opt.defaultValue
-      ? escapeJsString(opt.defaultValue)
-      : "";
+    const cleanDesc = (opt.description || "")
+      .replace(/'/g, "\\'")
+      .replace(/\n/g, " ");
 
     if (!opt.hasArg) {
       // Boolean flag
-      propertiesCode += `
-    {
+      properties.push(`    {
       displayName: '${displayName}',
       name: '${propName}',
       type: 'boolean',
       default: false,
+      description: '${cleanDesc}',
       displayOptions: {
         show: {
-          operation: ['${opName}'],
+          operation: ['${cmd.name}'],
         },
       },
-      description: '${cleanDesc}',
-    },`;
+    },`);
     } else {
-      // String option
-      propertiesCode += `
-    {
+      // String or Number option
+      let defaultVal = opt.defaultValue ? `'${opt.defaultValue}'` : "''";
+      let propType = "string";
+
+      // Infer numbers if defaultValue is numeric
+      if (opt.defaultValue && !isNaN(Number(opt.defaultValue))) {
+        propType = "number";
+        defaultVal = opt.defaultValue;
+      }
+
+      properties.push(`    {
       displayName: '${displayName}',
       name: '${propName}',
-      type: 'string',
-      default: '${cleanDefault}',
+      type: '${propType}',
+      default: ${defaultVal},
+      description: '${cleanDesc}',
       displayOptions: {
         show: {
-          operation: ['${opName}'],
+          operation: ['${cmd.name}'],
         },
       },
-      description: '${cleanDesc}',
-    },`;
+    },`);
     }
   }
 
   return `import type { INodeProperties } from 'n8n-workflow';
 
-/**
- * Property definitions for 'qsv ${opName}' operation.
- * Auto-generated by scripts/generate-qsv-nodes.ts
- */
-export const ${capitalized}Description: INodeProperties[] = [${propertiesCode}
+export const ${capitalized}Description: INodeProperties[] = [
+  {
+    displayName: 'Input CSV File Path',
+    name: 'inputPath',
+    type: 'string',
+    required: true,
+    default: '',
+    description: 'Path to input CSV file on disk or host filesystem',
+    displayOptions: {
+      show: {
+        operation: ['${cmd.name}'],
+      },
+    },
+  },
+  {
+    displayName: 'Output File Path',
+    name: 'outputPath',
+    type: 'string',
+    default: '',
+    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
+    displayOptions: {
+      show: {
+        operation: ['${cmd.name}'],
+      },
+    },
+  },
+  {
+    displayName: 'Additional Flags',
+    name: 'additionalArgs',
+    type: 'string',
+    default: '',
+    description: 'Additional raw command line arguments to pass to qsv ${cmd.name}',
+    displayOptions: {
+      show: {
+        operation: ['${cmd.name}'],
+      },
+    },
+  },
+  {
+    displayName: 'Options',
+    name: 'options',
+    type: 'collection',
+    placeholder: 'Add Option',
+    default: {},
+    displayOptions: {
+      show: {
+        operation: ['${cmd.name}'],
+      },
+    },
+    options: [
+${properties.join("\n")}
+    ],
+  },
 ];
 `;
 }
 
-function generateActionFile(parsed: ParsedCommand): string {
-  const opName = parsed.name;
-  const capitalized = toCapitalized(opName);
+function generateActionFile(cmd: ParsedCommand): string {
+  const capitalized = toCapitalized(cmd.name);
+  const opName = cmd.name;
 
-  let optionsParsingCode = "";
+  const flagProcessors: string[] = [];
 
-  for (const opt of parsed.options) {
-    if (opt.flag === "output") continue;
+  for (const opt of cmd.options) {
     const propName = toSafePropName(opt.flag);
 
     if (!opt.hasArg) {
-      optionsParsingCode += `
-    try {
-      const val = this.getNodeParameter('${propName}', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--${opt.flag}');
-      }
-    } catch {}
-`;
+      flagProcessors.push(`  if (options.${propName} === true) {
+    args.push('--${opt.flag}');
+  }`);
     } else {
-      optionsParsingCode += `
-    try {
-      const val = this.getNodeParameter('${propName}', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--${opt.flag}', val);
-      }
-    } catch {}
-`;
+      flagProcessors.push(`  if (options.${propName} !== undefined && options.${propName} !== '') {
+    args.push('--${opt.flag}', String(options.${propName}));
+  }`);
     }
   }
 
@@ -350,32 +345,33 @@ import { promisify } from 'util';
 
 const execFileAsync = promisify(execFile);
 
-/**
- * Action runner for 'qsv ${opName}'
- * Auto-generated by scripts/generate-qsv-nodes.ts
- */
 export async function execute${capitalized}(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
-  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
-  if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+  const inputPath = this.getNodeParameter('inputPath', itemIndex) as string;
+  if (!inputPath || !inputPath.trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Input CSV file path is required.',
+      { itemIndex },
+    );
   }
+  const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
+  const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
+  const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['${opName}'];
 
-  // Collect options and flags
-  ${optionsParsingCode.trim()}
+${flagProcessors.join("\n")}
 
-  try {
-    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
-    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
-    if (outputPath) {
-      args.push('--output', outputPath);
-    }
-  } catch {}
+  if (additionalArgs.trim()) {
+    args.push(...additionalArgs.trim().split(/\\s+/));
+  }
+
+  if (outputPath.trim()) {
+    args.push('--output', outputPath.trim());
+  }
 
   args.push(inputPath);
 
@@ -430,7 +426,10 @@ export async function execute${capitalized}(
 `;
 }
 
-function generateMainNodeFile(commands: ParsedCommand[]): string {
+function generateMainNodeFile(
+  commands: ParsedCommand[],
+  qsvVersion: string,
+): string {
   const importsDescriptions = commands
     .map(
       (c) =>
@@ -493,7 +492,7 @@ export class Qsv implements INodeType {
     group: ['transform'],
     version: 1,
     subtitle: '={{$parameter["operation"]}}',
-    description: 'Ultra-fast tabular data wrangling, stats, and transformations via QSV (requires qsv CLI on host)',
+    description: 'Ultra-fast tabular data wrangling, stats, and transformations via QSV (generated for QSV ${qsvVersion}; requires qsv CLI on host)',
     defaults: {
       name: 'QSV',
     },
@@ -504,7 +503,7 @@ export class Qsv implements INodeType {
         displayName: 'Host Requirement Notice',
         name: 'qsvHostNotice',
         type: 'notice',
-        default: 'This node executes the <b>qsv</b> binary directly on the host machine. Ensure <b>qsv</b> is installed and available in the system PATH of your n8n instance.',
+        default: 'This node executes the <b>qsv</b> binary directly on the host machine. Generated and tested against <b>qsv ${qsvVersion}</b>. Ensure <b>qsv</b> is installed and available in the system PATH of your n8n instance.',
       },
       {
         displayName: 'Operation',
@@ -568,6 +567,9 @@ async function main() {
   fs.mkdirSync(descriptionsDir, { recursive: true });
   fs.mkdirSync(actionsDir, { recursive: true });
 
+  const qsvVersion = getQsvVersion();
+  console.log(`Detected target QSV version: ${qsvVersion}`);
+
   const commands = getAvailableCommands();
   const generatedCommands: ParsedCommand[] = [];
 
@@ -597,10 +599,10 @@ async function main() {
   }
 
   // Generate main Qsv.node.ts
-  const mainNodeContent = generateMainNodeFile(generatedCommands);
+  const mainNodeContent = generateMainNodeFile(generatedCommands, qsvVersion);
   fs.writeFileSync(mainNodePath, mainNodeContent);
   console.log(
-    `✓ Updated main Qsv.node.ts with ${generatedCommands.length} operations`,
+    `✓ Updated main Qsv.node.ts with ${generatedCommands.length} operations (target QSV: ${qsvVersion})`,
   );
 
   console.log(

@@ -105,6 +105,31 @@ DARTFX_QSV_BIN_PATH=/opt/custom/bin/qsv
 
 ---
 
+## 📐 Versioning & Compatibility Strategy
+
+This package follows a decoupled versioning model to support multiple independent node collections (e.g. QSV, Data Artifex FAIRification, Harvester):
+
+### 1. Package Semantic Versioning (`n8n-nodes-dartfx`)
+* The package follows standard [Semantic Versioning](https://semver.org/) (starting at `0.1.0`).
+* Package releases are **independent** of external CLI versioning numbers.
+  * **Patch (`0.1.x`)**: Bug fixes, parameter corrections, and docs across any node collection.
+  * **Minor (`0.x.0`)**: Adding new node collections, new operations, or non-breaking features.
+  * **Major (`1.0.0`)**: Breaking changes in workflow node interfaces or execution contracts.
+
+### 2. External Dependency Compatibility Matrix
+Node collections that wrap host binaries declare and verify their target CLI versions:
+
+| Node Collection | Host Requirement | Tested / Target CLI Version | Notes |
+| :--- | :--- | :--- | :--- |
+| **QSV Data Wrangler** (`qsv`) | `qsv` binary in `$PATH` | `v22.0.1` (`>= 22.0.0`) | Generated dynamically via `pnpm run generate:qsv` |
+| **DartFx FAIR Nodes** | None (pure JS/TS) | N/A | Fully self-contained |
+
+### 3. Workflow Upgrade Behavior in n8n
+* **Non-breaking releases (Same `typeVersion: 1`)**: When an n8n instance installs a package update, existing workflows immediately execute the latest code without manual node re-configuration.
+* **Breaking schema changes (`typeVersion: 2+`)**: If a node introduces breaking parameter schema changes, existing workflows remain safely pinned to `typeVersion: 1` until manually upgraded by the user in the n8n canvas.
+
+---
+
 ## 💻 Development & Local Testing
 
 ### 1. Setup & Build
