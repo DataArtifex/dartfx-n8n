@@ -30,11 +30,11 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Cache QSV Binary
         id: cache-qsv
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ runner.os == 'Windows' && 'C:\qsv' || '/usr/local/bin/qsv' }}
           key: qsv-bin-${{ runner.os }}-${{ runner.arch }}-v22.0.1
@@ -75,13 +75,10 @@ jobs:
         run: qsv --version
 
       - name: Set up pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          # Pin exact version for reproducibility
-          version: 9.12.3
+        uses: pnpm/action-setup@v6
 
       - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"

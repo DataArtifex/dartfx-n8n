@@ -28,9 +28,10 @@
     "url": "https://github.com/DataArtifex/dartfx-n8n/issues"
   },
   "main": "index.js",
+  "packageManager": "pnpm@11.15.1",
   "engines": {
     "node": ">=22.0.0",
-    "pnpm": ">=9.0.0"
+    "pnpm": ">=11.0.0"
   },
   "scripts": {
     "build": "tsc && gulp build:icons",
