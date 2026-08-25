@@ -39,16 +39,20 @@ jobs:
       - name: Install QSV binary (Linux)
         if: runner.os == 'Linux' && steps.cache-qsv.outputs.cache-hit != 'true'
         run: |
-          curl -fsSL https://github.com/dathere/qsv/releases/download/22.0.1/qsv-22.0.1-x86_64-unknown-linux-musl.tar.gz | sudo tar -xz -C /usr/local/bin
+          curl -fsSL https://github.com/dathere/qsv/releases/download/22.0.1/qsv-22.0.1-x86_64-unknown-linux-musl.zip -o /tmp/qsv.zip
+          sudo unzip -o /tmp/qsv.zip qsv -d /usr/local/bin/
           sudo chmod +x /usr/local/bin/qsv
+          rm -f /tmp/qsv.zip
 
       - name: Install QSV binary (macOS)
         if: runner.os == 'macOS' && steps.cache-qsv.outputs.cache-hit != 'true'
         run: |
           ARCH=$(uname -m)
           if [ "$ARCH" = "arm64" ]; then QSV_ARCH="aarch64-apple-darwin"; else QSV_ARCH="x86_64-apple-darwin"; fi
-          curl -fsSL "https://github.com/dathere/qsv/releases/download/22.0.1/qsv-22.0.1-${QSV_ARCH}.tar.gz" | sudo tar -xz -C /usr/local/bin
+          curl -fsSL "https://github.com/dathere/qsv/releases/download/22.0.1/qsv-22.0.1-${QSV_ARCH}.zip" -o /tmp/qsv.zip
+          sudo unzip -o /tmp/qsv.zip qsv -d /usr/local/bin/
           sudo chmod +x /usr/local/bin/qsv
+          rm -f /tmp/qsv.zip
 
       - name: Install QSV binary (Windows)
         if: runner.os == 'Windows' && steps.cache-qsv.outputs.cache-hit != 'true'

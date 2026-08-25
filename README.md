@@ -67,12 +67,14 @@ FROM docker.n8n.io/n8nio/n8n:latest
 
 USER root
 # Install QSV pre-compiled binary for musl/alpine
-RUN apk add --no-cache curl tar \
+RUN apk add --no-cache curl unzip \
     && ARCH=$(uname -m) \
     && if [ "$ARCH" = "x86_64" ]; then QSV_ARCH="x86_64-unknown-linux-musl"; \
        elif [ "$ARCH" = "aarch64" ]; then QSV_ARCH="aarch64-unknown-linux-musl"; fi \
-    && curl -fsSL "https://github.com/dathere/qsv/releases/latest/download/qsv-latest-${QSV_ARCH}.tar.gz" | tar -xz -C /usr/local/bin \
-    && chmod +x /usr/local/bin/qsv
+    && curl -fsSL "https://github.com/dathere/qsv/releases/latest/download/qsv-latest-${QSV_ARCH}.zip" -o /tmp/qsv.zip \
+    && unzip -o /tmp/qsv.zip qsv -d /usr/local/bin \
+    && chmod +x /usr/local/bin/qsv \
+    && rm -f /tmp/qsv.zip
 
 USER node
 ```
