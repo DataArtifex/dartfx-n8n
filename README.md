@@ -77,6 +77,20 @@ RUN apk add --no-cache curl tar \
 USER node
 ```
 
+### 3. Environment Variables (Custom Binary Path)
+If `qsv` is installed in a non-standard location or outside your default `$PATH`, configure one of the following environment variables on your n8n instance:
+
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `DARTFX_QSV_BIN_PATH` | Primary override for the QSV binary path used by DartFX nodes | — |
+| `QSV_BIN_PATH` / `QSV_PATH` | Generic fallback QSV binary path | — |
+| _(Fallback)_ | System `$PATH` resolution | `qsv` |
+
+**Example in `.env` / Docker Compose:**
+```env
+DARTFX_QSV_BIN_PATH=/opt/custom/bin/qsv
+```
+
 - **Node.js**: v20+ (for local development & building)
 
 ---

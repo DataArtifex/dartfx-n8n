@@ -18,12 +18,18 @@ interface ParsedCommand {
   options: CliOption[];
 }
 
+const QSV_BIN =
+  process.env.DARTFX_QSV_BIN_PATH ||
+  process.env.QSV_BIN_PATH ||
+  process.env.QSV_PATH ||
+  "qsv";
+
 /**
  * Discovers available QSV commands dynamically by running `qsv --list`.
  */
 function getAvailableCommands(): string[] {
   try {
-    const listOutput = execSync("qsv --list", { encoding: "utf8" });
+    const listOutput = execSync(`${QSV_BIN} --list`, { encoding: "utf8" });
     const lines = listOutput.split("\n");
     const commands: string[] = [];
 
@@ -41,13 +47,13 @@ function getAvailableCommands(): string[] {
 
     if (commands.length > 0) {
       console.log(
-        `Discovered ${commands.length} QSV commands via 'qsv --list'`,
+        `Discovered ${commands.length} QSV commands via '${QSV_BIN} --list'`,
       );
       return commands;
     }
   } catch (error: any) {
     console.warn(
-      `Warning: Could not get commands via 'qsv --list': ${error.message}`,
+      `Warning: Could not get commands via '${QSV_BIN} --list': ${error.message}`,
     );
   }
 
@@ -71,10 +77,10 @@ function getAvailableCommands(): string[] {
 
 function getCommandHelp(cmd: string): string {
   try {
-    return execSync(`qsv ${cmd} --help`, { encoding: "utf8" });
+    return execSync(`${QSV_BIN} ${cmd} --help`, { encoding: "utf8" });
   } catch (error: any) {
     console.warn(
-      `Warning: Could not get help for 'qsv ${cmd}': ${error.message}`,
+      `Warning: Could not get help for '${QSV_BIN} ${cmd}': ${error.message}`,
     );
     return "";
   }
@@ -370,8 +376,14 @@ export async function execute${capitalized}(
 
   args.push(inputPath);
 
+  const qsvBin =
+    process.env.DARTFX_QSV_BIN_PATH ||
+    process.env.QSV_BIN_PATH ||
+    process.env.QSV_PATH ||
+    'qsv';
+
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa(qsvBin, args);
     let resultJson: any;
 
     try {
@@ -398,7 +410,7 @@ export async function execute${capitalized}(
     if (error.code === 'ENOENT') {
       throw new NodeOperationError(
         this.getNode(),
-        "The 'qsv' CLI binary was not found in the system PATH. Please ensure QSV is installed on the host running n8n (e.g. 'brew install qsv' or add to Docker image). See: https://github.com/dathere/qsv",
+        \`The QSV CLI binary ('\${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv\`,
         { itemIndex },
       );
     }

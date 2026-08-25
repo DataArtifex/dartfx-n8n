@@ -127,8 +127,14 @@ export async function executeExcel(
 
   args.push(inputPath);
 
+  const qsvBin =
+    process.env.DARTFX_QSV_BIN_PATH ||
+    process.env.QSV_BIN_PATH ||
+    process.env.QSV_PATH ||
+    'qsv';
+
   try {
-    const { stdout, stderr } = await execa('qsv', args);
+    const { stdout, stderr } = await execa(qsvBin, args);
     let resultJson: any;
 
     try {
@@ -155,7 +161,7 @@ export async function executeExcel(
     if (error.code === 'ENOENT') {
       throw new NodeOperationError(
         this.getNode(),
-        "The 'qsv' CLI binary was not found in the system PATH. Please ensure QSV is installed on the host running n8n (e.g. 'brew install qsv' or add to Docker image). See: https://github.com/dathere/qsv",
+        `The QSV CLI binary ('${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv`,
         { itemIndex },
       );
     }
