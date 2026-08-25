@@ -1,6 +1,9 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Action runner for 'qsv synthesize'
@@ -10,118 +13,158 @@ export async function executeSynthesize(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
-  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+  const rawInputPath = this.getNodeParameter(
+    "inputPath",
+    itemIndex,
+    "",
+  ) as string;
+  const inputPath = rawInputPath
+    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
+    : "";
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['synthesize'];
+  const args: string[] = ["synthesize"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('dictionary', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--dictionary', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('inferContentType', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--infer-content-type');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('rows', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--rows', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('seed', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--seed', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('locale', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--locale', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('freqLimit', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--freq-limit', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('statsOptions', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--stats-options', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('consistentFakes', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--consistent-fakes');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noRelationships', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-relationships');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jointCardinalityCap', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--joint-cardinality-cap', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('correlationThreshold', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--correlation-threshold', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('strictRelationships', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--strict-relationships');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--jobs', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
+    const val = this.getNodeParameter("dictionary", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--dictionary", val);
+    }
+  } catch {}
 
   try {
-    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
-    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+    const val = this.getNodeParameter(
+      "inferContentType",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--infer-content-type");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("rows", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--rows", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("seed", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--seed", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("locale", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--locale", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("freqLimit", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--freq-limit", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("statsOptions", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--stats-options", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "consistentFakes",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--consistent-fakes");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "noRelationships",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--no-relationships");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "jointCardinalityCap",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--joint-cardinality-cap", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "correlationThreshold",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--correlation-threshold", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "strictRelationships",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--strict-relationships");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--jobs", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const rawOutputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
+    const outputPath = rawOutputPath
+      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
+      : "";
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
@@ -131,17 +174,20 @@ export async function executeSynthesize(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
-    const { stdout, stderr } = await execa(qsvBin, args);
+    const { stdout, stderr } = await execFileAsync(qsvBin, args, {
+      maxBuffer: 50 * 1024 * 1024,
+      encoding: "utf8",
+    });
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv synthesize',
+        command: "qsv synthesize",
         inputPath,
         rawOutput: stdout,
       };
@@ -151,14 +197,14 @@ export async function executeSynthesize(
       {
         json: {
           success: true,
-          command: 'synthesize',
+          command: "synthesize",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv`,

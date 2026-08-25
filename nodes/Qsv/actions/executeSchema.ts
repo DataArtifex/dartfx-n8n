@@ -1,6 +1,9 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Action runner for 'qsv schema'
@@ -10,118 +13,154 @@ export async function executeSchema(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
-  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+  const rawInputPath = this.getNodeParameter(
+    "inputPath",
+    itemIndex,
+    "",
+  ) as string;
+  const inputPath = rawInputPath
+    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
+    : "";
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['schema'];
+  const args: string[] = ["schema"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('enumThreshold', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--enum-threshold', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('ignoreCase', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--ignore-case');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('strictDates', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--strict-dates');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('strictFormats', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--strict-formats');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('patternColumns', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--pattern-columns', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('datesWhitelist', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--dates-whitelist', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('preferDmy', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--prefer-dmy');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('force', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--force');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('stdout', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--stdout');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--jobs', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('polars', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--polars');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-headers');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('memcheck', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--memcheck');
-      }
-    } catch {}
+    const val = this.getNodeParameter("enumThreshold", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--enum-threshold", val);
+    }
+  } catch {}
 
   try {
-    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
-    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+    const val = this.getNodeParameter(
+      "ignoreCase",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--ignore-case");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "strictDates",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--strict-dates");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "strictFormats",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--strict-formats");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "patternColumns",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--pattern-columns", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "datesWhitelist",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--dates-whitelist", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("preferDmy", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--prefer-dmy");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("force", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--force");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("stdout", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--stdout");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--jobs", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("polars", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--polars");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-headers");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("memcheck", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--memcheck");
+    }
+  } catch {}
+
+  try {
+    const rawOutputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
+    const outputPath = rawOutputPath
+      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
+      : "";
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
@@ -131,17 +170,20 @@ export async function executeSchema(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
-    const { stdout, stderr } = await execa(qsvBin, args);
+    const { stdout, stderr } = await execFileAsync(qsvBin, args, {
+      maxBuffer: 50 * 1024 * 1024,
+      encoding: "utf8",
+    });
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv schema',
+        command: "qsv schema",
         inputPath,
         rawOutput: stdout,
       };
@@ -151,14 +193,14 @@ export async function executeSchema(
       {
         json: {
           success: true,
-          command: 'schema',
+          command: "schema",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv`,

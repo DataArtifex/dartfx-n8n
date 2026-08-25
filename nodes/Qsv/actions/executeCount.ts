@@ -1,6 +1,9 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Action runner for 'qsv count'
@@ -10,83 +13,107 @@ export async function executeCount(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
-  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+  const rawInputPath = this.getNodeParameter(
+    "inputPath",
+    itemIndex,
+    "",
+  ) as string;
+  const inputPath = rawInputPath
+    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
+    : "";
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['count'];
+  const args: string[] = ["count"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('humanReadable', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--human-readable');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('width', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--width');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('widthNoDelims', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--width-no-delims');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('json', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--json');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noPolars', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-polars');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('lowMemory', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--low-memory');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('flexible', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--flexible');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-headers');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
+    const val = this.getNodeParameter(
+      "humanReadable",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--human-readable");
+    }
+  } catch {}
 
   try {
-    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
-    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+    const val = this.getNodeParameter("width", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--width");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "widthNoDelims",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--width-no-delims");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("json", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--json");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noPolars", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-polars");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("lowMemory", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--low-memory");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("flexible", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--flexible");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-headers");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const rawOutputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
+    const outputPath = rawOutputPath
+      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
+      : "";
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
@@ -96,17 +123,20 @@ export async function executeCount(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
-    const { stdout, stderr } = await execa(qsvBin, args);
+    const { stdout, stderr } = await execFileAsync(qsvBin, args, {
+      maxBuffer: 50 * 1024 * 1024,
+      encoding: "utf8",
+    });
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv count',
+        command: "qsv count",
         inputPath,
         rawOutput: stdout,
       };
@@ -116,14 +146,14 @@ export async function executeCount(
       {
         json: {
           success: true,
-          command: 'count',
+          command: "count",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv`,

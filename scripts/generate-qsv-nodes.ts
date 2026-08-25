@@ -345,7 +345,10 @@ function generateActionFile(parsed: ParsedCommand): string {
 
   return `import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Action runner for 'qsv ${opName}'
@@ -383,7 +386,10 @@ export async function execute${capitalized}(
     'qsv';
 
   try {
-    const { stdout, stderr } = await execa(qsvBin, args);
+    const { stdout, stderr } = await execFileAsync(qsvBin, args, {
+      maxBuffer: 50 * 1024 * 1024,
+      encoding: 'utf8',
+    });
     let resultJson: any;
 
     try {

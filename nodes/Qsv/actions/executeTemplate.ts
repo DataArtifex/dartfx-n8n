@@ -1,6 +1,9 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Action runner for 'qsv template'
@@ -10,125 +13,149 @@ export async function executeTemplate(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
-  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+  const rawInputPath = this.getNodeParameter(
+    "inputPath",
+    itemIndex,
+    "",
+  ) as string;
+  const inputPath = rawInputPath
+    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
+    : "";
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['template'];
+  const args: string[] = ["template"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('template', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--template', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('templateFile', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--template-file', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('globalsJson', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--globals-json', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('outfilename', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--outfilename', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('outsubdirSize', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--outsubdir-size', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('customfilterError', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--customfilter-error', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--jobs', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('batch', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--batch', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('timeout', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--timeout', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cacheDir', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--cache-dir', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('ckanApi', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--ckan-api', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('ckanToken', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--ckan-token', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noHeaders', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-headers');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('progressbar', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--progressbar');
-      }
-    } catch {}
+    const val = this.getNodeParameter("template", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--template", val);
+    }
+  } catch {}
 
   try {
-    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
-    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+    const val = this.getNodeParameter("templateFile", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--template-file", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("globalsJson", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--globals-json", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("outfilename", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--outfilename", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("outsubdirSize", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--outsubdir-size", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "customfilterError",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--customfilter-error", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--jobs", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("batch", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--batch", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("timeout", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--timeout", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("cacheDir", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--cache-dir", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("ckanApi", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--ckan-api", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("ckanToken", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--ckan-token", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noHeaders", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-headers");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "progressbar",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--progressbar");
+    }
+  } catch {}
+
+  try {
+    const rawOutputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
+    const outputPath = rawOutputPath
+      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
+      : "";
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
@@ -138,17 +165,20 @@ export async function executeTemplate(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
-    const { stdout, stderr } = await execa(qsvBin, args);
+    const { stdout, stderr } = await execFileAsync(qsvBin, args, {
+      maxBuffer: 50 * 1024 * 1024,
+      encoding: "utf8",
+    });
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv template',
+        command: "qsv template",
         inputPath,
         rawOutput: stdout,
       };
@@ -158,14 +188,14 @@ export async function executeTemplate(
       {
         json: {
           success: true,
-          command: 'template',
+          command: "template",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv`,

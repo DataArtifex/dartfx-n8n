@@ -1,6 +1,9 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Action runner for 'qsv joinp'
@@ -10,307 +13,359 @@ export async function executeJoinp(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
-  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+  const rawInputPath = this.getNodeParameter(
+    "inputPath",
+    itemIndex,
+    "",
+  ) as string;
+  const inputPath = rawInputPath
+    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
+    : "";
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['joinp'];
+  const args: string[] = ["joinp"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('left', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--left');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('leftAnti', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--left-anti');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('leftSemi', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--left-semi');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('right', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--right');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('rightAnti', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--right-anti');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('rightSemi', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--right-semi');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('full', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--full');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cross', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--cross');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('nonEqui', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--non-equi', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('coalesce', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--coalesce');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('filterLeft', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--filter-left', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('filterRight', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--filter-right', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('validate', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--validate', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('maintainOrder', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--maintain-order', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('nulls', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--nulls');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('streaming', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--streaming');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('tryParsedates', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--try-parsedates');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('inferLen', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--infer-len', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cacheSchema', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--cache-schema', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('lowMemory', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--low-memory');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noOptimizations', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-optimizations');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('ignoreErrors', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--ignore-errors');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('decimalComma', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--decimal-comma');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('asof', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--asof');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noSort', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-sort');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('left_by', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--left_by', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('right_by', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--right_by', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('strategy', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--strategy', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('tolerance', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--tolerance', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('allowExactMatches', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--allow-exact-matches');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('sqlFilter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--sql-filter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('datetimeFormat', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--datetime-format', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('dateFormat', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--date-format', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('timeFormat', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--time-format', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('floatPrecision', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--float-precision', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('nullValue', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--null-value', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('ignoreCase', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--ignore-case');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('ignoreLeadingZeros', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--ignore-leading-zeros');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('normUnicode', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--norm-unicode', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--quiet');
-      }
-    } catch {}
+    const val = this.getNodeParameter("left", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--left");
+    }
+  } catch {}
 
   try {
-    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
-    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+    const val = this.getNodeParameter("leftAnti", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--left-anti");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("leftSemi", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--left-semi");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("right", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--right");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("rightAnti", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--right-anti");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("rightSemi", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--right-semi");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("full", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--full");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("cross", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--cross");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("nonEqui", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--non-equi", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("coalesce", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--coalesce");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("filterLeft", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--filter-left", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("filterRight", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--filter-right", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("validate", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--validate", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("maintainOrder", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--maintain-order", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("nulls", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--nulls");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("streaming", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--streaming");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "tryParsedates",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--try-parsedates");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("inferLen", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--infer-len", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("cacheSchema", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--cache-schema", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("lowMemory", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--low-memory");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "noOptimizations",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--no-optimizations");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "ignoreErrors",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--ignore-errors");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "decimalComma",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--decimal-comma");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("asof", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--asof");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noSort", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-sort");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("left_by", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--left_by", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("right_by", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--right_by", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("strategy", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--strategy", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("tolerance", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--tolerance", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "allowExactMatches",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--allow-exact-matches");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("sqlFilter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--sql-filter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "datetimeFormat",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--datetime-format", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("dateFormat", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--date-format", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("timeFormat", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--time-format", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "floatPrecision",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--float-precision", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("nullValue", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--null-value", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "ignoreCase",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--ignore-case");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "ignoreLeadingZeros",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--ignore-leading-zeros");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("normUnicode", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--norm-unicode", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--quiet");
+    }
+  } catch {}
+
+  try {
+    const rawOutputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
+    const outputPath = rawOutputPath
+      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
+      : "";
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
@@ -320,17 +375,20 @@ export async function executeJoinp(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
-    const { stdout, stderr } = await execa(qsvBin, args);
+    const { stdout, stderr } = await execFileAsync(qsvBin, args, {
+      maxBuffer: 50 * 1024 * 1024,
+      encoding: "utf8",
+    });
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv joinp',
+        command: "qsv joinp",
         inputPath,
         rawOutput: stdout,
       };
@@ -340,14 +398,14 @@ export async function executeJoinp(
       {
         json: {
           success: true,
-          command: 'joinp',
+          command: "joinp",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv`,

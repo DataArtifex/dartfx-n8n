@@ -1,6 +1,9 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Action runner for 'qsv sqlp'
@@ -10,167 +13,219 @@ export async function executeSqlp(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
-  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+  const rawInputPath = this.getNodeParameter(
+    "inputPath",
+    itemIndex,
+    "",
+  ) as string;
+  const inputPath = rawInputPath
+    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
+    : "";
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['sqlp'];
+  const args: string[] = ["sqlp"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('format', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--format', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('tryParsedates', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--try-parsedates');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('inferLen', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--infer-len', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('cacheSchema', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--cache-schema');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('streaming', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--streaming');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('lowMemory', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--low-memory');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noOptimizations', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-optimizations');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('truncateRaggedLines', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--truncate-ragged-lines');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('ignoreErrors', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--ignore-errors');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('rnullValues', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--rnull-values', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('decimalComma', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--decimal-comma');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('datetimeFormat', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--datetime-format', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('dateFormat', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--date-format', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('timeFormat', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--time-format', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('floatPrecision', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--float-precision', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('wnullValue', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--wnull-value', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('compression', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--compression', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('compressLevel', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--compress-level', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('statistics', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--statistics');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('delimiter', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--delimiter', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--quiet');
-      }
-    } catch {}
+    const val = this.getNodeParameter("format", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--format", val);
+    }
+  } catch {}
 
   try {
-    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
-    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+    const val = this.getNodeParameter(
+      "tryParsedates",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--try-parsedates");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("inferLen", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--infer-len", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "cacheSchema",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--cache-schema");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("streaming", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--streaming");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("lowMemory", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--low-memory");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "noOptimizations",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--no-optimizations");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "truncateRaggedLines",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--truncate-ragged-lines");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "ignoreErrors",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--ignore-errors");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("rnullValues", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--rnull-values", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "decimalComma",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--decimal-comma");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "datetimeFormat",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--datetime-format", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("dateFormat", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--date-format", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("timeFormat", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--time-format", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "floatPrecision",
+      itemIndex,
+      "",
+    ) as string;
+    if (val !== undefined && val !== "") {
+      args.push("--float-precision", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("wnullValue", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--wnull-value", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("compression", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--compression", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("compressLevel", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--compress-level", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter(
+      "statistics",
+      itemIndex,
+      false,
+    ) as boolean;
+    if (val) {
+      args.push("--statistics");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("delimiter", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--delimiter", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--quiet");
+    }
+  } catch {}
+
+  try {
+    const rawOutputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
+    const outputPath = rawOutputPath
+      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
+      : "";
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
@@ -180,17 +235,20 @@ export async function executeSqlp(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
-    const { stdout, stderr } = await execa(qsvBin, args);
+    const { stdout, stderr } = await execFileAsync(qsvBin, args, {
+      maxBuffer: 50 * 1024 * 1024,
+      encoding: "utf8",
+    });
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv sqlp',
+        command: "qsv sqlp",
         inputPath,
         rawOutput: stdout,
       };
@@ -200,14 +258,14 @@ export async function executeSqlp(
       {
         json: {
           success: true,
-          command: 'sqlp',
+          command: "sqlp",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv`,

@@ -53,9 +53,7 @@
       "dist/nodes/Qsv/Qsv.node.js"
     ]
   },
-  "dependencies": {
-    "execa": "^8.0.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.4",

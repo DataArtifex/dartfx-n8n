@@ -1,6 +1,9 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Action runner for 'qsv blake3'
@@ -10,90 +13,106 @@ export async function executeBlake3(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
-  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+  const rawInputPath = this.getNodeParameter(
+    "inputPath",
+    itemIndex,
+    "",
+  ) as string;
+  const inputPath = rawInputPath
+    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
+    : "";
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['blake3'];
+  const args: string[] = ["blake3"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('keyed', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--keyed');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('deriveKey', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--derive-key', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('length', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--length', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noMmap', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-mmap');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('noNames', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--no-names');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('raw', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--raw');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('tag', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--tag');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('check', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--check');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('jobs', itemIndex, '') as string;
-      if (val !== undefined && val !== '') {
-        args.push('--jobs', val);
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--quiet');
-      }
-    } catch {}
+    const val = this.getNodeParameter("keyed", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--keyed");
+    }
+  } catch {}
 
   try {
-    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
-    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+    const val = this.getNodeParameter("deriveKey", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--derive-key", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("length", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--length", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noMmap", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-mmap");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("noNames", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--no-names");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("raw", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--raw");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("tag", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--tag");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("check", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--check");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("jobs", itemIndex, "") as string;
+    if (val !== undefined && val !== "") {
+      args.push("--jobs", val);
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--quiet");
+    }
+  } catch {}
+
+  try {
+    const rawOutputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
+    const outputPath = rawOutputPath
+      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
+      : "";
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
@@ -103,17 +122,20 @@ export async function executeBlake3(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
-    const { stdout, stderr } = await execa(qsvBin, args);
+    const { stdout, stderr } = await execFileAsync(qsvBin, args, {
+      maxBuffer: 50 * 1024 * 1024,
+      encoding: "utf8",
+    });
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv blake3',
+        command: "qsv blake3",
         inputPath,
         rawOutput: stdout,
       };
@@ -123,14 +145,14 @@ export async function executeBlake3(
       {
         json: {
           success: true,
-          command: 'blake3',
+          command: "blake3",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv`,

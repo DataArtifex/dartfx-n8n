@@ -1,6 +1,9 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execa } from 'execa';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
+
+const execFileAsync = promisify(execFile);
 
 /**
  * Action runner for 'qsv clean'
@@ -10,104 +13,120 @@ export async function executeClean(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const rawInputPath = this.getNodeParameter('inputPath', itemIndex, '') as string;
-  const inputPath = rawInputPath ? rawInputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+  const rawInputPath = this.getNodeParameter(
+    "inputPath",
+    itemIndex,
+    "",
+  ) as string;
+  const inputPath = rawInputPath
+    ? rawInputPath.trim().replace(/^['"]|['"]$/g, "")
+    : "";
   if (!inputPath) {
-    throw new NodeOperationError(this.getNode(), 'Input CSV file path is required.', { itemIndex });
+    throw new NodeOperationError(
+      this.getNode(),
+      "Input CSV file path is required.",
+      { itemIndex },
+    );
   }
 
-  const args: string[] = ['clean'];
+  const args: string[] = ["clean"];
 
   // Collect options and flags
   try {
-      const val = this.getNodeParameter('stale', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--stale');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('recursive', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--recursive');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('dryRun', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--dry-run');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('force', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--force');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('index', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--index');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('stats', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--stats');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('frequency', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--frequency');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('schema', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--schema');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('validate', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--validate');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('moarstats', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--moarstats');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('all', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--all');
-      }
-    } catch {}
-
-    try {
-      const val = this.getNodeParameter('quiet', itemIndex, false) as boolean;
-      if (val) {
-        args.push('--quiet');
-      }
-    } catch {}
+    const val = this.getNodeParameter("stale", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--stale");
+    }
+  } catch {}
 
   try {
-    const rawOutputPath = this.getNodeParameter('outputPath', itemIndex, '') as string;
-    const outputPath = rawOutputPath ? rawOutputPath.trim().replace(/^['"]|['"]$/g, '') : '';
+    const val = this.getNodeParameter("recursive", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--recursive");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("dryRun", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--dry-run");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("force", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--force");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("index", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--index");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("stats", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--stats");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("frequency", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--frequency");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("schema", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--schema");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("validate", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--validate");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("moarstats", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--moarstats");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("all", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--all");
+    }
+  } catch {}
+
+  try {
+    const val = this.getNodeParameter("quiet", itemIndex, false) as boolean;
+    if (val) {
+      args.push("--quiet");
+    }
+  } catch {}
+
+  try {
+    const rawOutputPath = this.getNodeParameter(
+      "outputPath",
+      itemIndex,
+      "",
+    ) as string;
+    const outputPath = rawOutputPath
+      ? rawOutputPath.trim().replace(/^['"]|['"]$/g, "")
+      : "";
     if (outputPath) {
-      args.push('--output', outputPath);
+      args.push("--output", outputPath);
     }
   } catch {}
 
@@ -117,17 +136,20 @@ export async function executeClean(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
-    const { stdout, stderr } = await execa(qsvBin, args);
+    const { stdout, stderr } = await execFileAsync(qsvBin, args, {
+      maxBuffer: 50 * 1024 * 1024,
+      encoding: "utf8",
+    });
     let resultJson: any;
 
     try {
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv clean',
+        command: "qsv clean",
         inputPath,
         rawOutput: stdout,
       };
@@ -137,14 +159,14 @@ export async function executeClean(
       {
         json: {
           success: true,
-          command: 'clean',
+          command: "clean",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv`,
