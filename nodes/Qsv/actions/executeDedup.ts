@@ -86,13 +86,46 @@ export async function executeDedup(
     if (error.code === 'ENOENT') {
       throw new NodeOperationError(
         this.getNode(),
-        `The QSV CLI binary ('${qsvBin}') was not found. Please ensure QSV is installed and in your PATH, or specify its absolute path via the DARTFX_QSV_BIN_PATH or QSV_BIN_PATH environment variables. See: https://github.com/dathere/qsv`,
-        { itemIndex },
+        `The QSV CLI binary ('${qsvBin}') was not found`,
+        {
+          itemIndex,
+          description: `Please ensure 'qsv' is installed and available in the system PATH where n8n is running, or specify its absolute path via the DARTFX_QSV_BIN_PATH environment variable. (https://github.com/dathere/qsv)`,
+        },
       );
     }
+
+    const rawError = (error.stderr || error.message || '').trim();
+
+    if (rawError.includes('No such file or directory') || rawError.includes('os error 2')) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Input file not found: '${inputPath}'`,
+        {
+          itemIndex,
+          description: `qsv dedup could not find the file at '${inputPath}'. Check for typos, or if n8n is running in Docker, ensure the host directory is mounted into the container.`,
+        },
+      );
+    }
+
+    if (
+      rawError.includes('Operation not permitted') ||
+      rawError.includes('os error 1') ||
+      rawError.includes('Permission denied') ||
+      rawError.includes('os error 13')
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Permission denied accessing file: '${inputPath}'`,
+        {
+          itemIndex,
+          description: `qsv dedup was denied read access to '${inputPath}'. On macOS, check Full Disk Access or Removable Volumes permissions for the application running n8n.`,
+        },
+      );
+    }
+
     throw new NodeOperationError(
       this.getNode(),
-      `Failed executing 'qsv dedup': ${error.stderr || error.message}`,
+      `Failed executing 'qsv dedup': ${rawError}`,
       { itemIndex },
     );
   }

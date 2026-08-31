@@ -13,14 +13,6 @@ describe("Qsv Node Metadata & Structure", () => {
     expect(node.description.outputs).toEqual(["main"]);
   });
 
-  it("should include the host prerequisite notice in properties", () => {
-    const noticeProp = node.description.properties.find(
-      (p) => p.name === "qsvHostNotice",
-    );
-    expect(noticeProp).toBeDefined();
-    expect(noticeProp?.type).toBe("notice");
-    expect(noticeProp?.default).toContain("qsv");
-  });
 
   it("should include operation selector with essential tabular operations", () => {
     const operationProp = node.description.properties.find(

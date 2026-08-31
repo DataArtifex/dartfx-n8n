@@ -178,12 +178,6 @@ export class Qsv implements INodeType {
     outputs: ['main'],
     properties: [
       {
-        displayName: 'Host Requirement Notice',
-        name: 'qsvHostNotice',
-        type: 'notice',
-        default: 'This node executes the <b>qsv</b> binary directly on the host machine. Generated and tested against <b>qsv 22.0.1</b>. Ensure <b>qsv</b> is installed and available in the system PATH of your n8n instance.',
-      },
-      {
         displayName: 'Operation',
         name: 'operation',
         type: 'options',
