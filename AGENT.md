@@ -112,6 +112,15 @@ To test nodes directly inside a local n8n instance:
    n8n start
    ```
 
+### 🚀 Release & Publishing
+
+Releases to npm are triggered via Git tags. See [RELEASING.md](RELEASING.md) for full step-by-step instructions.
+
+```bash
+npm version patch -m "chore(release): %s"
+git push origin main --follow-tags
+```
+
 ---
 
 ## 🧠 Agent Guidelines & Best Practices

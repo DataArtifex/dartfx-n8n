@@ -1,7 +1,7 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execFile } from 'child_process';
-import { promisify } from 'util';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
 
 const execFileAsync = promisify(execFile);
 
@@ -9,28 +9,29 @@ export async function executePro(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex) as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex) as string;
   if (!inputPath || !inputPath.trim()) {
     throw new NodeOperationError(
       this.getNode(),
-      'Input CSV file path is required.',
+      "Input CSV file path is required.",
       { itemIndex },
     );
   }
-  const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
-  const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
-  const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
+  const outputPath =
+    (this.getNodeParameter("outputPath", itemIndex, "") as string) || "";
+  const additionalArgs =
+    (this.getNodeParameter("additionalArgs", itemIndex, "") as string) || "";
+  const options =
+    (this.getNodeParameter("options", itemIndex, {}) as any) || {};
 
-  const args: string[] = ['pro'];
-
-
+  const args: string[] = ["pro"];
 
   if (additionalArgs.trim()) {
     args.push(...additionalArgs.trim().split(/\s+/));
   }
 
   if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
+    args.push("--output", outputPath.trim());
   }
 
   args.push(inputPath);
@@ -39,12 +40,12 @@ export async function executePro(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
     const { stdout, stderr } = await execFileAsync(qsvBin, args, {
       maxBuffer: 50 * 1024 * 1024,
-      encoding: 'utf8',
+      encoding: "utf8",
     });
     let resultJson: any;
 
@@ -52,7 +53,7 @@ export async function executePro(
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv pro',
+        command: "qsv pro",
         inputPath,
         rawOutput: stdout,
       };
@@ -62,14 +63,14 @@ export async function executePro(
       {
         json: {
           success: true,
-          command: 'pro',
+          command: "pro",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found`,
@@ -80,9 +81,12 @@ export async function executePro(
       );
     }
 
-    const rawError = (error.stderr || error.message || '').trim();
+    const rawError = (error.stderr || error.message || "").trim();
 
-    if (rawError.includes('No such file or directory') || rawError.includes('os error 2')) {
+    if (
+      rawError.includes("No such file or directory") ||
+      rawError.includes("os error 2")
+    ) {
       throw new NodeOperationError(
         this.getNode(),
         `Input file not found: '${inputPath}'`,
@@ -94,10 +98,10 @@ export async function executePro(
     }
 
     if (
-      rawError.includes('Operation not permitted') ||
-      rawError.includes('os error 1') ||
-      rawError.includes('Permission denied') ||
-      rawError.includes('os error 13')
+      rawError.includes("Operation not permitted") ||
+      rawError.includes("os error 1") ||
+      rawError.includes("Permission denied") ||
+      rawError.includes("os error 13")
     ) {
       throw new NodeOperationError(
         this.getNode(),

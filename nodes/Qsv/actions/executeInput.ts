@@ -1,7 +1,7 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execFile } from 'child_process';
-import { promisify } from 'util';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
 
 const execFileAsync = promisify(execFile);
 
@@ -9,25 +9,28 @@ export async function executeInput(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex) as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex) as string;
   if (!inputPath || !inputPath.trim()) {
     throw new NodeOperationError(
       this.getNode(),
-      'Input CSV file path is required.',
+      "Input CSV file path is required.",
       { itemIndex },
     );
   }
-  const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
-  const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
-  const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
+  const outputPath =
+    (this.getNodeParameter("outputPath", itemIndex, "") as string) || "";
+  const additionalArgs =
+    (this.getNodeParameter("additionalArgs", itemIndex, "") as string) || "";
+  const options =
+    (this.getNodeParameter("options", itemIndex, {}) as any) || {};
 
-  const args: string[] = ['input'];
+  const args: string[] = ["input"];
 
-  if (options.output !== undefined && options.output !== '') {
-    args.push('--output', String(options.output));
+  if (options.output !== undefined && options.output !== "") {
+    args.push("--output", String(options.output));
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.delimiter !== undefined && options.delimiter !== "") {
+    args.push("--delimiter", String(options.delimiter));
   }
 
   if (additionalArgs.trim()) {
@@ -35,7 +38,7 @@ export async function executeInput(
   }
 
   if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
+    args.push("--output", outputPath.trim());
   }
 
   args.push(inputPath);
@@ -44,12 +47,12 @@ export async function executeInput(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
     const { stdout, stderr } = await execFileAsync(qsvBin, args, {
       maxBuffer: 50 * 1024 * 1024,
-      encoding: 'utf8',
+      encoding: "utf8",
     });
     let resultJson: any;
 
@@ -57,7 +60,7 @@ export async function executeInput(
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv input',
+        command: "qsv input",
         inputPath,
         rawOutput: stdout,
       };
@@ -67,14 +70,14 @@ export async function executeInput(
       {
         json: {
           success: true,
-          command: 'input',
+          command: "input",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found`,
@@ -85,9 +88,12 @@ export async function executeInput(
       );
     }
 
-    const rawError = (error.stderr || error.message || '').trim();
+    const rawError = (error.stderr || error.message || "").trim();
 
-    if (rawError.includes('No such file or directory') || rawError.includes('os error 2')) {
+    if (
+      rawError.includes("No such file or directory") ||
+      rawError.includes("os error 2")
+    ) {
       throw new NodeOperationError(
         this.getNode(),
         `Input file not found: '${inputPath}'`,
@@ -99,10 +105,10 @@ export async function executeInput(
     }
 
     if (
-      rawError.includes('Operation not permitted') ||
-      rawError.includes('os error 1') ||
-      rawError.includes('Permission denied') ||
-      rawError.includes('os error 13')
+      rawError.includes("Operation not permitted") ||
+      rawError.includes("os error 1") ||
+      rawError.includes("Permission denied") ||
+      rawError.includes("os error 13")
     ) {
       throw new NodeOperationError(
         this.getNode(),

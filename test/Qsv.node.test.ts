@@ -13,7 +13,6 @@ describe("Qsv Node Metadata & Structure", () => {
     expect(node.description.outputs).toEqual(["main"]);
   });
 
-
   it("should include operation selector with essential tabular operations", () => {
     const operationProp = node.description.properties.find(
       (p) => p.name === "operation",

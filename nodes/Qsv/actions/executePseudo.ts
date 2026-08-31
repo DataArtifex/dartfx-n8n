@@ -1,7 +1,7 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execFile } from 'child_process';
-import { promisify } from 'util';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
 
 const execFileAsync = promisify(execFile);
 
@@ -9,37 +9,40 @@ export async function executePseudo(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex) as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex) as string;
   if (!inputPath || !inputPath.trim()) {
     throw new NodeOperationError(
       this.getNode(),
-      'Input CSV file path is required.',
+      "Input CSV file path is required.",
       { itemIndex },
     );
   }
-  const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
-  const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
-  const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
+  const outputPath =
+    (this.getNodeParameter("outputPath", itemIndex, "") as string) || "";
+  const additionalArgs =
+    (this.getNodeParameter("additionalArgs", itemIndex, "") as string) || "";
+  const options =
+    (this.getNodeParameter("options", itemIndex, {}) as any) || {};
 
-  const args: string[] = ['pseudo'];
+  const args: string[] = ["pseudo"];
 
-  if (options.start !== undefined && options.start !== '') {
-    args.push('--start', String(options.start));
+  if (options.start !== undefined && options.start !== "") {
+    args.push("--start", String(options.start));
   }
-  if (options.increment !== undefined && options.increment !== '') {
-    args.push('--increment', String(options.increment));
+  if (options.increment !== undefined && options.increment !== "") {
+    args.push("--increment", String(options.increment));
   }
-  if (options.formatstr !== undefined && options.formatstr !== '') {
-    args.push('--formatstr', String(options.formatstr));
+  if (options.formatstr !== undefined && options.formatstr !== "") {
+    args.push("--formatstr", String(options.formatstr));
   }
-  if (options.output !== undefined && options.output !== '') {
-    args.push('--output', String(options.output));
+  if (options.output !== undefined && options.output !== "") {
+    args.push("--output", String(options.output));
   }
-  if (options.noHeaders !== undefined && options.noHeaders !== '') {
-    args.push('--no-headers', String(options.noHeaders));
+  if (options.noHeaders !== undefined && options.noHeaders !== "") {
+    args.push("--no-headers", String(options.noHeaders));
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.delimiter !== undefined && options.delimiter !== "") {
+    args.push("--delimiter", String(options.delimiter));
   }
 
   if (additionalArgs.trim()) {
@@ -47,7 +50,7 @@ export async function executePseudo(
   }
 
   if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
+    args.push("--output", outputPath.trim());
   }
 
   args.push(inputPath);
@@ -56,12 +59,12 @@ export async function executePseudo(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
     const { stdout, stderr } = await execFileAsync(qsvBin, args, {
       maxBuffer: 50 * 1024 * 1024,
-      encoding: 'utf8',
+      encoding: "utf8",
     });
     let resultJson: any;
 
@@ -69,7 +72,7 @@ export async function executePseudo(
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv pseudo',
+        command: "qsv pseudo",
         inputPath,
         rawOutput: stdout,
       };
@@ -79,14 +82,14 @@ export async function executePseudo(
       {
         json: {
           success: true,
-          command: 'pseudo',
+          command: "pseudo",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found`,
@@ -97,9 +100,12 @@ export async function executePseudo(
       );
     }
 
-    const rawError = (error.stderr || error.message || '').trim();
+    const rawError = (error.stderr || error.message || "").trim();
 
-    if (rawError.includes('No such file or directory') || rawError.includes('os error 2')) {
+    if (
+      rawError.includes("No such file or directory") ||
+      rawError.includes("os error 2")
+    ) {
       throw new NodeOperationError(
         this.getNode(),
         `Input file not found: '${inputPath}'`,
@@ -111,10 +117,10 @@ export async function executePseudo(
     }
 
     if (
-      rawError.includes('Operation not permitted') ||
-      rawError.includes('os error 1') ||
-      rawError.includes('Permission denied') ||
-      rawError.includes('os error 13')
+      rawError.includes("Operation not permitted") ||
+      rawError.includes("os error 1") ||
+      rawError.includes("Permission denied") ||
+      rawError.includes("os error 13")
     ) {
       throw new NodeOperationError(
         this.getNode(),

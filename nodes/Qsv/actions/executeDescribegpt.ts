@@ -1,7 +1,7 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execFile } from 'child_process';
-import { promisify } from 'util';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
 
 const execFileAsync = promisify(execFile);
 
@@ -9,46 +9,49 @@ export async function executeDescribegpt(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex) as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex) as string;
   if (!inputPath || !inputPath.trim()) {
     throw new NodeOperationError(
       this.getNode(),
-      'Input CSV file path is required.',
+      "Input CSV file path is required.",
       { itemIndex },
     );
   }
-  const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
-  const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
-  const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
+  const outputPath =
+    (this.getNodeParameter("outputPath", itemIndex, "") as string) || "";
+  const additionalArgs =
+    (this.getNodeParameter("additionalArgs", itemIndex, "") as string) || "";
+  const options =
+    (this.getNodeParameter("options", itemIndex, {}) as any) || {};
 
-  const args: string[] = ['describegpt'];
+  const args: string[] = ["describegpt"];
 
-  if (options.format !== undefined && options.format !== '') {
-    args.push('--format', String(options.format));
+  if (options.format !== undefined && options.format !== "") {
+    args.push("--format", String(options.format));
   }
-  if (options.allowExtraCols !== undefined && options.allowExtraCols !== '') {
-    args.push('--allow-extra-cols', String(options.allowExtraCols));
+  if (options.allowExtraCols !== undefined && options.allowExtraCols !== "") {
+    args.push("--allow-extra-cols", String(options.allowExtraCols));
   }
-  if (options.strictDates !== undefined && options.strictDates !== '') {
-    args.push('--strict-dates', String(options.strictDates));
+  if (options.strictDates !== undefined && options.strictDates !== "") {
+    args.push("--strict-dates", String(options.strictDates));
   }
-  if (options.dsSource !== undefined && options.dsSource !== '') {
-    args.push('--ds-source', String(options.dsSource));
+  if (options.dsSource !== undefined && options.dsSource !== "") {
+    args.push("--ds-source", String(options.dsSource));
   }
-  if (options.dsUpdated !== undefined && options.dsUpdated !== '') {
-    args.push('--ds-updated', String(options.dsUpdated));
+  if (options.dsUpdated !== undefined && options.dsUpdated !== "") {
+    args.push("--ds-updated", String(options.dsUpdated));
   }
-  if (options.dsLicense !== undefined && options.dsLicense !== '') {
-    args.push('--ds-license', String(options.dsLicense));
+  if (options.dsLicense !== undefined && options.dsLicense !== "") {
+    args.push("--ds-license", String(options.dsLicense));
   }
-  if (options.okfType !== undefined && options.okfType !== '') {
-    args.push('--okf-type', String(options.okfType));
+  if (options.okfType !== undefined && options.okfType !== "") {
+    args.push("--okf-type", String(options.okfType));
   }
-  if (options.output !== undefined && options.output !== '') {
-    args.push('--output', String(options.output));
+  if (options.output !== undefined && options.output !== "") {
+    args.push("--output", String(options.output));
   }
-  if (options.quiet !== undefined && options.quiet !== '') {
-    args.push('--quiet', String(options.quiet));
+  if (options.quiet !== undefined && options.quiet !== "") {
+    args.push("--quiet", String(options.quiet));
   }
 
   if (additionalArgs.trim()) {
@@ -56,7 +59,7 @@ export async function executeDescribegpt(
   }
 
   if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
+    args.push("--output", outputPath.trim());
   }
 
   args.push(inputPath);
@@ -65,12 +68,12 @@ export async function executeDescribegpt(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
     const { stdout, stderr } = await execFileAsync(qsvBin, args, {
       maxBuffer: 50 * 1024 * 1024,
-      encoding: 'utf8',
+      encoding: "utf8",
     });
     let resultJson: any;
 
@@ -78,7 +81,7 @@ export async function executeDescribegpt(
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv describegpt',
+        command: "qsv describegpt",
         inputPath,
         rawOutput: stdout,
       };
@@ -88,14 +91,14 @@ export async function executeDescribegpt(
       {
         json: {
           success: true,
-          command: 'describegpt',
+          command: "describegpt",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found`,
@@ -106,9 +109,12 @@ export async function executeDescribegpt(
       );
     }
 
-    const rawError = (error.stderr || error.message || '').trim();
+    const rawError = (error.stderr || error.message || "").trim();
 
-    if (rawError.includes('No such file or directory') || rawError.includes('os error 2')) {
+    if (
+      rawError.includes("No such file or directory") ||
+      rawError.includes("os error 2")
+    ) {
       throw new NodeOperationError(
         this.getNode(),
         `Input file not found: '${inputPath}'`,
@@ -120,10 +126,10 @@ export async function executeDescribegpt(
     }
 
     if (
-      rawError.includes('Operation not permitted') ||
-      rawError.includes('os error 1') ||
-      rawError.includes('Permission denied') ||
-      rawError.includes('os error 13')
+      rawError.includes("Operation not permitted") ||
+      rawError.includes("os error 1") ||
+      rawError.includes("Permission denied") ||
+      rawError.includes("os error 13")
     ) {
       throw new NodeOperationError(
         this.getNode(),

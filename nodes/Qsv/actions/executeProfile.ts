@@ -1,7 +1,7 @@
-import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
-import { execFile } from 'child_process';
-import { promisify } from 'util';
+import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
+import { execFile } from "child_process";
+import { promisify } from "util";
 
 const execFileAsync = promisify(execFile);
 
@@ -9,28 +9,31 @@ export async function executeProfile(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter('inputPath', itemIndex) as string;
+  const inputPath = this.getNodeParameter("inputPath", itemIndex) as string;
   if (!inputPath || !inputPath.trim()) {
     throw new NodeOperationError(
       this.getNode(),
-      'Input CSV file path is required.',
+      "Input CSV file path is required.",
       { itemIndex },
     );
   }
-  const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
-  const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
-  const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
+  const outputPath =
+    (this.getNodeParameter("outputPath", itemIndex, "") as string) || "";
+  const additionalArgs =
+    (this.getNodeParameter("additionalArgs", itemIndex, "") as string) || "";
+  const options =
+    (this.getNodeParameter("options", itemIndex, {}) as any) || {};
 
-  const args: string[] = ['profile'];
+  const args: string[] = ["profile"];
 
-  if (options.noHeaders !== undefined && options.noHeaders !== '') {
-    args.push('--no-headers', String(options.noHeaders));
+  if (options.noHeaders !== undefined && options.noHeaders !== "") {
+    args.push("--no-headers", String(options.noHeaders));
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.delimiter !== undefined && options.delimiter !== "") {
+    args.push("--delimiter", String(options.delimiter));
   }
-  if (options.memcheck !== undefined && options.memcheck !== '') {
-    args.push('--memcheck', String(options.memcheck));
+  if (options.memcheck !== undefined && options.memcheck !== "") {
+    args.push("--memcheck", String(options.memcheck));
   }
 
   if (additionalArgs.trim()) {
@@ -38,7 +41,7 @@ export async function executeProfile(
   }
 
   if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
+    args.push("--output", outputPath.trim());
   }
 
   args.push(inputPath);
@@ -47,12 +50,12 @@ export async function executeProfile(
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    'qsv';
+    "qsv";
 
   try {
     const { stdout, stderr } = await execFileAsync(qsvBin, args, {
       maxBuffer: 50 * 1024 * 1024,
-      encoding: 'utf8',
+      encoding: "utf8",
     });
     let resultJson: any;
 
@@ -60,7 +63,7 @@ export async function executeProfile(
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv profile',
+        command: "qsv profile",
         inputPath,
         rawOutput: stdout,
       };
@@ -70,14 +73,14 @@ export async function executeProfile(
       {
         json: {
           success: true,
-          command: 'profile',
+          command: "profile",
           inputPath,
           result: resultJson,
         },
       },
     ];
   } catch (error: any) {
-    if (error.code === 'ENOENT') {
+    if (error.code === "ENOENT") {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found`,
@@ -88,9 +91,12 @@ export async function executeProfile(
       );
     }
 
-    const rawError = (error.stderr || error.message || '').trim();
+    const rawError = (error.stderr || error.message || "").trim();
 
-    if (rawError.includes('No such file or directory') || rawError.includes('os error 2')) {
+    if (
+      rawError.includes("No such file or directory") ||
+      rawError.includes("os error 2")
+    ) {
       throw new NodeOperationError(
         this.getNode(),
         `Input file not found: '${inputPath}'`,
@@ -102,10 +108,10 @@ export async function executeProfile(
     }
 
     if (
-      rawError.includes('Operation not permitted') ||
-      rawError.includes('os error 1') ||
-      rawError.includes('Permission denied') ||
-      rawError.includes('os error 13')
+      rawError.includes("Operation not permitted") ||
+      rawError.includes("os error 1") ||
+      rawError.includes("Permission denied") ||
+      rawError.includes("os error 13")
     ) {
       throw new NodeOperationError(
         this.getNode(),

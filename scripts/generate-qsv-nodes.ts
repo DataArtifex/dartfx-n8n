@@ -32,9 +32,7 @@ function getQsvVersion(): string {
     const versionOutput = execSync(`${QSV_BIN} --version`, {
       encoding: "utf8",
     }).trim();
-    const match = versionOutput.match(
-      /^qsv\s+([0-9]+\.[0-9]+(?:\.[0-9]+)?)/i,
-    );
+    const match = versionOutput.match(/^qsv\s+([0-9]+\.[0-9]+(?:\.[0-9]+)?)/i);
     if (match) {
       return match[1];
     }

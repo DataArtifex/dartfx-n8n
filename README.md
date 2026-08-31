@@ -246,4 +246,4 @@ and then reference the path inside n8n as `/data/myfile.csv`.
 
 ---
 
-See [AGENT.md](AGENT.md) for full architecture and development workflows.
+See [AGENT.md](AGENT.md) for full architecture and development workflows, and [RELEASING.md](RELEASING.md) for publishing and versioning instructions.
