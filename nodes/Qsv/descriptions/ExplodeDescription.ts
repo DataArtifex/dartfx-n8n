@@ -56,11 +56,6 @@ export const ExplodeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['explode'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -68,11 +63,6 @@ export const ExplodeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will not be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['explode'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -80,11 +70,6 @@ export const ExplodeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['explode'],
-        },
-      },
     },
     ],
   },

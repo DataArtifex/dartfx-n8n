@@ -56,11 +56,6 @@ export const FixlengthsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['fixlengths'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const FixlengthsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['fixlengths'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -80,11 +70,6 @@ export const FixlengthsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'on\'t print removed column information.',
-      displayOptions: {
-        show: {
-          operation: ['fixlengths'],
-        },
-      },
     },
     ],
   },

@@ -56,11 +56,6 @@ export const TransposeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['transpose'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const TransposeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['transpose'],
-        },
-      },
     },
     {
       displayName: 'Memcheck',
@@ -80,11 +70,6 @@ export const TransposeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'heck if there is enough memory to load the entire',
-      displayOptions: {
-        show: {
-          operation: ['transpose'],
-        },
-      },
     },
     ],
   },

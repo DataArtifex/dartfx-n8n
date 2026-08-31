@@ -56,11 +56,6 @@ export const FixedwidthDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['fixedwidth'],
-        },
-      },
     },
     ],
   },

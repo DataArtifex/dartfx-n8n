@@ -56,11 +56,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Adaptive sampling mode for time-series data.',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'Ts Aggregate',
@@ -68,11 +63,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Aggregation function to apply within each time interval.',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'Ts Input Tz',
@@ -80,11 +70,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Timezone for parsing input timestamps. Can be an IANA timezone name or "local" for the local timezone.',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'Ts Prefer Dmy',
@@ -92,11 +77,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'refer to parse dates in dmy format. Otherwise, use mdy format.',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'Sketch Out',
@@ -104,11 +84,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'After sampling, also write a binary sketch describing the internal',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'Sketch In',
@@ -116,11 +91,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Comma-separated list of sketch files produced by --sketch-out.',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'User Agent',
@@ -128,11 +98,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Specify custom user agent to use when the input is a URL.',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'Timeout',
@@ -140,11 +105,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Inactivity timeout for downloading URLs in seconds. Aborts only if',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'Max Size',
@@ -152,11 +112,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Maximum size of the file to download in MB before sampling.',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'Force',
@@ -164,11 +119,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not use stats cache, even if its available.',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'Output',
@@ -176,11 +126,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -188,11 +133,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will be considered as part of',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -200,11 +140,6 @@ export const SampleDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading/writing CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['sample'],
-        },
-      },
     },
     ],
   },

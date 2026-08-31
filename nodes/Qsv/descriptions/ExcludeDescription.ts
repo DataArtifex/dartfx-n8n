@@ -56,11 +56,6 @@ export const ExcludeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['exclude'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -68,11 +63,6 @@ export const ExcludeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will not be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['exclude'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -80,11 +70,6 @@ export const ExcludeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['exclude'],
-        },
-      },
     },
     {
       displayName: 'Memcheck',
@@ -92,11 +77,6 @@ export const ExcludeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'heck if there is enough memory to load <input2>',
-      displayOptions: {
-        show: {
-          operation: ['exclude'],
-        },
-      },
     },
     ],
   },

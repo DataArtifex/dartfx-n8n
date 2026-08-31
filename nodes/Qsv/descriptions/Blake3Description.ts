@@ -56,11 +56,6 @@ export const Blake3Description: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['blake3'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -68,11 +63,6 @@ export const Blake3Description: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'kip printing OK for each checked file.',
-      displayOptions: {
-        show: {
-          operation: ['blake3'],
-        },
-      },
     },
     ],
   },

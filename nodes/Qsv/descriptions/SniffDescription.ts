@@ -56,11 +56,6 @@ export const SniffDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'how progress bars. Only valid for URL input.',
-      displayOptions: {
-        show: {
-          operation: ['sniff'],
-        },
-      },
     },
     ],
   },

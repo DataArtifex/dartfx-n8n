@@ -56,11 +56,6 @@ export const SplitDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will NOT be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['split'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const SplitDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['split'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -80,11 +70,6 @@ export const SplitDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not display an output summary to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['split'],
-        },
-      },
     },
     ],
   },

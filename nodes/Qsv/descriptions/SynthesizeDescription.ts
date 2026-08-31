@@ -56,11 +56,6 @@ export const SynthesizeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['synthesize'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const SynthesizeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading the input CSV.',
-      displayOptions: {
-        show: {
-          operation: ['synthesize'],
-        },
-      },
     },
     ],
   },

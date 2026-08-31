@@ -56,11 +56,6 @@ export const SnappyDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <output> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['snappy'],
-        },
-      },
     },
     {
       displayName: 'Jobs',
@@ -68,11 +63,6 @@ export const SnappyDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The number of jobs to run in parallel when compressing.',
-      displayOptions: {
-        show: {
-          operation: ['snappy'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -80,11 +70,6 @@ export const SnappyDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'uppress status messages to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['snappy'],
-        },
-      },
     },
     {
       displayName: 'Progressbar',
@@ -92,11 +77,6 @@ export const SnappyDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'how download progress bars. Only valid for URL input.',
-      displayOptions: {
-        show: {
-          operation: ['snappy'],
-        },
-      },
     },
     ],
   },

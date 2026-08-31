@@ -56,11 +56,6 @@ export const SqlpDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['sqlp'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const SqlpDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading and writing CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['sqlp'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -80,11 +70,6 @@ export const SqlpDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not return result shape to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['sqlp'],
-        },
-      },
     },
     ],
   },

@@ -56,11 +56,6 @@ export const CleanDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not print the per-file / summary report.',
-      displayOptions: {
-        show: {
-          operation: ['clean'],
-        },
-      },
     },
     ],
   },

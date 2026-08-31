@@ -56,11 +56,6 @@ export const DenullDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write the report here instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['denull'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -68,11 +63,6 @@ export const DenullDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will NOT be interpreted as',
-      displayOptions: {
-        show: {
-          operation: ['denull'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -80,11 +70,6 @@ export const DenullDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['denull'],
-        },
-      },
     },
     ],
   },

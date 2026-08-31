@@ -56,11 +56,6 @@ export const ToDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['to'],
-        },
-      },
     },
     ],
   },

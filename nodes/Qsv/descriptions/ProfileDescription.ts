@@ -56,11 +56,6 @@ export const ProfileDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will not be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['profile'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const ProfileDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['profile'],
-        },
-      },
     },
     {
       displayName: 'Memcheck',
@@ -80,11 +70,6 @@ export const ProfileDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'heck if there is enough memory to load the entire',
-      displayOptions: {
-        show: {
-          operation: ['profile'],
-        },
-      },
     },
     ],
   },

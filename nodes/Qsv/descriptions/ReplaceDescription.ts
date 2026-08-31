@@ -56,11 +56,6 @@ export const ReplaceDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['replace'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -68,11 +63,6 @@ export const ReplaceDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will not be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['replace'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -80,11 +70,6 @@ export const ReplaceDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['replace'],
-        },
-      },
     },
     {
       displayName: 'Progressbar',
@@ -92,11 +77,6 @@ export const ReplaceDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'how progress bars. Not valid for stdin.',
-      displayOptions: {
-        show: {
-          operation: ['replace'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -104,11 +84,6 @@ export const ReplaceDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not print number of replacements to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['replace'],
-        },
-      },
     },
     ],
   },

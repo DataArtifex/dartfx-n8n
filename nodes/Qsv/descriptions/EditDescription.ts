@@ -56,11 +56,6 @@ export const EditDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['edit'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -68,11 +63,6 @@ export const EditDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'tart row indices from the header row as 0 (allows editing the header row).',
-      displayOptions: {
-        show: {
-          operation: ['edit'],
-        },
-      },
     },
     ],
   },

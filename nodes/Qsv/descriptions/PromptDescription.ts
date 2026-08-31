@@ -56,11 +56,6 @@ export const PromptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> without showing a save dialog.',
-      displayOptions: {
-        show: {
-          operation: ['prompt'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -68,11 +63,6 @@ export const PromptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not print --fd-output message to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['prompt'],
-        },
-      },
     },
     ],
   },

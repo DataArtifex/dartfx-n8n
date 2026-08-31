@@ -56,11 +56,6 @@ export const GeocodeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['geocode'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const GeocodeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['geocode'],
-        },
-      },
     },
     {
       displayName: 'Progressbar',
@@ -80,11 +70,6 @@ export const GeocodeDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'how progress bars. Will also show the cache hit rate upon completion.',
-      displayOptions: {
-        show: {
-          operation: ['geocode'],
-        },
-      },
     },
     ],
   },

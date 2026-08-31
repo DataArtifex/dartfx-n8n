@@ -56,11 +56,6 @@ export const ExtdedupDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will not be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['extdedup'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const ExtdedupDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['extdedup'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -80,11 +70,6 @@ export const ExtdedupDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not print duplicate count to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['extdedup'],
-        },
-      },
     },
     ],
   },

@@ -56,11 +56,6 @@ export const MoarstatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: '',
-      displayOptions: {
-        show: {
-          operation: ['moarstats'],
-        },
-      },
     },
     {
       displayName: 'Bivariate Batch',
@@ -68,11 +63,6 @@ export const MoarstatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Process at most <n> field pairs per pass over the input,',
-      displayOptions: {
-        show: {
-          operation: ['moarstats'],
-        },
-      },
     },
     {
       displayName: 'Join Inputs',
@@ -80,11 +70,6 @@ export const MoarstatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: '',
-      displayOptions: {
-        show: {
-          operation: ['moarstats'],
-        },
-      },
     },
     {
       displayName: 'Join Keys',
@@ -92,11 +77,6 @@ export const MoarstatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: '',
-      displayOptions: {
-        show: {
-          operation: ['moarstats'],
-        },
-      },
     },
     {
       displayName: 'Join Type',
@@ -104,11 +84,6 @@ export const MoarstatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: '',
-      displayOptions: {
-        show: {
-          operation: ['moarstats'],
-        },
-      },
     },
     {
       displayName: 'Progressbar',
@@ -116,11 +91,6 @@ export const MoarstatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'how progress bars when computing bivariate statistics.',
-      displayOptions: {
-        show: {
-          operation: ['moarstats'],
-        },
-      },
     },
     {
       displayName: 'Force',
@@ -128,11 +98,6 @@ export const MoarstatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'orce recomputing stats even if valid precomputed stats',
-      displayOptions: {
-        show: {
-          operation: ['moarstats'],
-        },
-      },
     },
     {
       displayName: 'Jobs',
@@ -140,11 +105,6 @@ export const MoarstatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The number of jobs to run in parallel.',
-      displayOptions: {
-        show: {
-          operation: ['moarstats'],
-        },
-      },
     },
     {
       displayName: 'Output',
@@ -152,11 +112,6 @@ export const MoarstatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of overwriting the stats CSV file.',
-      displayOptions: {
-        show: {
-          operation: ['moarstats'],
-        },
-      },
     },
     ],
   },

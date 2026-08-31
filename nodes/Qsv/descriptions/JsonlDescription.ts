@@ -56,11 +56,6 @@ export const JsonlDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['jsonl'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const JsonlDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The delimiter to use when writing CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['jsonl'],
-        },
-      },
     },
     ],
   },

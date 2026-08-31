@@ -56,11 +56,6 @@ export const DescribegptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Output format: Markdown, TSV, JSON, TOON, JSONSchema, SemanticMd, or OKF.',
-      displayOptions: {
-        show: {
-          operation: ['describegpt'],
-        },
-      },
     },
     {
       displayName: 'Allow Extra Cols',
@@ -68,11 +63,6 @@ export const DescribegptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen the format is JSONSchema, emit additionalProperties as true at the',
-      displayOptions: {
-        show: {
-          operation: ['describegpt'],
-        },
-      },
     },
     {
       displayName: 'Strict Dates',
@@ -80,11 +70,6 @@ export const DescribegptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen the format is JSONSchema, emit format date or date-time for',
-      displayOptions: {
-        show: {
-          operation: ['describegpt'],
-        },
-      },
     },
     {
       displayName: 'Ds Source',
@@ -92,11 +77,6 @@ export const DescribegptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'For the SemanticMd & OKF formats only: the dataset source/provenance',
-      displayOptions: {
-        show: {
-          operation: ['describegpt'],
-        },
-      },
     },
     {
       displayName: 'Ds Updated',
@@ -104,11 +84,6 @@ export const DescribegptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'For the SemanticMd & OKF formats only: the dataset\'s last-updated date',
-      displayOptions: {
-        show: {
-          operation: ['describegpt'],
-        },
-      },
     },
     {
       displayName: 'Ds License',
@@ -116,11 +91,6 @@ export const DescribegptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'For the SemanticMd format only: the dataset license recorded in the',
-      displayOptions: {
-        show: {
-          operation: ['describegpt'],
-        },
-      },
     },
     {
       displayName: 'Okf Type',
@@ -128,11 +98,6 @@ export const DescribegptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'For the OKF format only: the value of the required `type` frontmatter key',
-      displayOptions: {
-        show: {
-          operation: ['describegpt'],
-        },
-      },
     },
     {
       displayName: 'Output',
@@ -140,11 +105,6 @@ export const DescribegptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout. If --format is set to TSV,',
-      displayOptions: {
-        show: {
-          operation: ['describegpt'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -152,11 +112,6 @@ export const DescribegptDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not print status messages to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['describegpt'],
-        },
-      },
     },
     ],
   },

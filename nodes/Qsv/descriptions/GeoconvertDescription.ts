@@ -56,11 +56,6 @@ export const GeoconvertDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['geoconvert'],
-        },
-      },
     },
     ],
   },

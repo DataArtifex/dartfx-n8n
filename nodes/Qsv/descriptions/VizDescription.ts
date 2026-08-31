@@ -56,11 +56,6 @@ export const VizDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout. The chart',
-      displayOptions: {
-        show: {
-          operation: ['viz'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const VizDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['viz'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -80,11 +70,6 @@ export const VizDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will not be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['viz'],
-        },
-      },
     },
     ],
   },

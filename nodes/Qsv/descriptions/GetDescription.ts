@@ -56,11 +56,6 @@ export const GetDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The qsv cache directory. Overrides the QSV_CACHE_DIR',
-      displayOptions: {
-        show: {
-          operation: ['get'],
-        },
-      },
     },
     {
       displayName: 'Output',
@@ -68,11 +63,6 @@ export const GetDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'For a single <source> (or cache-fetch <name>), write the',
-      displayOptions: {
-        show: {
-          operation: ['get'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -80,11 +70,6 @@ export const GetDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not print progress/summary messages to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['get'],
-        },
-      },
     },
     ],
   },

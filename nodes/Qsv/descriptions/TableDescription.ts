@@ -56,11 +56,6 @@ export const TableDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Limits the length of each field to the value',
-      displayOptions: {
-        show: {
-          operation: ['table'],
-        },
-      },
     },
     {
       displayName: 'Output',
@@ -68,11 +63,6 @@ export const TableDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['table'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -80,11 +70,6 @@ export const TableDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['table'],
-        },
-      },
     },
     {
       displayName: 'Memcheck',
@@ -92,11 +77,6 @@ export const TableDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'heck if there is enough memory to load the entire',
-      displayOptions: {
-        show: {
-          operation: ['table'],
-        },
-      },
     },
     ],
   },

@@ -56,11 +56,6 @@ export const ExcelDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['excel'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const ExcelDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The delimiter to use when writing CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['excel'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -80,11 +70,6 @@ export const ExcelDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not display export summary message.',
-      displayOptions: {
-        show: {
-          operation: ['excel'],
-        },
-      },
     },
     ],
   },

@@ -56,11 +56,6 @@ export const StatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['stats'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -68,11 +63,6 @@ export const StatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will NOT be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['stats'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -80,11 +70,6 @@ export const StatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for READING CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['stats'],
-        },
-      },
     },
     {
       displayName: 'Memcheck',
@@ -92,11 +77,6 @@ export const StatsDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'se CONSERVATIVE heuristics for the in-memory load',
-      displayOptions: {
-        show: {
-          operation: ['stats'],
-        },
-      },
     },
     ],
   },

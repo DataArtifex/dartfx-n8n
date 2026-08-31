@@ -56,11 +56,6 @@ export const DiffDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['diff'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const DiffDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Set ALL delimiters to this character.',
-      displayOptions: {
-        show: {
-          operation: ['diff'],
-        },
-      },
     },
     ],
   },

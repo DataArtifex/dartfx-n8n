@@ -56,11 +56,6 @@ export const JoinpDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['joinp'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const JoinpDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading/writing CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['joinp'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -80,11 +70,6 @@ export const JoinpDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not return join shape to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['joinp'],
-        },
-      },
     },
     ],
   },

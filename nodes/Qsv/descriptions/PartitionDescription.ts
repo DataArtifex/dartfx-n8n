@@ -56,11 +56,6 @@ export const PartitionDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will NOT be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['partition'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const PartitionDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['partition'],
-        },
-      },
     },
     ],
   },

@@ -56,11 +56,6 @@ export const PivotpDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['pivotp'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const PivotpDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading/writing CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['pivotp'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -80,11 +70,6 @@ export const PivotpDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not return smart aggregation chosen nor pivot result shape to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['pivotp'],
-        },
-      },
     },
     ],
   },

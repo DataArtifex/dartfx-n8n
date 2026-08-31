@@ -227,11 +227,6 @@ function generateDescriptionFile(cmd: ParsedCommand): string {
       type: 'boolean',
       default: false,
       description: '${cleanDesc}',
-      displayOptions: {
-        show: {
-          operation: ['${cmd.name}'],
-        },
-      },
     },`);
     } else {
       // String or Number option
@@ -250,11 +245,6 @@ function generateDescriptionFile(cmd: ParsedCommand): string {
       type: '${propType}',
       default: ${defaultVal},
       description: '${cleanDesc}',
-      displayOptions: {
-        show: {
-          operation: ['${cmd.name}'],
-        },
-      },
     },`);
     }
   }

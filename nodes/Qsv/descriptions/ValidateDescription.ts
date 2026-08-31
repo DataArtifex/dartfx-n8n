@@ -56,11 +56,6 @@ export const ValidateDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will not be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['validate'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const ValidateDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['validate'],
-        },
-      },
     },
     {
       displayName: 'Progressbar',
@@ -80,11 +70,6 @@ export const ValidateDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'how progress bars. Not valid for stdin.',
-      displayOptions: {
-        show: {
-          operation: ['validate'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -92,11 +77,6 @@ export const ValidateDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not display validation summary message.',
-      displayOptions: {
-        show: {
-          operation: ['validate'],
-        },
-      },
     },
     ],
   },

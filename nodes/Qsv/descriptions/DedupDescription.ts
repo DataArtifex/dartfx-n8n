@@ -56,11 +56,6 @@ export const DedupDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['dedup'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -68,11 +63,6 @@ export const DedupDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will not be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['dedup'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -80,11 +70,6 @@ export const DedupDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['dedup'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -92,11 +77,6 @@ export const DedupDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not print duplicate count to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['dedup'],
-        },
-      },
     },
     {
       displayName: 'Memcheck',
@@ -104,11 +84,6 @@ export const DedupDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'heck if there is enough memory to load the entire',
-      displayOptions: {
-        show: {
-          operation: ['dedup'],
-        },
-      },
     },
     ],
   },

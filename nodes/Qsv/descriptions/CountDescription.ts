@@ -56,11 +56,6 @@ export const CountDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not validate if the CSV has different number of',
-      displayOptions: {
-        show: {
-          operation: ['count'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -68,11 +63,6 @@ export const CountDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will be included in',
-      displayOptions: {
-        show: {
-          operation: ['count'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -80,11 +70,6 @@ export const CountDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The delimiter to use when reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['count'],
-        },
-      },
     },
     ],
   },

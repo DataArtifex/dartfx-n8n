@@ -56,11 +56,6 @@ export const BeheadDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not validate if the CSV has different number of',
-      displayOptions: {
-        show: {
-          operation: ['behead'],
-        },
-      },
     },
     {
       displayName: 'Output',
@@ -68,11 +63,6 @@ export const BeheadDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['behead'],
-        },
-      },
     },
     ],
   },

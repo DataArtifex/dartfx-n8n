@@ -56,11 +56,6 @@ export const PragmastatDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['pragmastat'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const PragmastatDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading/writing CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['pragmastat'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -80,11 +70,6 @@ export const PragmastatDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will not be treated as headers.',
-      displayOptions: {
-        show: {
-          operation: ['pragmastat'],
-        },
-      },
     },
     {
       displayName: 'Jobs',
@@ -92,11 +77,6 @@ export const PragmastatDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The number of jobs to run in parallel.',
-      displayOptions: {
-        show: {
-          operation: ['pragmastat'],
-        },
-      },
     },
     {
       displayName: 'Memcheck',
@@ -104,11 +84,6 @@ export const PragmastatDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'heck if there is enough memory to load the entire',
-      displayOptions: {
-        show: {
-          operation: ['pragmastat'],
-        },
-      },
     },
     ],
   },

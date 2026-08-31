@@ -56,11 +56,6 @@ export const ScoresqlDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['scoresql'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const ScoresqlDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['scoresql'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -80,11 +70,6 @@ export const ScoresqlDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not print informational messages to stderr.',
-      displayOptions: {
-        show: {
-          operation: ['scoresql'],
-        },
-      },
     },
     ],
   },

@@ -56,11 +56,6 @@ export const TojsonlDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['tojsonl'],
-        },
-      },
     },
     {
       displayName: 'Output',
@@ -68,11 +63,6 @@ export const TojsonlDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['tojsonl'],
-        },
-      },
     },
     {
       displayName: 'Memcheck',
@@ -80,11 +70,6 @@ export const TojsonlDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'heck if there is enough memory to load the entire',
-      displayOptions: {
-        show: {
-          operation: ['tojsonl'],
-        },
-      },
     },
     {
       displayName: 'Quiet',
@@ -92,11 +77,6 @@ export const TojsonlDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'o not display enum/const list inferencing messages.',
-      displayOptions: {
-        show: {
-          operation: ['tojsonl'],
-        },
-      },
     },
     ],
   },

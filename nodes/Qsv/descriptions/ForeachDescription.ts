@@ -56,11 +56,6 @@ export const ForeachDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the file will be considered to have no',
-      displayOptions: {
-        show: {
-          operation: ['foreach'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -68,11 +63,6 @@ export const ForeachDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['foreach'],
-        },
-      },
     },
     {
       displayName: 'Progressbar',
@@ -80,11 +70,6 @@ export const ForeachDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'how progress bars. Not valid for stdin.',
-      displayOptions: {
-        show: {
-          operation: ['foreach'],
-        },
-      },
     },
     ],
   },

@@ -56,11 +56,6 @@ export const PseudoDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The starting number for the incremental identifier.',
-      displayOptions: {
-        show: {
-          operation: ['pseudo'],
-        },
-      },
     },
     {
       displayName: 'Increment',
@@ -68,11 +63,6 @@ export const PseudoDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The increment for the incremental identifier.',
-      displayOptions: {
-        show: {
-          operation: ['pseudo'],
-        },
-      },
     },
     {
       displayName: 'Formatstr',
@@ -80,11 +70,6 @@ export const PseudoDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The format string for the incremental identifier.',
-      displayOptions: {
-        show: {
-          operation: ['pseudo'],
-        },
-      },
     },
     {
       displayName: 'Output',
@@ -92,11 +77,6 @@ export const PseudoDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'Write output to <file> instead of stdout.',
-      displayOptions: {
-        show: {
-          operation: ['pseudo'],
-        },
-      },
     },
     {
       displayName: 'No Headers',
@@ -104,11 +84,6 @@ export const PseudoDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'hen set, the first row will not be interpreted',
-      displayOptions: {
-        show: {
-          operation: ['pseudo'],
-        },
-      },
     },
     {
       displayName: 'Delimiter',
@@ -116,11 +91,6 @@ export const PseudoDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data.',
-      displayOptions: {
-        show: {
-          operation: ['pseudo'],
-        },
-      },
     },
     ],
   },
