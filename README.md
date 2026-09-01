@@ -73,13 +73,14 @@ If you run n8n using Docker, create a custom image that includes the `qsv` binar
 FROM docker.n8n.io/n8nio/n8n:latest
 
 USER root
-# Install QSV pre-compiled binary for musl/alpine
-RUN apk add --no-cache curl unzip \
+# Install dependencies and download appropriate QSV prebuilt binary for host architecture
+RUN apk add --no-cache curl unzip bash \
     && ARCH=$(uname -m) \
     && if [ "$ARCH" = "x86_64" ]; then QSV_ARCH="x86_64-unknown-linux-musl"; \
-       elif [ "$ARCH" = "aarch64" ]; then QSV_ARCH="aarch64-unknown-linux-musl"; fi \
-    && curl -fsSL "https://github.com/dathere/qsv/releases/latest/download/qsv-latest-${QSV_ARCH}.zip" -o /tmp/qsv.zip \
-    && unzip -o /tmp/qsv.zip qsv -d /usr/local/bin \
+       elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then QSV_ARCH="aarch64-unknown-linux-musl"; \
+       else QSV_ARCH="x86_64-unknown-linux-musl"; fi \
+    && curl -fsSL "https://github.com/dathere/qsv/releases/latest/download/qsv-${QSV_ARCH}.zip" -o /tmp/qsv.zip \
+    && unzip -q -o /tmp/qsv.zip qsv -d /usr/local/bin \
     && chmod +x /usr/local/bin/qsv \
     && rm -f /tmp/qsv.zip
 
