@@ -26,15 +26,40 @@ export async function executePrompt(
 
   const args: string[] = ["prompt"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.msg !== undefined && options.msg !== "") {
+    args.push("--msg", String(options.msg));
   }
-  if (options.quiet !== undefined && options.quiet !== "") {
-    args.push("--quiet", String(options.quiet));
+  if (options.filters !== undefined && options.filters !== "") {
+    args.push("--filters", String(options.filters));
+  }
+  if (options.workdir !== undefined && options.workdir !== "") {
+    args.push("--workdir", String(options.workdir));
+  }
+  if (options.fdOutput === true) {
+    args.push("--fd-output");
+  }
+  if (options.saveFname !== undefined && options.saveFname !== "") {
+    args.push("--save-fname", String(options.saveFname));
+  }
+  if (options.baseDelayMs !== undefined && options.baseDelayMs !== "") {
+    args.push("--base-delay-ms", String(options.baseDelayMs));
+  }
+  if (options.quiet === true) {
+    args.push("--quiet");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -66,14 +91,24 @@ export async function executePrompt(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "prompt",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "prompt",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -88,7 +123,36 @@ export async function executePrompt(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv prompt returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'prompt' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'prompt' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

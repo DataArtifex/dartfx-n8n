@@ -51,6 +51,14 @@ export const ClipboardDescription: INodeProperties[] = [
         operation: ["clipboard"],
       },
     },
-    options: [],
+    options: [
+      {
+        displayName: "Save",
+        name: "save",
+        type: "boolean",
+        default: false,
+        description: "Save output to clipboard.",
+      },
+    ],
   },
 ];

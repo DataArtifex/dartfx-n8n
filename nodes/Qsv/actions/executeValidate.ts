@@ -26,21 +26,103 @@ export async function executeValidate(
 
   const args: string[] = ["validate"];
 
-  if (options.noHeaders !== undefined && options.noHeaders !== "") {
-    args.push("--no-headers", String(options.noHeaders));
+  if (options.trim === true) {
+    args.push("--trim");
+  }
+  if (options.noFormatValidation === true) {
+    args.push("--no-format-validation");
+  }
+  if (options.failFast === true) {
+    args.push("--fail-fast");
+  }
+  if (options.valid !== undefined && options.valid !== "") {
+    args.push("--valid", String(options.valid));
+  }
+  if (options.invalid !== undefined && options.invalid !== "") {
+    args.push("--invalid", String(options.invalid));
+  }
+  if (options.splitRagged === true) {
+    args.push("--split-ragged");
+  }
+  if (options.json === true) {
+    args.push("--json");
+  }
+  if (options.prettyJson === true) {
+    args.push("--pretty-json");
+  }
+  if (options.validOutput !== undefined && options.validOutput !== "") {
+    args.push("--valid-output", String(options.validOutput));
+  }
+  if (options.jobs !== undefined && options.jobs !== "") {
+    args.push("--jobs", String(options.jobs));
+  }
+  if (options.batch !== undefined && options.batch !== "") {
+    args.push("--batch", String(options.batch));
+  }
+  if (options.fancyRegex === true) {
+    args.push("--fancy-regex");
+  }
+  if (options.backtrackLimit !== undefined && options.backtrackLimit !== "") {
+    args.push("--backtrack-limit", String(options.backtrackLimit));
+  }
+  if (options.sizeLimit !== undefined && options.sizeLimit !== "") {
+    args.push("--size-limit", String(options.sizeLimit));
+  }
+  if (options.dfaSizeLimit !== undefined && options.dfaSizeLimit !== "") {
+    args.push("--dfa-size-limit", String(options.dfaSizeLimit));
+  }
+  if (options.timeout !== undefined && options.timeout !== "") {
+    args.push("--timeout", String(options.timeout));
+  }
+  if (options.cacheDir !== undefined && options.cacheDir !== "") {
+    args.push("--cache-dir", String(options.cacheDir));
+  }
+  if (options.ckanApi !== undefined && options.ckanApi !== "") {
+    args.push("--ckan-api", String(options.ckanApi));
+  }
+  if (options.ckanToken !== undefined && options.ckanToken !== "") {
+    args.push("--ckan-token", String(options.ckanToken));
+  }
+  if (options.emailRequiredTld === true) {
+    args.push("--email-required-tld");
+  }
+  if (options.emailDisplayText === true) {
+    args.push("--email-display-text");
+  }
+  if (
+    options.emailMinSubdomains !== undefined &&
+    options.emailMinSubdomains !== ""
+  ) {
+    args.push("--email-min-subdomains", String(options.emailMinSubdomains));
+  }
+  if (options.emailDomainLiteral === true) {
+    args.push("--email-domain-literal");
+  }
+  if (options.noHeaders === true) {
+    args.push("--no-headers");
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.progressbar !== undefined && options.progressbar !== "") {
-    args.push("--progressbar", String(options.progressbar));
+  if (options.progressbar === true) {
+    args.push("--progressbar");
   }
-  if (options.quiet !== undefined && options.quiet !== "") {
-    args.push("--quiet", String(options.quiet));
+  if (options.quiet === true) {
+    args.push("--quiet");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -72,14 +154,24 @@ export async function executeValidate(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "validate",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "validate",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -94,7 +186,36 @@ export async function executeValidate(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv validate returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'validate' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'validate' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

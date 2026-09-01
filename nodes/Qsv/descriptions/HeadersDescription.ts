@@ -52,6 +52,34 @@ export const HeadersDescription: INodeProperties[] = [
     },
     options: [
       {
+        displayName: "Just Names",
+        name: "justNames",
+        type: "boolean",
+        default: false,
+        description: "Only show the header names (hide column index).",
+      },
+      {
+        displayName: "Just Count",
+        name: "justCount",
+        type: "boolean",
+        default: false,
+        description: "Only show the number of headers.",
+      },
+      {
+        displayName: "Union",
+        name: "union",
+        type: "boolean",
+        default: false,
+        description: "Shows the union of headers across all inputs",
+      },
+      {
+        displayName: "Trim",
+        name: "trim",
+        type: "boolean",
+        default: false,
+        description: "Trim leading/trailing space, tab, and quote",
+      },
+      {
         displayName: "Delimiter",
         name: "delimiter",
         type: "string",

@@ -26,12 +26,31 @@ export async function executeGeoconvert(
 
   const args: string[] = ["geoconvert"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.geometry !== undefined && options.geometry !== "") {
+    args.push("--geometry", String(options.geometry));
+  }
+  if (options.latitude !== undefined && options.latitude !== "") {
+    args.push("--latitude", String(options.latitude));
+  }
+  if (options.longitude !== undefined && options.longitude !== "") {
+    args.push("--longitude", String(options.longitude));
+  }
+  if (options.maxLength !== undefined && options.maxLength !== "") {
+    args.push("--max-length", String(options.maxLength));
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -63,14 +82,24 @@ export async function executeGeoconvert(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "geoconvert",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "geoconvert",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -85,7 +114,36 @@ export async function executeGeoconvert(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv geoconvert returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'geoconvert' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'geoconvert' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

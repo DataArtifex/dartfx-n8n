@@ -52,6 +52,98 @@ export const SampleDescription: INodeProperties[] = [
     },
     options: [
       {
+        displayName: "Seed",
+        name: "seed",
+        type: "string",
+        default: "",
+        description: "Random Number Generator (RNG) seed.",
+      },
+      {
+        displayName: "Rng",
+        name: "rng",
+        type: "string",
+        default: "",
+        description: "The Random Number Generator (RNG) algorithm to use.",
+      },
+      {
+        displayName: "Bernoulli",
+        name: "bernoulli",
+        type: "boolean",
+        default: false,
+        description:
+          "Use Bernoulli sampling instead of indexed or reservoir sampling.",
+      },
+      {
+        displayName: "Systematic",
+        name: "systematic",
+        type: "string",
+        default: "",
+        description:
+          "Use systematic sampling (every nth record as specified by <sample-size>).",
+      },
+      {
+        displayName: "Stratified",
+        name: "stratified",
+        type: "string",
+        default: "",
+        description:
+          "Use stratified sampling. The strata column is specified by <col>.",
+      },
+      {
+        displayName: "Weighted",
+        name: "weighted",
+        type: "string",
+        default: "",
+        description:
+          "Use weighted sampling. The weight column is specified by <col>.",
+      },
+      {
+        displayName: "Varopt",
+        name: "varopt",
+        type: "string",
+        default: "",
+        description: "Use VAROPT weighted reservoir sampling (A-ExpJ keying).",
+      },
+      {
+        displayName: "Mergeable Reservoir",
+        name: "mergeableReservoir",
+        type: "boolean",
+        default: false,
+        description:
+          "Use a mergeable Algorithm-R reservoir sampler. Distribution is",
+      },
+      {
+        displayName: "Cluster",
+        name: "cluster",
+        type: "string",
+        default: "",
+        description:
+          "Use cluster sampling. The cluster column is specified by <col>.",
+      },
+      {
+        displayName: "Timeseries",
+        name: "timeseries",
+        type: "string",
+        default: "",
+        description:
+          "Use time-series sampling. The time column is specified by <col>.",
+      },
+      {
+        displayName: "Ts Interval",
+        name: "tsInterval",
+        type: "string",
+        default: "",
+        description:
+          "Time interval for grouping records. Format: <number><unit>",
+      },
+      {
+        displayName: "Ts Start",
+        name: "tsStart",
+        type: "string",
+        default: "",
+        description: "Starting point for time-series sampling.",
+      },
+      {
         displayName: "Ts Adaptive",
         name: "tsAdaptive",
         type: "string",
@@ -76,10 +168,10 @@ export const SampleDescription: INodeProperties[] = [
       {
         displayName: "Ts Prefer Dmy",
         name: "tsPreferDmy",
-        type: "string",
-        default: "",
+        type: "boolean",
+        default: false,
         description:
-          "refer to parse dates in dmy format. Otherwise, use mdy format.",
+          "Prefer to parse dates in dmy format. Otherwise, use mdy format.",
       },
       {
         displayName: "Sketch Out",
@@ -124,23 +216,16 @@ export const SampleDescription: INodeProperties[] = [
       {
         displayName: "Force",
         name: "force",
-        type: "string",
-        default: "",
-        description: "o not use stats cache, even if its available.",
-      },
-      {
-        displayName: "Output",
-        name: "output",
-        type: "string",
-        default: "",
-        description: "Write output to <file> instead of stdout.",
+        type: "boolean",
+        default: false,
+        description: "Do not use stats cache, even if its available.",
       },
       {
         displayName: "No Headers",
         name: "noHeaders",
-        type: "string",
-        default: "",
-        description: "hen set, the first row will be considered as part of",
+        type: "boolean",
+        default: false,
+        description: "When set, the first row will be considered as part of",
       },
       {
         displayName: "Delimiter",

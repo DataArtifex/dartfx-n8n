@@ -52,18 +52,32 @@ export const SelectDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Random",
+        name: "random",
+        type: "boolean",
+        default: false,
+        description: "Randomly shuffle the columns in the selection.",
+      },
+      {
+        displayName: "Seed",
+        name: "seed",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description: "Seed for the random number generator.",
+      },
+      {
+        displayName: "Sort",
+        name: "sort",
+        type: "boolean",
+        default: false,
+        description: "Sort the selected columns lexicographically,",
       },
       {
         displayName: "No Headers",
         name: "noHeaders",
-        type: "string",
-        default: "",
-        description: "hen set, the first row will not be interpreted",
+        type: "boolean",
+        default: false,
+        description: "When set, the first row will not be interpreted",
       },
       {
         displayName: "Delimiter",

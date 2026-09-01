@@ -52,18 +52,40 @@ export const FillDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Groupby",
+        name: "groupby",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description: "Group by specified columns.",
+      },
+      {
+        displayName: "First",
+        name: "first",
+        type: "boolean",
+        default: false,
+        description:
+          "Fill using the first valid value of a column, instead of the latest.",
+      },
+      {
+        displayName: "Backfill",
+        name: "backfill",
+        type: "boolean",
+        default: false,
+        description: "Fill initial empty values with the first valid value.",
+      },
+      {
+        displayName: "Default",
+        name: "default",
+        type: "string",
+        default: "",
+        description: "Fill using this default value.",
       },
       {
         displayName: "No Headers",
         name: "noHeaders",
-        type: "string",
-        default: "",
-        description: "hen set, the first row will not be interpreted",
+        type: "boolean",
+        default: false,
+        description: "When set, the first row will not be interpreted",
       },
       {
         displayName: "Delimiter",

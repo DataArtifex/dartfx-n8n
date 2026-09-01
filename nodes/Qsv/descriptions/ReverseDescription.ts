@@ -52,18 +52,11 @@ export const ReverseDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
-        type: "string",
-        default: "",
-        description: "Write output to <file> instead of stdout.",
-      },
-      {
         displayName: "No Headers",
         name: "noHeaders",
-        type: "string",
-        default: "",
-        description: "hen set, the first row will not be interpreted",
+        type: "boolean",
+        default: false,
+        description: "When set, the first row will not be interpreted",
       },
       {
         displayName: "Delimiter",
@@ -75,9 +68,9 @@ export const ReverseDescription: INodeProperties[] = [
       {
         displayName: "Memcheck",
         name: "memcheck",
-        type: "string",
-        default: "",
-        description: "heck if there is enough memory to load the entire",
+        type: "boolean",
+        default: false,
+        description: "Check if there is enough memory to load the entire",
       },
     ],
   },

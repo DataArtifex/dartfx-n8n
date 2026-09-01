@@ -61,9 +61,9 @@ export const ExtsortDescription: INodeProperties[] = [
       {
         displayName: "No Headers",
         name: "noHeaders",
-        type: "string",
-        default: "",
-        description: "hen set, the first row will not be interpreted",
+        type: "boolean",
+        default: false,
+        description: "When set, the first row will not be interpreted",
       },
     ],
   },

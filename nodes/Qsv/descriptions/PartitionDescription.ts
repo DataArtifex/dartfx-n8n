@@ -53,11 +53,39 @@ export const PartitionDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "No Headers",
-        name: "noHeaders",
+        displayName: "Filename",
+        name: "filename",
         type: "string",
         default: "",
-        description: "hen set, the first row will NOT be interpreted",
+        description: "A filename template to use when constructing the",
+      },
+      {
+        displayName: "Prefix Length",
+        name: "prefixLength",
+        type: "string",
+        default: "",
+        description: "Truncate the partition column after the",
+      },
+      {
+        displayName: "Drop",
+        name: "drop",
+        type: "boolean",
+        default: false,
+        description: "Drop the partition column from results.",
+      },
+      {
+        displayName: "Limit",
+        name: "limit",
+        type: "string",
+        default: "",
+        description: "Limit the number of simultaneously open files.",
+      },
+      {
+        displayName: "No Headers",
+        name: "noHeaders",
+        type: "boolean",
+        default: false,
+        description: "When set, the first row will NOT be interpreted",
       },
       {
         displayName: "Delimiter",

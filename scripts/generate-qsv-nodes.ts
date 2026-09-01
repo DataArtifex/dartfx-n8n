@@ -140,7 +140,8 @@ function parseHelpText(cmdName: string, helpText: string): ParsedCommand {
     if (
       line.trim().startsWith("Usage:") ||
       line.trim().startsWith("Common options:") ||
-      line.trim().startsWith("options:")
+      line.trim().startsWith("options:") ||
+      line.trim().endsWith("options:")
     ) {
       break;
     }
@@ -151,28 +152,25 @@ function parseHelpText(cmdName: string, helpText: string): ParsedCommand {
 
   // Extract options
   let inOptions = false;
+  const linePattern =
+    /^\s*(?:-([a-zA-Z0-9]),\s+)?--([a-zA-Z0-9_-]+)(?:(?:=|\s+)(<[^>]+>|\[[^\]]+\]|[A-Z][A-Z0-9_-]*))?(?:\s{2,}(.*)|$)/;
+
   for (const line of lines) {
-    if (
-      line.trim().toLowerCase().startsWith("options:") ||
-      line.trim().toLowerCase().startsWith("common options:")
-    ) {
+    if (line.trim().toLowerCase().includes("options:")) {
       inOptions = true;
       continue;
     }
 
     if (inOptions) {
-      // Match option lines like: "    -s, --select <arg>  Select columns" or "    --delimiter <arg>  Field delimiter"
-      const optMatch = line.match(
-        /^\s*(?:-([a-zA-Z0-9]),\s+)?--([a-zA-Z0-9_-]+)(?:\s+(<[^>]+>|\[[^\]]+\]|[A-Z_]+))?\s*(.*)$/,
-      );
+      const optMatch = line.match(linePattern);
       if (optMatch) {
         const shortFlag = optMatch[1];
         const flag = optMatch[2];
         const argType = optMatch[3];
         let desc = optMatch[4] ? optMatch[4].trim() : "";
 
-        // Filter out options that n8n handles automatically or are irrelevant for automated node
-        if (["help", "version"].includes(flag)) {
+        // Filter out options handled top-level (output) or irrelevant (help, version)
+        if (["help", "version", "output"].includes(flag)) {
           continue;
         }
 
@@ -354,7 +352,17 @@ export async function execute${capitalized}(
 ${flagProcessors.join("\n")}
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\\s+/));
+    const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -386,14 +394,24 @@ ${flagProcessors.join("\n")}
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: '${opName}',
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: '${opName}',
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -408,7 +426,33 @@ ${flagProcessors.join("\n")}
       );
     }
 
+    if (error.code === 'ERR_CHILD_PROCESS_STDIO_MAXBUFFER' || (error.message && error.message.includes('maxBuffer'))) {
+      throw new NodeOperationError(
+        this.getNode(),
+        \`QSV execution exceeded maximum stdout buffer (50 MB)\`,
+        {
+          itemIndex,
+          description: \`qsv ${opName} returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.\`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || '').trim();
+
+    if (
+      rawError.includes('is not a qsv command') ||
+      rawError.includes('unrecognized subcommand') ||
+      rawError.includes('not available in this')
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        \`Operation '${opName}' is not available in the installed QSV binary\`,
+        {
+          itemIndex,
+          description: \`The installed QSV binary at '\${qsvBin}' does not include the '${opName}' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags\`,
+        },
+      );
+    }
 
     if (rawError.includes('No such file or directory') || rawError.includes('os error 2')) {
       throw new NodeOperationError(

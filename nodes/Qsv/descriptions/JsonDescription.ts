@@ -52,11 +52,19 @@ export const JsonDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Jaq",
+        name: "jaq",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description:
+          "Filter JSON data using jaq syntax (https://github.com/01mf02/jaq),",
+      },
+      {
+        displayName: "Select",
+        name: "select",
+        type: "string",
+        default: "",
+        description: "Select, reorder or drop columns for output.",
       },
     ],
   },

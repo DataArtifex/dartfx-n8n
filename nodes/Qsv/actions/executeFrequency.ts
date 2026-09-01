@@ -26,21 +26,127 @@ export async function executeFrequency(
 
   const args: string[] = ["frequency"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.select !== undefined && options.select !== "") {
+    args.push("--select", String(options.select));
   }
-  if (options.noHeaders !== undefined && options.noHeaders !== "") {
-    args.push("--no-headers", String(options.noHeaders));
+  if (options.limit !== undefined && options.limit !== "") {
+    args.push("--limit", String(options.limit));
+  }
+  if (options.sketchMethod !== undefined && options.sketchMethod !== "") {
+    args.push("--sketch-method", String(options.sketchMethod));
+  }
+  if (options.sketchMapSize !== undefined && options.sketchMapSize !== "") {
+    args.push("--sketch-map-size", String(options.sketchMapSize));
+  }
+  if (options.unqLimit !== undefined && options.unqLimit !== "") {
+    args.push("--unq-limit", String(options.unqLimit));
+  }
+  if (options.lmtThreshold !== undefined && options.lmtThreshold !== "") {
+    args.push("--lmt-threshold", String(options.lmtThreshold));
+  }
+  if (options.rankStrategy !== undefined && options.rankStrategy !== "") {
+    args.push("--rank-strategy", String(options.rankStrategy));
+  }
+  if (options.pctDecPlaces !== undefined && options.pctDecPlaces !== "") {
+    args.push("--pct-dec-places", String(options.pctDecPlaces));
+  }
+  if (options.otherSorted === true) {
+    args.push("--other-sorted");
+  }
+  if (options.otherText !== undefined && options.otherText !== "") {
+    args.push("--other-text", String(options.otherText));
+  }
+  if (options.noOther === true) {
+    args.push("--no-other");
+  }
+  if (options.nullSorted === true) {
+    args.push("--null-sorted");
+  }
+  if (options.asc === true) {
+    args.push("--asc");
+  }
+  if (options.noTrim === true) {
+    args.push("--no-trim");
+  }
+  if (options.nullText !== undefined && options.nullText !== "") {
+    args.push("--null-text", String(options.nullText));
+  }
+  if (options.noNulls === true) {
+    args.push("--no-nulls");
+  }
+  if (options.pctNulls === true) {
+    args.push("--pct-nulls");
+  }
+  if (options.ignoreCase === true) {
+    args.push("--ignore-case");
+  }
+  if (options.noFloat !== undefined && options.noFloat !== "") {
+    args.push("--no-float", String(options.noFloat));
+  }
+  if (options.statsFilter !== undefined && options.statsFilter !== "") {
+    args.push("--stats-filter", String(options.statsFilter));
+  }
+  if (options.allUniqueText !== undefined && options.allUniqueText !== "") {
+    args.push("--all-unique-text", String(options.allUniqueText));
+  }
+  if (options.visWhitespace === true) {
+    args.push("--vis-whitespace");
+  }
+  if (options.jobs !== undefined && options.jobs !== "") {
+    args.push("--jobs", String(options.jobs));
+  }
+  if (options.frequencyJsonl === true) {
+    args.push("--frequency-jsonl");
+  }
+  if (
+    options.highCardThreshold !== undefined &&
+    options.highCardThreshold !== ""
+  ) {
+    args.push("--high-card-threshold", String(options.highCardThreshold));
+  }
+  if (options.highCardPct !== undefined && options.highCardPct !== "") {
+    args.push("--high-card-pct", String(options.highCardPct));
+  }
+  if (options.force === true) {
+    args.push("--force");
+  }
+  if (options.json === true) {
+    args.push("--json");
+  }
+  if (options.prettyJson === true) {
+    args.push("--pretty-json");
+  }
+  if (options.toon === true) {
+    args.push("--toon");
+  }
+  if (options.noStats === true) {
+    args.push("--no-stats");
+  }
+  if (options.weight !== undefined && options.weight !== "") {
+    args.push("--weight", String(options.weight));
+  }
+  if (options.noHeaders === true) {
+    args.push("--no-headers");
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.memcheck !== undefined && options.memcheck !== "") {
-    args.push("--memcheck", String(options.memcheck));
+  if (options.memcheck === true) {
+    args.push("--memcheck");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -72,14 +178,24 @@ export async function executeFrequency(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "frequency",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "frequency",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -94,7 +210,36 @@ export async function executeFrequency(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv frequency returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'frequency' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'frequency' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

@@ -52,11 +52,25 @@ export const JsonlDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Ignore Errors",
+        name: "ignoreErrors",
+        type: "boolean",
+        default: false,
+        description: "Skip malformed input lines.",
+      },
+      {
+        displayName: "Jobs",
+        name: "jobs",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description: "The number of jobs to run in parallel.",
+      },
+      {
+        displayName: "Batch",
+        name: "batch",
+        type: "string",
+        default: "",
+        description: "The number of rows per batch to load into memory,",
       },
       {
         displayName: "Delimiter",

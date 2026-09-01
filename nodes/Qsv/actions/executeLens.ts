@@ -26,8 +26,64 @@ export async function executeLens(
 
   const args: string[] = ["lens"];
 
+  if (options.delimiter !== undefined && options.delimiter !== "") {
+    args.push("--delimiter", String(options.delimiter));
+  }
+  if (options.tabSeparated === true) {
+    args.push("--tab-separated");
+  }
+  if (options.noHeaders === true) {
+    args.push("--no-headers");
+  }
+  if (options.columns !== undefined && options.columns !== "") {
+    args.push("--columns", String(options.columns));
+  }
+  if (options.filter !== undefined && options.filter !== "") {
+    args.push("--filter", String(options.filter));
+  }
+  if (options.find !== undefined && options.find !== "") {
+    args.push("--find", String(options.find));
+  }
+  if (options.ignoreCase === true) {
+    args.push("--ignore-case");
+  }
+  if (options.freezeColumns !== undefined && options.freezeColumns !== "") {
+    args.push("--freeze-columns", String(options.freezeColumns));
+  }
+  if (options.monochrome === true) {
+    args.push("--monochrome");
+  }
+  if (options.wrapMode !== undefined && options.wrapMode !== "") {
+    args.push("--wrap-mode", String(options.wrapMode));
+  }
+  if (options.autoReload === true) {
+    args.push("--auto-reload");
+  }
+  if (options.streamingStdin === true) {
+    args.push("--streaming-stdin");
+  }
+  if (options.prompt !== undefined && options.prompt !== "") {
+    args.push("--prompt", String(options.prompt));
+  }
+  if (options.echoColumn !== undefined && options.echoColumn !== "") {
+    args.push("--echo-column", String(options.echoColumn));
+  }
+  if (options.debug === true) {
+    args.push("--debug");
+  }
+
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -59,14 +115,24 @@ export async function executeLens(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "lens",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "lens",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -81,7 +147,36 @@ export async function executeLens(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv lens returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'lens' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'lens' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

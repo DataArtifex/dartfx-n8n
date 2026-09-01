@@ -26,21 +26,34 @@ export async function executeExclude(
 
   const args: string[] = ["exclude"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.ignoreCase === true) {
+    args.push("--ignore-case");
   }
-  if (options.noHeaders !== undefined && options.noHeaders !== "") {
-    args.push("--no-headers", String(options.noHeaders));
+  if (options.invert === true) {
+    args.push("--invert");
+  }
+  if (options.noHeaders === true) {
+    args.push("--no-headers");
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.memcheck !== undefined && options.memcheck !== "") {
-    args.push("--memcheck", String(options.memcheck));
+  if (options.memcheck === true) {
+    args.push("--memcheck");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -72,14 +85,24 @@ export async function executeExclude(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "exclude",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "exclude",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -94,7 +117,36 @@ export async function executeExclude(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv exclude returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'exclude' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'exclude' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

@@ -41,10 +41,11 @@ When an n8n workflow triggers the QSV node:
 2. **Action Handlers (`actions/execute*.ts`)**:
    - Extracts node parameters.
    - Constructs argument array for `qsv` (e.g. `['stats', '--everything', '--json', inputPath]`).
-   - Invokes `execa('qsv', args)`.
+   - Invokes `child_process.execFile` (promisified) with configurable `maxBuffer`.
 3. **Output Emission**:
-   - If `outputPath` is specified, writes to disk and returns `{ json: { outputPath, success: true } }`.
-   - If stdout returns JSON, parses and emits structured data objects into the n8n execution pipeline.
+   - Returns `{ json: { success: true, command, inputPath, outputPath?, result, warnings? } }`.
+   - When `outputPath` is specified, writes to disk and passes `outputPath` in the returned JSON object for zero-copy chaining in downstream nodes (`{{ $json.outputPath }}`).
+   - If stdout returns JSON, parses and emits structured data objects in `result`. If warnings occurred, passes them in `warnings`.
 
 ---
 

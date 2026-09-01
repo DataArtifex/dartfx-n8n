@@ -26,18 +26,82 @@ export async function executeSqlp(
 
   const args: string[] = ["sqlp"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.format !== undefined && options.format !== "") {
+    args.push("--format", String(options.format));
+  }
+  if (options.tryParsedates === true) {
+    args.push("--try-parsedates");
+  }
+  if (options.inferLen !== undefined && options.inferLen !== "") {
+    args.push("--infer-len", String(options.inferLen));
+  }
+  if (options.cacheSchema === true) {
+    args.push("--cache-schema");
+  }
+  if (options.streaming === true) {
+    args.push("--streaming");
+  }
+  if (options.lowMemory === true) {
+    args.push("--low-memory");
+  }
+  if (options.noOptimizations === true) {
+    args.push("--no-optimizations");
+  }
+  if (options.truncateRaggedLines === true) {
+    args.push("--truncate-ragged-lines");
+  }
+  if (options.ignoreErrors === true) {
+    args.push("--ignore-errors");
+  }
+  if (options.rnullValues !== undefined && options.rnullValues !== "") {
+    args.push("--rnull-values", String(options.rnullValues));
+  }
+  if (options.decimalComma === true) {
+    args.push("--decimal-comma");
+  }
+  if (options.datetimeFormat !== undefined && options.datetimeFormat !== "") {
+    args.push("--datetime-format", String(options.datetimeFormat));
+  }
+  if (options.dateFormat !== undefined && options.dateFormat !== "") {
+    args.push("--date-format", String(options.dateFormat));
+  }
+  if (options.timeFormat !== undefined && options.timeFormat !== "") {
+    args.push("--time-format", String(options.timeFormat));
+  }
+  if (options.floatPrecision !== undefined && options.floatPrecision !== "") {
+    args.push("--float-precision", String(options.floatPrecision));
+  }
+  if (options.wnullValue !== undefined && options.wnullValue !== "") {
+    args.push("--wnull-value", String(options.wnullValue));
+  }
+  if (options.compression !== undefined && options.compression !== "") {
+    args.push("--compression", String(options.compression));
+  }
+  if (options.compressLevel !== undefined && options.compressLevel !== "") {
+    args.push("--compress-level", String(options.compressLevel));
+  }
+  if (options.statistics === true) {
+    args.push("--statistics");
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.quiet !== undefined && options.quiet !== "") {
-    args.push("--quiet", String(options.quiet));
+  if (options.quiet === true) {
+    args.push("--quiet");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -69,14 +133,24 @@ export async function executeSqlp(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "sqlp",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "sqlp",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -91,7 +165,36 @@ export async function executeSqlp(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv sqlp returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'sqlp' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'sqlp' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

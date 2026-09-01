@@ -26,21 +26,121 @@ export async function executeStats(
 
   const args: string[] = ["stats"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.select !== undefined && options.select !== "") {
+    args.push("--select", String(options.select));
   }
-  if (options.noHeaders !== undefined && options.noHeaders !== "") {
-    args.push("--no-headers", String(options.noHeaders));
+  if (options.everything === true) {
+    args.push("--everything");
+  }
+  if (options.typesonly === true) {
+    args.push("--typesonly");
+  }
+  if (options.inferBoolean === true) {
+    args.push("--infer-boolean");
+  }
+  if (options.booleanPatterns !== undefined && options.booleanPatterns !== "") {
+    args.push("--boolean-patterns", String(options.booleanPatterns));
+  }
+  if (options.mode === true) {
+    args.push("--mode");
+  }
+  if (options.cardinality === true) {
+    args.push("--cardinality");
+  }
+  if (options.zeroPaddedNumeric === true) {
+    args.push("--zero-padded-numeric");
+  }
+  if (options.median === true) {
+    args.push("--median");
+  }
+  if (options.mad === true) {
+    args.push("--mad");
+  }
+  if (options.quartiles === true) {
+    args.push("--quartiles");
+  }
+  if (options.percentiles === true) {
+    args.push("--percentiles");
+  }
+  if (options.percentileList !== undefined && options.percentileList !== "") {
+    args.push("--percentile-list", String(options.percentileList));
+  }
+  if (options.quantileMethod !== undefined && options.quantileMethod !== "") {
+    args.push("--quantile-method", String(options.quantileMethod));
+  }
+  if (
+    options.cardinalityMethod !== undefined &&
+    options.cardinalityMethod !== ""
+  ) {
+    args.push("--cardinality-method", String(options.cardinalityMethod));
+  }
+  if (
+    options.modeCardinalityCap !== undefined &&
+    options.modeCardinalityCap !== ""
+  ) {
+    args.push("--mode-cardinality-cap", String(options.modeCardinalityCap));
+  }
+  if (options.round !== undefined && options.round !== "") {
+    args.push("--round", String(options.round));
+  }
+  if (options.nulls === true) {
+    args.push("--nulls");
+  }
+  if (options.weight !== undefined && options.weight !== "") {
+    args.push("--weight", String(options.weight));
+  }
+  if (options.inferDates === true) {
+    args.push("--infer-dates");
+  }
+  if (options.datesWhitelist !== undefined && options.datesWhitelist !== "") {
+    args.push("--dates-whitelist", String(options.datesWhitelist));
+  }
+  if (options.preferDmy === true) {
+    args.push("--prefer-dmy");
+  }
+  if (options.force === true) {
+    args.push("--force");
+  }
+  if (options.jobs !== undefined && options.jobs !== "") {
+    args.push("--jobs", String(options.jobs));
+  }
+  if (options.statsJsonl === true) {
+    args.push("--stats-jsonl");
+  }
+  if (options.jsonl === true) {
+    args.push("--jsonl");
+  }
+  if (options.prettyJson === true) {
+    args.push("--pretty-json");
+  }
+  if (options.cacheThreshold !== undefined && options.cacheThreshold !== "") {
+    args.push("--cache-threshold", String(options.cacheThreshold));
+  }
+  if (options.visWhitespace === true) {
+    args.push("--vis-whitespace");
+  }
+  if (options.noHeaders === true) {
+    args.push("--no-headers");
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.memcheck !== undefined && options.memcheck !== "") {
-    args.push("--memcheck", String(options.memcheck));
+  if (options.memcheck === true) {
+    args.push("--memcheck");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -72,14 +172,24 @@ export async function executeStats(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "stats",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "stats",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -94,7 +204,36 @@ export async function executeStats(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv stats returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'stats' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'stats' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

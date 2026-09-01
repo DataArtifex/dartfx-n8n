@@ -26,18 +26,67 @@ export async function executePivotp(
 
   const args: string[] = ["pivotp"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.index !== undefined && options.index !== "") {
+    args.push("--index", String(options.index));
+  }
+  if (options.values !== undefined && options.values !== "") {
+    args.push("--values", String(options.values));
+  }
+  if (options.agg !== undefined && options.agg !== "") {
+    args.push("--agg", String(options.agg));
+  }
+  if (options.sortColumns === true) {
+    args.push("--sort-columns");
+  }
+  if (options.maintainOrder === true) {
+    args.push("--maintain-order");
+  }
+  if (options.colSeparator !== undefined && options.colSeparator !== "") {
+    args.push("--col-separator", String(options.colSeparator));
+  }
+  if (options.validate === true) {
+    args.push("--validate");
+  }
+  if (options.tryParsedates === true) {
+    args.push("--try-parsedates");
+  }
+  if (options.inferLen !== undefined && options.inferLen !== "") {
+    args.push("--infer-len", String(options.inferLen));
+  }
+  if (options.decimalComma === true) {
+    args.push("--decimal-comma");
+  }
+  if (options.ignoreErrors === true) {
+    args.push("--ignore-errors");
+  }
+  if (options.grandTotal === true) {
+    args.push("--grand-total");
+  }
+  if (options.subtotal === true) {
+    args.push("--subtotal");
+  }
+  if (options.totalLabel !== undefined && options.totalLabel !== "") {
+    args.push("--total-label", String(options.totalLabel));
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.quiet !== undefined && options.quiet !== "") {
-    args.push("--quiet", String(options.quiet));
+  if (options.quiet === true) {
+    args.push("--quiet");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -69,14 +118,24 @@ export async function executePivotp(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "pivotp",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "pivotp",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -91,7 +150,36 @@ export async function executePivotp(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv pivotp returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'pivotp' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'pivotp' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

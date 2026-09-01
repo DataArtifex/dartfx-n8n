@@ -53,11 +53,25 @@ export const TransposeDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Multipass",
+        name: "multipass",
+        type: "boolean",
+        default: false,
+        description: "Process the transpose by making multiple passes",
+      },
+      {
+        displayName: "Select",
+        name: "select",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description: "Select a subset of columns to transpose.",
+      },
+      {
+        displayName: "Long",
+        name: "long",
+        type: "string",
+        default: "",
+        description: 'Convert wide-format CSV to "long" format.',
       },
       {
         displayName: "Delimiter",
@@ -69,9 +83,9 @@ export const TransposeDescription: INodeProperties[] = [
       {
         displayName: "Memcheck",
         name: "memcheck",
-        type: "string",
-        default: "",
-        description: "heck if there is enough memory to load the entire",
+        type: "boolean",
+        default: false,
+        description: "Check if there is enough memory to load the entire",
       },
     ],
   },

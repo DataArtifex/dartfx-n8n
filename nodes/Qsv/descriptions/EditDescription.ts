@@ -52,19 +52,19 @@ export const EditDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
-        type: "string",
-        default: "",
-        description: "Write output to <file> instead of stdout.",
+        displayName: "In Place",
+        name: "inPlace",
+        type: "boolean",
+        default: false,
+        description: "Overwrite the input file data with the output.",
       },
       {
         displayName: "No Headers",
         name: "noHeaders",
-        type: "string",
-        default: "",
+        type: "boolean",
+        default: false,
         description:
-          "tart row indices from the header row as 0 (allows editing the header row).",
+          "Start row indices from the header row as 0 (allows editing the header row).",
       },
     ],
   },

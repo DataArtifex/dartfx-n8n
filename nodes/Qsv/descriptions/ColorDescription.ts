@@ -52,11 +52,25 @@ export const ColorDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Color",
+        name: "color",
+        type: "boolean",
+        default: false,
+        description: "Force color on, even in situations where colors",
+      },
+      {
+        displayName: "Row Numbers",
+        name: "rowNumbers",
+        type: "boolean",
+        default: false,
+        description: "Show row numbers.",
+      },
+      {
+        displayName: "Title",
+        name: "title",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description: "Add a title row above the headers.",
       },
       {
         displayName: "Delimiter",
@@ -68,9 +82,9 @@ export const ColorDescription: INodeProperties[] = [
       {
         displayName: "Memcheck",
         name: "memcheck",
-        type: "string",
-        default: "",
-        description: "heck if there is enough memory to load the entire",
+        type: "boolean",
+        default: false,
+        description: "Check if there is enough memory to load the entire",
       },
     ],
   },

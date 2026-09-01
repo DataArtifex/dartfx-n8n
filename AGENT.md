@@ -17,10 +17,7 @@ Primary components:
 ## 🛠 Tech Stack & Environment
 
 - **Language**: TypeScript (ES2022 / CommonJS for n8n node loader)
-- **Runtime**: Node.js 20+ (compiled with TypeScript 5.x)
-- **Framework**: `n8n-workflow` (Declarative & Programmatic node APIs)
-- **Process Orchestration**: `execa` for async subprocess execution
-- **Code Generation**: `tsx scripts/generate-qsv-nodes.ts` to dynamically discover all available commands from `qsv --list` and generate typed node definitions, actions, and `Qsv.node.ts` directly from CLI help
+- **Process Orchestration**: `child_process.execFile` (via Node.js `util.promisify`) for lightweight, async subprocess execution with zero external runtime dependencies
 - **External Dependencies**:
   - `qsv` CLI (Rust binary, version >= 22.0.0) available in `$PATH`
 
@@ -127,5 +124,5 @@ git push origin main --follow-tags
 
 1. **Keep Node UI Clean**: Use `displayOptions: { show: { operation: ['stats'] } }` so only relevant parameters appear for each selected operation.
 2. **Handle Both Paths and Streams**: Support `inputPath` (preferred) while gracefully allowing an optional `binaryPropertyName` fallback when working with upstream HTTP downloads.
-3. **Structured Errors**: Wrap `execa` subprocess invocations and parse stderr to return clean n8n node operational errors ([`NodeOperationError`](https://docs.n8n.io/integrations/creating-nodes/build/declarative-style-node/)).
+3. **Structured Errors**: Wrap `child_process.execFile` subprocess invocations and parse stderr to return clean n8n node operational errors ([`NodeOperationError`](https://docs.n8n.io/integrations/creating-nodes/build/declarative-style-node/)).
 4. **Never Block on Large Outputs**: Use `--json` / `--stats-jsonl` where appropriate, streaming directly to disk if the output is tabular or large.

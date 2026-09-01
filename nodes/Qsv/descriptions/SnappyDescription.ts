@@ -52,11 +52,19 @@ export const SnappyDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "User Agent",
+        name: "userAgent",
         type: "string",
         default: "",
-        description: "Write output to <output> instead of stdout.",
+        description:
+          "Specify custom user agent to use when the input is a URL.",
+      },
+      {
+        displayName: "Timeout",
+        name: "timeout",
+        type: "string",
+        default: "",
+        description: "Timeout for downloading URLs in seconds.",
       },
       {
         displayName: "Jobs",
@@ -68,16 +76,16 @@ export const SnappyDescription: INodeProperties[] = [
       {
         displayName: "Quiet",
         name: "quiet",
-        type: "string",
-        default: "",
-        description: "uppress status messages to stderr.",
+        type: "boolean",
+        default: false,
+        description: "Suppress status messages to stderr.",
       },
       {
         displayName: "Progressbar",
         name: "progressbar",
-        type: "string",
-        default: "",
-        description: "how download progress bars. Only valid for URL input.",
+        type: "boolean",
+        default: false,
+        description: "Show download progress bars. Only valid for URL input.",
       },
     ],
   },

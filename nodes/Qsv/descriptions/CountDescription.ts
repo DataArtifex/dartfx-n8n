@@ -52,18 +52,62 @@ export const CountDescription: INodeProperties[] = [
     },
     options: [
       {
+        displayName: "Human Readable",
+        name: "humanReadable",
+        type: "boolean",
+        default: false,
+        description: "Comma separate counts.",
+      },
+      {
+        displayName: "Width",
+        name: "width",
+        type: "boolean",
+        default: false,
+        description: "Also return the estimated widths of each record.",
+      },
+      {
+        displayName: "Width No Delims",
+        name: "widthNoDelims",
+        type: "boolean",
+        default: false,
+        description:
+          "Same as --width but does not count the delimiters in the width.",
+      },
+      {
+        displayName: "Json",
+        name: "json",
+        type: "boolean",
+        default: false,
+        description: "Output the width stats in JSON format.",
+      },
+      {
+        displayName: "No Polars",
+        name: "noPolars",
+        type: "boolean",
+        default: false,
+        description:
+          'Use the "regular", single-threaded, streaming CSV reader instead',
+      },
+      {
+        displayName: "Low Memory",
+        name: "lowMemory",
+        type: "boolean",
+        default: false,
+        description: "Use the Polars CSV Reader's low-memory mode. This mode",
+      },
+      {
         displayName: "Flexible",
         name: "flexible",
-        type: "string",
-        default: "",
-        description: "o not validate if the CSV has different number of",
+        type: "boolean",
+        default: false,
+        description: "Do not validate if the CSV has different number of",
       },
       {
         displayName: "No Headers",
         name: "noHeaders",
-        type: "string",
-        default: "",
-        description: "hen set, the first row will be included in",
+        type: "boolean",
+        default: false,
+        description: "When set, the first row will be included in",
       },
       {
         displayName: "Delimiter",

@@ -26,15 +26,67 @@ export async function executeSynthesize(
 
   const args: string[] = ["synthesize"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.dictionary !== undefined && options.dictionary !== "") {
+    args.push("--dictionary", String(options.dictionary));
+  }
+  if (options.inferContentType === true) {
+    args.push("--infer-content-type");
+  }
+  if (options.rows !== undefined && options.rows !== "") {
+    args.push("--rows", String(options.rows));
+  }
+  if (options.seed !== undefined && options.seed !== "") {
+    args.push("--seed", String(options.seed));
+  }
+  if (options.locale !== undefined && options.locale !== "") {
+    args.push("--locale", String(options.locale));
+  }
+  if (options.freqLimit !== undefined && options.freqLimit !== "") {
+    args.push("--freq-limit", String(options.freqLimit));
+  }
+  if (options.statsOptions !== undefined && options.statsOptions !== "") {
+    args.push("--stats-options", String(options.statsOptions));
+  }
+  if (options.consistentFakes === true) {
+    args.push("--consistent-fakes");
+  }
+  if (options.noRelationships === true) {
+    args.push("--no-relationships");
+  }
+  if (
+    options.jointCardinalityCap !== undefined &&
+    options.jointCardinalityCap !== ""
+  ) {
+    args.push("--joint-cardinality-cap", String(options.jointCardinalityCap));
+  }
+  if (
+    options.correlationThreshold !== undefined &&
+    options.correlationThreshold !== ""
+  ) {
+    args.push("--correlation-threshold", String(options.correlationThreshold));
+  }
+  if (options.strictRelationships === true) {
+    args.push("--strict-relationships");
+  }
+  if (options.jobs !== undefined && options.jobs !== "") {
+    args.push("--jobs", String(options.jobs));
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -66,14 +118,24 @@ export async function executeSynthesize(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "synthesize",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "synthesize",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -88,7 +150,36 @@ export async function executeSynthesize(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv synthesize returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'synthesize' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'synthesize' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

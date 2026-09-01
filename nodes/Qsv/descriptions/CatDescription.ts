@@ -52,18 +52,41 @@ export const CatDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Pad",
+        name: "pad",
+        type: "boolean",
+        default: false,
+        description: "When concatenating columns, this flag will cause",
+      },
+      {
+        displayName: "Flexible",
+        name: "flexible",
+        type: "boolean",
+        default: false,
+        description: "When concatenating rows, this flag turns off validation",
+      },
+      {
+        displayName: "Group",
+        name: "group",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description:
+          "When concatenating with rowskey, you can specify a grouping value",
+      },
+      {
+        displayName: "Group Name",
+        name: "groupName",
+        type: "string",
+        default: "",
+        description:
+          "When concatenating with rowskey, this flag provides the name",
       },
       {
         displayName: "No Headers",
         name: "noHeaders",
-        type: "string",
-        default: "",
-        description: "hen set, the first row will NOT be interpreted",
+        type: "boolean",
+        default: false,
+        description: "When set, the first row will NOT be interpreted",
       },
       {
         displayName: "Delimiter",

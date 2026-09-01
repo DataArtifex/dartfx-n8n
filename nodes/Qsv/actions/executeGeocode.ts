@@ -26,18 +26,91 @@ export async function executeGeocode(
 
   const args: string[] = ["geocode"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.newColumn !== undefined && options.newColumn !== "") {
+    args.push("--new-column", String(options.newColumn));
+  }
+  if (options.rename !== undefined && options.rename !== "") {
+    args.push("--rename", String(options.rename));
+  }
+  if (options.country !== undefined && options.country !== "") {
+    args.push("--country", String(options.country));
+  }
+  if (options.minScore !== undefined && options.minScore !== "") {
+    args.push("--min-score", String(options.minScore));
+  }
+  if (options.admin1 !== undefined && options.admin1 !== "") {
+    args.push("--admin1", String(options.admin1));
+  }
+  if (options.k_weight !== undefined && options.k_weight !== "") {
+    args.push("--k_weight", String(options.k_weight));
+  }
+  if (options.apiKey !== undefined && options.apiKey !== "") {
+    args.push("--api-key", String(options.apiKey));
+  }
+  if (options.rateLimit !== undefined && options.rateLimit !== "") {
+    args.push("--rate-limit", String(options.rateLimit));
+  }
+  if (options.reverse === true) {
+    args.push("--reverse");
+  }
+  if (options.noAnnotations === true) {
+    args.push("--no-annotations");
+  }
+  if (options.cacheTtl !== undefined && options.cacheTtl !== "") {
+    args.push("--cache-ttl", String(options.cacheTtl));
+  }
+  if (options.noCache === true) {
+    args.push("--no-cache");
+  }
+  if (options.language !== undefined && options.language !== "") {
+    args.push("--language", String(options.language));
+  }
+  if (options.invalidResult !== undefined && options.invalidResult !== "") {
+    args.push("--invalid-result", String(options.invalidResult));
+  }
+  if (options.jobs !== undefined && options.jobs !== "") {
+    args.push("--jobs", String(options.jobs));
+  }
+  if (options.batch !== undefined && options.batch !== "") {
+    args.push("--batch", String(options.batch));
+  }
+  if (options.timeout !== undefined && options.timeout !== "") {
+    args.push("--timeout", String(options.timeout));
+  }
+  if (options.cacheDir !== undefined && options.cacheDir !== "") {
+    args.push("--cache-dir", String(options.cacheDir));
+  }
+  if (options.olderThan !== undefined && options.olderThan !== "") {
+    args.push("--older-than", String(options.olderThan));
+  }
+  if (options.languages !== undefined && options.languages !== "") {
+    args.push("--languages", String(options.languages));
+  }
+  if (options.citiesUrl !== undefined && options.citiesUrl !== "") {
+    args.push("--cities-url", String(options.citiesUrl));
+  }
+  if (options.force === true) {
+    args.push("--force");
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.progressbar !== undefined && options.progressbar !== "") {
-    args.push("--progressbar", String(options.progressbar));
+  if (options.progressbar === true) {
+    args.push("--progressbar");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -69,14 +142,24 @@ export async function executeGeocode(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "geocode",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "geocode",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -91,7 +174,36 @@ export async function executeGeocode(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv geocode returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'geocode' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'geocode' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

@@ -26,18 +26,142 @@ export async function executeJoinp(
 
   const args: string[] = ["joinp"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.left === true) {
+    args.push("--left");
+  }
+  if (options.leftAnti === true) {
+    args.push("--left-anti");
+  }
+  if (options.leftSemi === true) {
+    args.push("--left-semi");
+  }
+  if (options.right === true) {
+    args.push("--right");
+  }
+  if (options.rightAnti === true) {
+    args.push("--right-anti");
+  }
+  if (options.rightSemi === true) {
+    args.push("--right-semi");
+  }
+  if (options.full === true) {
+    args.push("--full");
+  }
+  if (options.cross === true) {
+    args.push("--cross");
+  }
+  if (options.nonEqui !== undefined && options.nonEqui !== "") {
+    args.push("--non-equi", String(options.nonEqui));
+  }
+  if (options.coalesce === true) {
+    args.push("--coalesce");
+  }
+  if (options.filterLeft !== undefined && options.filterLeft !== "") {
+    args.push("--filter-left", String(options.filterLeft));
+  }
+  if (options.filterRight !== undefined && options.filterRight !== "") {
+    args.push("--filter-right", String(options.filterRight));
+  }
+  if (options.validate !== undefined && options.validate !== "") {
+    args.push("--validate", String(options.validate));
+  }
+  if (options.maintainOrder !== undefined && options.maintainOrder !== "") {
+    args.push("--maintain-order", String(options.maintainOrder));
+  }
+  if (options.nulls === true) {
+    args.push("--nulls");
+  }
+  if (options.streaming === true) {
+    args.push("--streaming");
+  }
+  if (options.tryParsedates === true) {
+    args.push("--try-parsedates");
+  }
+  if (options.inferLen !== undefined && options.inferLen !== "") {
+    args.push("--infer-len", String(options.inferLen));
+  }
+  if (options.cacheSchema !== undefined && options.cacheSchema !== "") {
+    args.push("--cache-schema", String(options.cacheSchema));
+  }
+  if (options.lowMemory === true) {
+    args.push("--low-memory");
+  }
+  if (options.noOptimizations === true) {
+    args.push("--no-optimizations");
+  }
+  if (options.ignoreErrors === true) {
+    args.push("--ignore-errors");
+  }
+  if (options.decimalComma === true) {
+    args.push("--decimal-comma");
+  }
+  if (options.asof === true) {
+    args.push("--asof");
+  }
+  if (options.noSort === true) {
+    args.push("--no-sort");
+  }
+  if (options.left_by !== undefined && options.left_by !== "") {
+    args.push("--left_by", String(options.left_by));
+  }
+  if (options.right_by !== undefined && options.right_by !== "") {
+    args.push("--right_by", String(options.right_by));
+  }
+  if (options.strategy !== undefined && options.strategy !== "") {
+    args.push("--strategy", String(options.strategy));
+  }
+  if (options.tolerance !== undefined && options.tolerance !== "") {
+    args.push("--tolerance", String(options.tolerance));
+  }
+  if (options.allowExactMatches === true) {
+    args.push("--allow-exact-matches");
+  }
+  if (options.sqlFilter !== undefined && options.sqlFilter !== "") {
+    args.push("--sql-filter", String(options.sqlFilter));
+  }
+  if (options.datetimeFormat !== undefined && options.datetimeFormat !== "") {
+    args.push("--datetime-format", String(options.datetimeFormat));
+  }
+  if (options.dateFormat !== undefined && options.dateFormat !== "") {
+    args.push("--date-format", String(options.dateFormat));
+  }
+  if (options.timeFormat !== undefined && options.timeFormat !== "") {
+    args.push("--time-format", String(options.timeFormat));
+  }
+  if (options.floatPrecision !== undefined && options.floatPrecision !== "") {
+    args.push("--float-precision", String(options.floatPrecision));
+  }
+  if (options.nullValue !== undefined && options.nullValue !== "") {
+    args.push("--null-value", String(options.nullValue));
+  }
+  if (options.ignoreCase === true) {
+    args.push("--ignore-case");
+  }
+  if (options.ignoreLeadingZeros === true) {
+    args.push("--ignore-leading-zeros");
+  }
+  if (options.normUnicode !== undefined && options.normUnicode !== "") {
+    args.push("--norm-unicode", String(options.normUnicode));
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.quiet !== undefined && options.quiet !== "") {
-    args.push("--quiet", String(options.quiet));
+  if (options.quiet === true) {
+    args.push("--quiet");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -69,14 +193,24 @@ export async function executeJoinp(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "joinp",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "joinp",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -91,7 +225,36 @@ export async function executeJoinp(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv joinp returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'joinp' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'joinp' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

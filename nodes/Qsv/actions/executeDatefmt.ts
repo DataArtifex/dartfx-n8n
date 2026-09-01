@@ -26,21 +26,64 @@ export async function executeDatefmt(
 
   const args: string[] = ["datefmt"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.newColumn !== undefined && options.newColumn !== "") {
+    args.push("--new-column", String(options.newColumn));
   }
-  if (options.noHeaders !== undefined && options.noHeaders !== "") {
-    args.push("--no-headers", String(options.noHeaders));
+  if (options.rename !== undefined && options.rename !== "") {
+    args.push("--rename", String(options.rename));
+  }
+  if (options.preferDmy === true) {
+    args.push("--prefer-dmy");
+  }
+  if (options.keepZeroTime === true) {
+    args.push("--keep-zero-time");
+  }
+  if (options.inputTz !== undefined && options.inputTz !== "") {
+    args.push("--input-tz", String(options.inputTz));
+  }
+  if (options.outputTz !== undefined && options.outputTz !== "") {
+    args.push("--output-tz", String(options.outputTz));
+  }
+  if (options.defaultTz !== undefined && options.defaultTz !== "") {
+    args.push("--default-tz", String(options.defaultTz));
+  }
+  if (options.utc === true) {
+    args.push("--utc");
+  }
+  if (options.zulu === true) {
+    args.push("--zulu");
+  }
+  if (options.tsResolution !== undefined && options.tsResolution !== "") {
+    args.push("--ts-resolution", String(options.tsResolution));
+  }
+  if (options.jobs !== undefined && options.jobs !== "") {
+    args.push("--jobs", String(options.jobs));
+  }
+  if (options.batch !== undefined && options.batch !== "") {
+    args.push("--batch", String(options.batch));
+  }
+  if (options.noHeaders === true) {
+    args.push("--no-headers");
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.progressbar !== undefined && options.progressbar !== "") {
-    args.push("--progressbar", String(options.progressbar));
+  if (options.progressbar === true) {
+    args.push("--progressbar");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -72,14 +115,24 @@ export async function executeDatefmt(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "datefmt",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "datefmt",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -94,7 +147,36 @@ export async function executeDatefmt(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv datefmt returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'datefmt' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'datefmt' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

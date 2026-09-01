@@ -26,24 +26,79 @@ export async function executeSearchset(
 
   const args: string[] = ["searchset"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.ignoreCase === true) {
+    args.push("--ignore-case");
   }
-  if (options.noHeaders !== undefined && options.noHeaders !== "") {
-    args.push("--no-headers", String(options.noHeaders));
+  if (options.literal === true) {
+    args.push("--literal");
+  }
+  if (options.exact === true) {
+    args.push("--exact");
+  }
+  if (options.select !== undefined && options.select !== "") {
+    args.push("--select", String(options.select));
+  }
+  if (options.invertMatch === true) {
+    args.push("--invert-match");
+  }
+  if (options.unicode === true) {
+    args.push("--unicode");
+  }
+  if (options.flag !== undefined && options.flag !== "") {
+    args.push("--flag", String(options.flag));
+  }
+  if (options.flagMatchesOnly === true) {
+    args.push("--flag-matches-only");
+  }
+  if (options.unmatchedOutput !== undefined && options.unmatchedOutput !== "") {
+    args.push("--unmatched-output", String(options.unmatchedOutput));
+  }
+  if (options.quick === true) {
+    args.push("--quick");
+  }
+  if (options.count === true) {
+    args.push("--count");
+  }
+  if (options.json === true) {
+    args.push("--json");
+  }
+  if (options.sizeLimit !== undefined && options.sizeLimit !== "") {
+    args.push("--size-limit", String(options.sizeLimit));
+  }
+  if (options.dfaSizeLimit !== undefined && options.dfaSizeLimit !== "") {
+    args.push("--dfa-size-limit", String(options.dfaSizeLimit));
+  }
+  if (options.notOne === true) {
+    args.push("--not-one");
+  }
+  if (options.jobs !== undefined && options.jobs !== "") {
+    args.push("--jobs", String(options.jobs));
+  }
+  if (options.noHeaders === true) {
+    args.push("--no-headers");
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.progressbar !== undefined && options.progressbar !== "") {
-    args.push("--progressbar", String(options.progressbar));
+  if (options.progressbar === true) {
+    args.push("--progressbar");
   }
-  if (options.quiet !== undefined && options.quiet !== "") {
-    args.push("--quiet", String(options.quiet));
+  if (options.quiet === true) {
+    args.push("--quiet");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -75,14 +130,24 @@ export async function executeSearchset(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "searchset",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "searchset",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -97,7 +162,36 @@ export async function executeSearchset(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv searchset returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'searchset' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'searchset' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

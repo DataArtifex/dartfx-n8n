@@ -52,11 +52,95 @@ export const ExcelDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Sheet",
+        name: "sheet",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description:
+          "Name (case-insensitive) or zero-based index of sheet to export.",
+      },
+      {
+        displayName: "Header Row",
+        name: "headerRow",
+        type: "string",
+        default: "",
+        description:
+          "The header row. Set if other than the first non-empty row of the sheet.",
+      },
+      {
+        displayName: "Metadata",
+        name: "metadata",
+        type: "string",
+        default: "",
+        description: "Outputs workbook metadata in CSV or JSON format:",
+      },
+      {
+        displayName: "Table",
+        name: "table",
+        type: "string",
+        default: "",
+        description: "An Excel table (case-insensitive) to extract to a CSV.",
+      },
+      {
+        displayName: "Range",
+        name: "range",
+        type: "string",
+        default: "",
+        description:
+          "An Excel format range - like RangeName, C:T, C3:T25 or 'Sheet1!C3:T25' to",
+      },
+      {
+        displayName: "Cell",
+        name: "cell",
+        type: "string",
+        default: "",
+        description:
+          "A single cell reference - like C3 or 'Sheet1!C3' to extract.",
+      },
+      {
+        displayName: "Error Format",
+        name: "errorFormat",
+        type: "string",
+        default: "",
+        description: "The format to use when formatting error cells.",
+      },
+      {
+        displayName: "Flexible",
+        name: "flexible",
+        type: "boolean",
+        default: false,
+        description:
+          "Continue even if the number of columns is different from row to row.",
+      },
+      {
+        displayName: "Trim",
+        name: "trim",
+        type: "boolean",
+        default: false,
+        description:
+          "Trim all fields so that leading & trailing whitespaces are removed.",
+      },
+      {
+        displayName: "Date Format",
+        name: "dateFormat",
+        type: "string",
+        default: "",
+        description: "Optional date format to use when formatting dates.",
+      },
+      {
+        displayName: "Keep Zero Time",
+        name: "keepZeroTime",
+        type: "boolean",
+        default: false,
+        description:
+          "Keep the time part of a date-time field if it is 00:00:00.",
+      },
+      {
+        displayName: "Jobs",
+        name: "jobs",
+        type: "string",
+        default: "",
+        description: "The number of jobs to run in parallel.",
       },
       {
         displayName: "Delimiter",
@@ -68,9 +152,9 @@ export const ExcelDescription: INodeProperties[] = [
       {
         displayName: "Quiet",
         name: "quiet",
-        type: "string",
-        default: "",
-        description: "o not display export summary message.",
+        type: "boolean",
+        default: false,
+        description: "Do not display export summary message.",
       },
     ],
   },

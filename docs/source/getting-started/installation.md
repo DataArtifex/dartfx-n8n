@@ -60,12 +60,21 @@ When deploying n8n via Docker, you can install community nodes at startup or use
 FROM docker.n8n.io/n8nio/n8n:latest
 
 USER root
-# Install QSV prebuilt binary into /usr/local/bin
-RUN apk add --no-cache curl tar gzip \
-    && curl -fsSL https://github.com/dathere/qsv/releases/latest/download/qsv-x86_64-unknown-linux-musl.zip -o /tmp/qsv.zip \
-    && unzip /tmp/qsv.zip -d /usr/local/bin/ \
+
+# Install dependencies and download appropriate QSV binary for host architecture (x86_64 or aarch64)
+RUN apk add --no-cache curl unzip bash \
+    && ARCH=$(uname -m) \
+    && if [ "$ARCH" = "x86_64" ]; then \
+         QSV_ARCH="x86_64-unknown-linux-musl"; \
+       elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then \
+         QSV_ARCH="aarch64-unknown-linux-musl"; \
+       else \
+         QSV_ARCH="x86_64-unknown-linux-musl"; \
+       fi \
+    && curl -fsSL "https://github.com/dathere/qsv/releases/latest/download/qsv-${QSV_ARCH}.zip" -o /tmp/qsv.zip \
+    && unzip -q -o /tmp/qsv.zip qsv -d /usr/local/bin/ \
     && chmod +x /usr/local/bin/qsv \
-    && rm /tmp/qsv.zip
+    && rm -f /tmp/qsv.zip
 
 USER node
 ```

@@ -53,18 +53,193 @@ export const FetchpostDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Payload Tpl",
+        name: "payloadTpl",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description:
+          "Instead of <column-list>, use a MiniJinja template file to render a JSON",
+      },
+      {
+        displayName: "Content Type",
+        name: "contentType",
+        type: "string",
+        default: "",
+        description: "Overrides automatic content types for `<column-list>`",
+      },
+      {
+        displayName: "Globals Json",
+        name: "globalsJson",
+        type: "string",
+        default: "",
+        description: "A JSON file containing global variables.",
+      },
+      {
+        displayName: "New Column",
+        name: "newColumn",
+        type: "string",
+        default: "",
+        description:
+          "Put the fetched values in a new column. Specifying this option",
+      },
+      {
+        displayName: "Jaq",
+        name: "jaq",
+        type: "string",
+        default: "",
+        description: "Apply jaq selector to API returned JSON response.",
+      },
+      {
+        displayName: "Jaqfile",
+        name: "jaqfile",
+        type: "string",
+        default: "",
+        description: "Load jaq selector from file instead.",
+      },
+      {
+        displayName: "Pretty",
+        name: "pretty",
+        type: "boolean",
+        default: false,
+        description: "Prettify JSON responses. Otherwise, they're minified.",
+      },
+      {
+        displayName: "Rate Limit",
+        name: "rateLimit",
+        type: "string",
+        default: "",
+        description:
+          "Rate Limit in Queries Per Second (max: 1000). Note that fetch",
+      },
+      {
+        displayName: "Timeout",
+        name: "timeout",
+        type: "string",
+        default: "",
+        description: "Timeout for each URL request.",
+      },
+      {
+        displayName: "Http Header",
+        name: "httpHeader",
+        type: "string",
+        default: "",
+        description:
+          "Append custom header(s) to the HTTP header. Pass multiple key-value pairs",
+      },
+      {
+        displayName: "Compress",
+        name: "compress",
+        type: "boolean",
+        default: false,
+        description:
+          "Compress the HTTP request body using gzip. Note that most servers do not support",
+      },
+      {
+        displayName: "Max Retries",
+        name: "maxRetries",
+        type: "string",
+        default: "",
+        description:
+          "Maximum number of retries per record before an error is raised.",
+      },
+      {
+        displayName: "Max Errors",
+        name: "maxErrors",
+        type: "string",
+        default: "",
+        description: "Maximum number of errors before aborting.",
+      },
+      {
+        displayName: "Store Error",
+        name: "storeError",
+        type: "boolean",
+        default: false,
+        description:
+          "On error, store error code/message instead of blank value.",
+      },
+      {
+        displayName: "Cookies",
+        name: "cookies",
+        type: "boolean",
+        default: false,
+        description: "Allow cookies.",
+      },
+      {
+        displayName: "User Agent",
+        name: "userAgent",
+        type: "string",
+        default: "",
+        description:
+          "Specify custom user agent. It supports the following variables -",
+      },
+      {
+        displayName: "Report",
+        name: "report",
+        type: "string",
+        default: "",
+        description:
+          "Creates a report of the fetchpost job. The report has the same name as the",
+      },
+      {
+        displayName: "No Cache",
+        name: "noCache",
+        type: "boolean",
+        default: false,
+        description: "Do not cache responses.",
+      },
+      {
+        displayName: "Mem Cache Size",
+        name: "memCacheSize",
+        type: "string",
+        default: "",
+        description: "Maximum number of entries in the in-memory LRU cache.",
+      },
+      {
+        displayName: "Disk Cache",
+        name: "diskCache",
+        type: "boolean",
+        default: false,
+        description:
+          "Use a persistent disk cache for responses. The cache is stored in the directory",
+      },
+      {
+        displayName: "Disk Cache Dir",
+        name: "diskCacheDir",
+        type: "string",
+        default: "",
+        description:
+          "The directory <dir> to store the disk cache. Note that if the directory",
+      },
+      {
+        displayName: "Redis Cache",
+        name: "redisCache",
+        type: "boolean",
+        default: false,
+        description:
+          'Use Redis to cache responses. It connects to "redis://127.0.0.1:6379/2"',
+      },
+      {
+        displayName: "Cache Error",
+        name: "cacheError",
+        type: "boolean",
+        default: false,
+        description:
+          "Cache error responses even if a request fails. If an identical URL is requested,",
+      },
+      {
+        displayName: "Flush Cache",
+        name: "flushCache",
+        type: "boolean",
+        default: false,
+        description:
+          "Flush all the keys in the current cache on startup. This only applies to",
       },
       {
         displayName: "No Headers",
         name: "noHeaders",
-        type: "string",
-        default: "",
-        description: "hen set, the first row will not be interpreted",
+        type: "boolean",
+        default: false,
+        description: "When set, the first row will not be interpreted",
       },
       {
         displayName: "Delimiter",
@@ -76,10 +251,10 @@ export const FetchpostDescription: INodeProperties[] = [
       {
         displayName: "Progressbar",
         name: "progressbar",
-        type: "string",
-        default: "",
+        type: "boolean",
+        default: false,
         description:
-          "how progress bars. Will also show the cache hit rate upon completion.",
+          "Show progress bars. Will also show the cache hit rate upon completion.",
       },
     ],
   },

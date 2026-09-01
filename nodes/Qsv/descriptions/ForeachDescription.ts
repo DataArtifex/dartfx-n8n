@@ -52,11 +52,33 @@ export const ForeachDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "No Headers",
-        name: "noHeaders",
+        displayName: "Unify",
+        name: "unify",
+        type: "boolean",
+        default: false,
+        description: "If the output of the executed command is a CSV,",
+      },
+      {
+        displayName: "New Column",
+        name: "newColumn",
         type: "string",
         default: "",
-        description: "hen set, the file will be considered to have no",
+        description: "If unifying, add a new column with given name",
+      },
+      {
+        displayName: "Dry Run",
+        name: "dryRun",
+        type: "string",
+        default: "",
+        description:
+          "If set to true (the default for safety reasons), the commands are",
+      },
+      {
+        displayName: "No Headers",
+        name: "noHeaders",
+        type: "boolean",
+        default: false,
+        description: "When set, the file will be considered to have no",
       },
       {
         displayName: "Delimiter",
@@ -68,9 +90,9 @@ export const ForeachDescription: INodeProperties[] = [
       {
         displayName: "Progressbar",
         name: "progressbar",
-        type: "string",
-        default: "",
-        description: "how progress bars. Not valid for stdin.",
+        type: "boolean",
+        default: false,
+        description: "Show progress bars. Not valid for stdin.",
       },
     ],
   },

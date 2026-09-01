@@ -26,18 +26,76 @@ export async function executeProfile(
 
   const args: string[] = ["profile"];
 
-  if (options.noHeaders !== undefined && options.noHeaders !== "") {
-    args.push("--no-headers", String(options.noHeaders));
+  if (options.spec !== undefined && options.spec !== "") {
+    args.push("--spec", String(options.spec));
+  }
+  if (options.initialContext !== undefined && options.initialContext !== "") {
+    args.push("--initial-context", String(options.initialContext));
+  }
+  if (options.noProjection === true) {
+    args.push("--no-projection");
+  }
+  if (options.noCkan === true) {
+    args.push("--no-ckan");
+  }
+  if (options.croissantFrequency === true) {
+    args.push("--croissant-frequency");
+  }
+  if (options.dcatLegacyLicense === true) {
+    args.push("--dcat-legacy-license");
+  }
+  if (options.noDcatDiscovery === true) {
+    args.push("--no-dcat-discovery");
+  }
+  if (
+    options.dcatDiscoveryTimeout !== undefined &&
+    options.dcatDiscoveryTimeout !== ""
+  ) {
+    args.push("--dcat-discovery-timeout", String(options.dcatDiscoveryTimeout));
+  }
+  if (options.validate === true) {
+    args.push("--validate");
+  }
+  if (options.strict === true) {
+    args.push("--strict");
+  }
+  if (options.allowExternalValidator === true) {
+    args.push("--allow-external-validator");
+  }
+  if (options.catalog === true) {
+    args.push("--catalog");
+  }
+  if (options.profile !== undefined && options.profile !== "") {
+    args.push("--profile", String(options.profile));
+  }
+  if (options.force === true) {
+    args.push("--force");
+  }
+  if (options.jobs !== undefined && options.jobs !== "") {
+    args.push("--jobs", String(options.jobs));
+  }
+  if (options.noHeaders === true) {
+    args.push("--no-headers");
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.memcheck !== undefined && options.memcheck !== "") {
-    args.push("--memcheck", String(options.memcheck));
+  if (options.memcheck === true) {
+    args.push("--memcheck");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -69,14 +127,24 @@ export async function executeProfile(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "profile",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "profile",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -91,7 +159,36 @@ export async function executeProfile(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv profile returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'profile' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'profile' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

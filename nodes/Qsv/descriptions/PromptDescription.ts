@@ -52,18 +52,56 @@ export const PromptDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Msg",
+        name: "msg",
         type: "string",
         default: "",
-        description: "Write output to <file> without showing a save dialog.",
+        description: "The prompt message to display in the file dialog title.",
+      },
+      {
+        displayName: "Filters",
+        name: "filters",
+        type: "string",
+        default: "",
+        description:
+          'The filter to use for the INPUT file dialog. Set to "None" to',
+      },
+      {
+        displayName: "Workdir",
+        name: "workdir",
+        type: "string",
+        default: "",
+        description: "The directory to start the file dialog in.",
+      },
+      {
+        displayName: "Fd Output",
+        name: "fdOutput",
+        type: "boolean",
+        default: false,
+        description: "Write output to a file by using a save file dialog.",
+      },
+      {
+        displayName: "Save Fname",
+        name: "saveFname",
+        type: "string",
+        default: "",
+        description:
+          "The filename to save the output as when using --fd-output.",
+      },
+      {
+        displayName: "Base Delay Ms",
+        name: "baseDelayMs",
+        type: "string",
+        default: "",
+        description:
+          "The base delay in milliseconds to use when opening INPUT dialog.",
       },
       {
         displayName: "Quiet",
         name: "quiet",
-        type: "string",
-        default: "",
-        description: "o not print --fd-output message to stderr.",
+        type: "boolean",
+        default: false,
+        description: "Do not print --fd-output message to stderr.",
       },
     ],
   },

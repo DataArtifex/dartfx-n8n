@@ -53,11 +53,18 @@ export const FixedwidthDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Positions",
+        name: "positions",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description: "Comma-separated, 1-based starting byte position of",
+      },
+      {
+        displayName: "Widths",
+        name: "widths",
+        type: "string",
+        default: "",
+        description: "Comma-separated width, in bytes, of each column",
       },
     ],
   },

@@ -53,11 +53,43 @@ export const SafenamesDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Output",
-        name: "output",
+        displayName: "Mode",
+        name: "mode",
         type: "string",
         default: "",
-        description: "Write output to <file> instead of stdout.",
+        description: 'Rename header names to "safe" names — guaranteed',
+      },
+      {
+        displayName: "Reserved",
+        name: "reserved",
+        type: "string",
+        default: "",
+        description:
+          "Comma-delimited list of additional case-insensitive reserved names",
+      },
+      {
+        displayName: "Prefix",
+        name: "prefix",
+        type: "string",
+        default: "",
+        description:
+          'Certain systems do not allow header names to start with "_" (e.g. CKAN Datastore).',
+      },
+      {
+        displayName: "Collapse",
+        name: "collapse",
+        type: "boolean",
+        default: false,
+        description:
+          "Collapse consecutive runs of non-alphanumeric characters into a",
+      },
+      {
+        displayName: "Unicode",
+        name: "unicode",
+        type: "boolean",
+        default: false,
+        description:
+          "Preserve unicode letters & numbers instead of stripping to ASCII.",
       },
       {
         displayName: "Delimiter",

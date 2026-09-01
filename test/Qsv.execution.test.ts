@@ -1,6 +1,9 @@
 import * as path from "path";
+import * as fs from "fs";
+import * as os from "os";
 import { executeCount } from "../nodes/Qsv/actions/executeCount";
 import { executeStats } from "../nodes/Qsv/actions/executeStats";
+import { executeSort } from "../nodes/Qsv/actions/executeSort";
 import { NodeOperationError } from "n8n-workflow";
 
 function createMockContext(params: Record<string, any>) {
@@ -65,10 +68,67 @@ describe("Qsv Action Execution & Error Handling", () => {
     expect(results[0].json).toHaveProperty("command", "count");
   });
 
+  it("should correctly handle boolean options like noHeaders without invalid argument errors", async () => {
+    const mockContext = createMockContext({
+      inputPath: sampleCsvPath,
+      options: {
+        noHeaders: true,
+        flexible: true,
+      },
+    });
+
+    const results = await executeCount.call(mockContext, 0);
+    expect(results).toHaveLength(1);
+    expect(results[0].json).toHaveProperty("success", true);
+    expect(results[0].json.command).toBe("count");
+    // With no-headers, row count on 5-line CSV (header + 4 data) should be 5
+    expect(results[0].json.result).toBe(5);
+  });
+
+  it("should return outputPath in JSON when outputPath is specified", async () => {
+    const tempOutFile = path.join(
+      os.tmpdir(),
+      `qsv-sort-test-${Date.now()}.csv`,
+    );
+
+    try {
+      const mockContext = createMockContext({
+        inputPath: sampleCsvPath,
+        outputPath: tempOutFile,
+      });
+
+      const results = await executeSort.call(mockContext, 0);
+      expect(results).toHaveLength(1);
+      expect(results[0].json).toHaveProperty("success", true);
+      expect(results[0].json).toHaveProperty("outputPath", tempOutFile);
+      expect(fs.existsSync(tempOutFile)).toBe(true);
+
+      const content = fs.readFileSync(tempOutFile, "utf8");
+      expect(content).toContain("Alice");
+    } finally {
+      if (fs.existsSync(tempOutFile)) {
+        fs.unlinkSync(tempOutFile);
+      }
+    }
+  });
+
+  it("should handle quote-aware additionalArgs with spaces correctly", async () => {
+    const mockContext = createMockContext({
+      inputPath: sampleCsvPath,
+      additionalArgs: '--select "name,salary" --nulls',
+    });
+
+    const results = await executeStats.call(mockContext, 0);
+    expect(results).toHaveLength(1);
+    expect(results[0].json).toHaveProperty("success", true);
+  });
+
   it("should successfully execute qsv stats on a valid CSV file", async () => {
     const mockContext = createMockContext({
       inputPath: sampleCsvPath,
-      everything: true,
+      options: {
+        everything: true,
+      },
     });
 
     const results = await executeStats.call(mockContext, 0);

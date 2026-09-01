@@ -52,11 +52,116 @@ export const SniffDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "Progressbar",
-        name: "progressbar",
+        displayName: "Sample",
+        name: "sample",
         type: "string",
         default: "",
-        description: "how progress bars. Only valid for URL input.",
+        description: "First n rows to sample to sniff out the metadata.",
+      },
+      {
+        displayName: "Prefer Dmy",
+        name: "preferDmy",
+        type: "boolean",
+        default: false,
+        description:
+          "Prefer to parse dates in dmy format. Otherwise, use mdy format.",
+      },
+      {
+        displayName: "Delimiter",
+        name: "delimiter",
+        type: "string",
+        default: "",
+        description: "The delimiter for reading CSV data.",
+      },
+      {
+        displayName: "Quote",
+        name: "quote",
+        type: "string",
+        default: "",
+        description: "The quote character for reading CSV data.",
+      },
+      {
+        displayName: "Json",
+        name: "json",
+        type: "boolean",
+        default: false,
+        description: "Return results in JSON format.",
+      },
+      {
+        displayName: "Pretty Json",
+        name: "prettyJson",
+        type: "boolean",
+        default: false,
+        description: "Return results in pretty JSON format.",
+      },
+      {
+        displayName: "Save Urlsample",
+        name: "saveUrlsample",
+        type: "string",
+        default: "",
+        description: "Save the URL sample to a file.",
+      },
+      {
+        displayName: "Timeout",
+        name: "timeout",
+        type: "string",
+        default: "",
+        description:
+          "Timeout when sniffing URLs in seconds. If 0, no timeout is used.",
+      },
+      {
+        displayName: "User Agent",
+        name: "userAgent",
+        type: "string",
+        default: "",
+        description:
+          "Specify custom user agent to use when sniffing a CSV on a URL.",
+      },
+      {
+        displayName: "Stats Types",
+        name: "statsTypes",
+        type: "boolean",
+        default: false,
+        description: "Use the same data type names as `stats`.",
+      },
+      {
+        displayName: "No Infer",
+        name: "noInfer",
+        type: "boolean",
+        default: false,
+        description:
+          "Do not infer the schema. Only return the file's mime type, size and",
+      },
+      {
+        displayName: "Just Mime",
+        name: "justMime",
+        type: "boolean",
+        default: false,
+        description:
+          "Only return the file's mime type. Use this to use sniff as a general",
+      },
+      {
+        displayName: "Quick",
+        name: "quick",
+        type: "boolean",
+        default: false,
+        description:
+          "When sniffing a non-CSV remote file, only download the first chunk of the file",
+      },
+      {
+        displayName: "Harvest Mode",
+        name: "harvestMode",
+        type: "boolean",
+        default: false,
+        description:
+          "This is a convenience flag when using sniff in CKAN harvesters.",
+      },
+      {
+        displayName: "Progressbar",
+        name: "progressbar",
+        type: "boolean",
+        default: false,
+        description: "Show progress bars. Only valid for URL input.",
       },
     ],
   },

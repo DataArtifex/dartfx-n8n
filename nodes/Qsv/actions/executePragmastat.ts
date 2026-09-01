@@ -26,24 +26,67 @@ export async function executePragmastat(
 
   const args: string[] = ["pragmastat"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.twosample === true) {
+    args.push("--twosample");
+  }
+  if (options.compare1 !== undefined && options.compare1 !== "") {
+    args.push("--compare1", String(options.compare1));
+  }
+  if (options.compare2 !== undefined && options.compare2 !== "") {
+    args.push("--compare2", String(options.compare2));
+  }
+  if (options.select !== undefined && options.select !== "") {
+    args.push("--select", String(options.select));
+  }
+  if (options.misrate !== undefined && options.misrate !== "") {
+    args.push("--misrate", String(options.misrate));
+  }
+  if (options.standalone === true) {
+    args.push("--standalone");
+  }
+  if (options.statsOptions !== undefined && options.statsOptions !== "") {
+    args.push("--stats-options", String(options.statsOptions));
+  }
+  if (options.round !== undefined && options.round !== "") {
+    args.push("--round", String(options.round));
+  }
+  if (options.force === true) {
+    args.push("--force");
+  }
+  if (options.subsample !== undefined && options.subsample !== "") {
+    args.push("--subsample", String(options.subsample));
+  }
+  if (options.seed !== undefined && options.seed !== "") {
+    args.push("--seed", String(options.seed));
+  }
+  if (options.noBounds === true) {
+    args.push("--no-bounds");
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
-  if (options.noHeaders !== undefined && options.noHeaders !== "") {
-    args.push("--no-headers", String(options.noHeaders));
+  if (options.noHeaders === true) {
+    args.push("--no-headers");
   }
   if (options.jobs !== undefined && options.jobs !== "") {
     args.push("--jobs", String(options.jobs));
   }
-  if (options.memcheck !== undefined && options.memcheck !== "") {
-    args.push("--memcheck", String(options.memcheck));
+  if (options.memcheck === true) {
+    args.push("--memcheck");
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -75,14 +118,24 @@ export async function executePragmastat(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "pragmastat",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "pragmastat",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -97,7 +150,36 @@ export async function executePragmastat(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv pragmastat returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'pragmastat' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'pragmastat' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

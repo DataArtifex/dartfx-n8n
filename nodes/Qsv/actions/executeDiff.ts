@@ -26,15 +26,55 @@ export async function executeDiff(
 
   const args: string[] = ["diff"];
 
-  if (options.output !== undefined && options.output !== "") {
-    args.push("--output", String(options.output));
+  if (options.noHeadersLeft === true) {
+    args.push("--no-headers-left");
+  }
+  if (options.noHeadersRight === true) {
+    args.push("--no-headers-right");
+  }
+  if (options.noHeadersOutput === true) {
+    args.push("--no-headers-output");
+  }
+  if (options.delimiterLeft !== undefined && options.delimiterLeft !== "") {
+    args.push("--delimiter-left", String(options.delimiterLeft));
+  }
+  if (options.delimiterRight !== undefined && options.delimiterRight !== "") {
+    args.push("--delimiter-right", String(options.delimiterRight));
+  }
+  if (options.delimiterOutput !== undefined && options.delimiterOutput !== "") {
+    args.push("--delimiter-output", String(options.delimiterOutput));
+  }
+  if (options.key !== undefined && options.key !== "") {
+    args.push("--key", String(options.key));
+  }
+  if (options.sortColumns !== undefined && options.sortColumns !== "") {
+    args.push("--sort-columns", String(options.sortColumns));
+  }
+  if (options.dropEqualFields === true) {
+    args.push("--drop-equal-fields");
+  }
+  if (options.dropEqualColumns === true) {
+    args.push("--drop-equal-columns");
+  }
+  if (options.jobs !== undefined && options.jobs !== "") {
+    args.push("--jobs", String(options.jobs));
   }
   if (options.delimiter !== undefined && options.delimiter !== "") {
     args.push("--delimiter", String(options.delimiter));
   }
 
   if (additionalArgs.trim()) {
-    args.push(...additionalArgs.trim().split(/\s+/));
+    const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
+    const parsedArgs = rawMatches.map((arg) => {
+      if (
+        (arg.startsWith('"') && arg.endsWith('"')) ||
+        (arg.startsWith("'") && arg.endsWith("'"))
+      ) {
+        return arg.slice(1, -1);
+      }
+      return arg;
+    });
+    args.push(...parsedArgs);
   }
 
   if (outputPath.trim()) {
@@ -66,14 +106,24 @@ export async function executeDiff(
       };
     }
 
+    const returnJson: Record<string, any> = {
+      success: true,
+      command: "diff",
+      inputPath,
+      result: resultJson,
+    };
+
+    if (outputPath.trim()) {
+      returnJson.outputPath = outputPath.trim();
+    }
+
+    if (stderr && stderr.trim()) {
+      returnJson.warnings = stderr.trim();
+    }
+
     return [
       {
-        json: {
-          success: true,
-          command: "diff",
-          inputPath,
-          result: resultJson,
-        },
+        json: returnJson,
       },
     ];
   } catch (error: any) {
@@ -88,7 +138,36 @@ export async function executeDiff(
       );
     }
 
+    if (
+      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
+      (error.message && error.message.includes("maxBuffer"))
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `QSV execution exceeded maximum stdout buffer (50 MB)`,
+        {
+          itemIndex,
+          description: `qsv diff returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+        },
+      );
+    }
+
     const rawError = (error.stderr || error.message || "").trim();
+
+    if (
+      rawError.includes("is not a qsv command") ||
+      rawError.includes("unrecognized subcommand") ||
+      rawError.includes("not available in this")
+    ) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Operation 'diff' is not available in the installed QSV binary`,
+        {
+          itemIndex,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'diff' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+        },
+      );
+    }
 
     if (
       rawError.includes("No such file or directory") ||

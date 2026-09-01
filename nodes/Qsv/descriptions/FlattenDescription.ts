@@ -52,11 +52,32 @@ export const FlattenDescription: INodeProperties[] = [
     },
     options: [
       {
-        displayName: "No Headers",
-        name: "noHeaders",
+        displayName: "Condense",
+        name: "condense",
         type: "string",
         default: "",
-        description: "hen set, the first row will not be interpreted",
+        description: "Limits the length of each field to the value",
+      },
+      {
+        displayName: "Field Separator",
+        name: "fieldSeparator",
+        type: "string",
+        default: "",
+        description: "A string of characters to write between a column name",
+      },
+      {
+        displayName: "Separator",
+        name: "separator",
+        type: "string",
+        default: "",
+        description: "A string of characters to write after each record.",
+      },
+      {
+        displayName: "No Headers",
+        name: "noHeaders",
+        type: "boolean",
+        default: false,
+        description: "When set, the first row will not be interpreted",
       },
       {
         displayName: "Delimiter",

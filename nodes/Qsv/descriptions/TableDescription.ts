@@ -52,18 +52,32 @@ export const TableDescription: INodeProperties[] = [
     },
     options: [
       {
+        displayName: "Width",
+        name: "width",
+        type: "string",
+        default: "",
+        description: "The minimum width of each column.",
+      },
+      {
+        displayName: "Pad",
+        name: "pad",
+        type: "string",
+        default: "",
+        description: "The minimum number of spaces between each column.",
+      },
+      {
+        displayName: "Align",
+        name: "align",
+        type: "string",
+        default: "",
+        description: "How entries should be aligned in a column.",
+      },
+      {
         displayName: "Condense",
         name: "condense",
         type: "string",
         default: "",
         description: "Limits the length of each field to the value",
-      },
-      {
-        displayName: "Output",
-        name: "output",
-        type: "string",
-        default: "",
-        description: "Write output to <file> instead of stdout.",
       },
       {
         displayName: "Delimiter",
@@ -75,9 +89,9 @@ export const TableDescription: INodeProperties[] = [
       {
         displayName: "Memcheck",
         name: "memcheck",
-        type: "string",
-        default: "",
-        description: "heck if there is enough memory to load the entire",
+        type: "boolean",
+        default: false,
+        description: "Check if there is enough memory to load the entire",
       },
     ],
   },
