@@ -1,119 +1,119 @@
-import type { INodeProperties } from "n8n-workflow";
+import type { INodeProperties } from 'n8n-workflow';
 
 export const DenullDescription: INodeProperties[] = [
   {
-    displayName: "Input CSV File Path",
-    name: "inputPath",
-    type: "string",
+    displayName: 'Input CSV File Path',
+    name: 'inputPath',
+    type: 'string',
     required: true,
-    default: "",
-    description: "Path to input CSV file on disk or host filesystem",
+    default: '',
+    description: 'Path to input CSV file on disk or host filesystem',
     displayOptions: {
       show: {
-        operation: ["denull"],
+        operation: ['denull'],
+      },
+    },
+  },
+
+  {
+    displayName: 'Output File Path',
+    name: 'outputPath',
+    type: 'string',
+    default: '',
+    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
+    displayOptions: {
+      show: {
+        operation: ['denull'],
       },
     },
   },
   {
-    displayName: "Output File Path",
-    name: "outputPath",
-    type: "string",
-    default: "",
-    description:
-      "Optional path to write output file directly to disk (if omitted, results are returned in node output)",
+    displayName: 'Additional Flags',
+    name: 'additionalArgs',
+    type: 'string',
+    default: '',
+    description: 'Additional raw command line arguments to pass to qsv denull (Docs: https://github.com/dathere/qsv/blob/master/docs/help/denull.md)',
     displayOptions: {
       show: {
-        operation: ["denull"],
+        operation: ['denull'],
       },
     },
   },
   {
-    displayName: "Additional Flags",
-    name: "additionalArgs",
-    type: "string",
-    default: "",
-    description: "Additional raw command line arguments to pass to qsv denull",
-    displayOptions: {
-      show: {
-        operation: ["denull"],
-      },
-    },
-  },
-  {
-    displayName: "Options",
-    name: "options",
-    type: "collection",
-    placeholder: "Add Option",
+    displayName: 'Options',
+    name: 'options',
+    type: 'collection',
+    placeholder: 'Add Option',
     default: {},
     displayOptions: {
       show: {
-        operation: ["denull"],
+        operation: ['denull'],
       },
     },
     options: [
-      {
-        displayName: "Select",
-        name: "select",
-        type: "string",
-        default: "",
-        description: "Select the columns to scan. See `qsv select --help`",
-      },
-      {
-        displayName: "Vocab",
-        name: "vocab",
-        type: "string",
-        default: "",
-        description: "Comma-separated null sentinel vocabulary, REPLACING",
-      },
-      {
-        displayName: "Add Vocab",
-        name: "addVocab",
-        type: "string",
-        default: "",
-        description: "Comma-separated tokens to ADD to the built-in list.",
-      },
-      {
-        displayName: "Max Distinct",
-        name: "maxDistinct",
-        type: "string",
-        default: "",
-        description: "Abandon a column once it holds this many distinct",
-      },
-      {
-        displayName: "All Columns",
-        name: "allColumns",
-        type: "boolean",
-        default: false,
-        description: "Also report columns with nothing to flag. By default",
-      },
-      {
-        displayName: "Apply",
-        name: "apply",
-        type: "boolean",
-        default: false,
-        description: "Rewrite the data instead of only reporting it. Blanks",
-      },
-      {
-        displayName: "Json",
-        name: "json",
-        type: "boolean",
-        default: false,
-        description: "Emit the report as a JSON array instead of CSV.",
-      },
-      {
-        displayName: "No Headers",
-        name: "noHeaders",
-        type: "boolean",
-        default: false,
-        description: "When set, the first row will NOT be interpreted as",
-      },
-      {
-        displayName: "Delimiter",
-        name: "delimiter",
-        type: "string",
-        default: "",
-        description: "The field delimiter for reading CSV data.",
-      },
+    {
+      displayName: 'Add Vocab',
+      name: 'addVocab',
+      type: 'string',
+      default: '',
+      description: 'Comma-separated tokens to ADD to the built-in list. Use this for site-specific markers.',
+    },
+    {
+      displayName: 'All Columns',
+      name: 'allColumns',
+      type: 'boolean',
+      default: false,
+      description: 'Also report columns with nothing to flag. By default only columns with a verdict are listed.',
+    },
+    {
+      displayName: 'Apply',
+      name: 'apply',
+      type: 'boolean',
+      default: false,
+      description: 'Rewrite the data instead of only reporting it. Blanks the sentinels in every CONFIRMED column and writes the CSV to <output> (or stdout), sending the report to stderr. Rejected and unscanned columns pass through untouched. Needs a file input, and <output> must not be the input file.',
+    },
+    {
+      displayName: 'Delimiter',
+      name: 'delimiter',
+      type: 'string',
+      default: '',
+      description: 'The field delimiter for reading CSV data. Must be a single character. (default: ,)',
+    },
+    {
+      displayName: 'Json',
+      name: 'json',
+      type: 'boolean',
+      default: false,
+      description: 'Emit the report as a JSON array instead of CSV.',
+    },
+    {
+      displayName: 'Max Distinct',
+      name: 'maxDistinct',
+      type: 'string',
+      default: '',
+      description: 'Abandon a column once it holds this many distinct non-numeric values. Guards memory on free-text columns and bounds the report. [default: 16]',
+    },
+    {
+      displayName: 'No Headers',
+      name: 'noHeaders',
+      type: 'boolean',
+      default: false,
+      description: 'When set, the first row will NOT be interpreted as column names. Columns are named col_1, col_2, etc.',
+    },
+    {
+      displayName: 'Select',
+      name: 'select',
+      type: 'string',
+      default: '',
+      description: 'Select the columns to scan. See `qsv select --help` for the full selection syntax.',
+    },
+    {
+      displayName: 'Vocab',
+      name: 'vocab',
+      type: 'string',
+      default: '',
+      description: 'Comma-separated null sentinel vocabulary, REPLACING the built-in list. Matched case-insensitively after trimming surrounding whitespace.',
+    },
     ],
   },
 ];

@@ -1,239 +1,224 @@
-import type { INodeProperties } from "n8n-workflow";
+import type { INodeProperties } from 'n8n-workflow';
 
 export const GeocodeDescription: INodeProperties[] = [
   {
-    displayName: "Input CSV File Path",
-    name: "inputPath",
-    type: "string",
+    displayName: 'Input CSV File Path',
+    name: 'inputPath',
+    type: 'string',
     required: true,
-    default: "",
-    description: "Path to input CSV file on disk or host filesystem",
+    default: '',
+    description: 'Path to input CSV file on disk or host filesystem',
     displayOptions: {
       show: {
-        operation: ["geocode"],
+        operation: ['geocode'],
+      },
+    },
+  },
+
+  {
+    displayName: 'Output File Path',
+    name: 'outputPath',
+    type: 'string',
+    default: '',
+    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
+    displayOptions: {
+      show: {
+        operation: ['geocode'],
       },
     },
   },
   {
-    displayName: "Output File Path",
-    name: "outputPath",
-    type: "string",
-    default: "",
-    description:
-      "Optional path to write output file directly to disk (if omitted, results are returned in node output)",
+    displayName: 'Additional Flags',
+    name: 'additionalArgs',
+    type: 'string',
+    default: '',
+    description: 'Additional raw command line arguments to pass to qsv geocode (Docs: https://github.com/dathere/qsv/blob/master/docs/help/geocode.md)',
     displayOptions: {
       show: {
-        operation: ["geocode"],
+        operation: ['geocode'],
       },
     },
   },
   {
-    displayName: "Additional Flags",
-    name: "additionalArgs",
-    type: "string",
-    default: "",
-    description: "Additional raw command line arguments to pass to qsv geocode",
-    displayOptions: {
-      show: {
-        operation: ["geocode"],
-      },
-    },
-  },
-  {
-    displayName: "Options",
-    name: "options",
-    type: "collection",
-    placeholder: "Add Option",
+    displayName: 'Options',
+    name: 'options',
+    type: 'collection',
+    placeholder: 'Add Option',
     default: {},
     displayOptions: {
       show: {
-        operation: ["geocode"],
+        operation: ['geocode'],
       },
     },
     options: [
-      {
-        displayName: "New Column",
-        name: "newColumn",
-        type: "string",
-        default: "",
-        description:
-          "Put the transformed values in a new column instead. Not valid when",
-      },
-      {
-        displayName: "Rename",
-        name: "rename",
-        type: "string",
-        default: "",
-        description: "New name for the transformed column.",
-      },
-      {
-        displayName: "Country",
-        name: "country",
-        type: "string",
-        default: "",
-        description:
-          "The comma-delimited, case-insensitive list of countries to filter for.",
-      },
-      {
-        displayName: "Min Score",
-        name: "minScore",
-        type: "string",
-        default: "",
-        description: "The minimum Jaro-Winkler distance score.",
-      },
-      {
-        displayName: "Admin1",
-        name: "admin1",
-        type: "string",
-        default: "",
-        description:
-          "The comma-delimited, case-insensitive list of admin1s to filter for.",
-      },
-      {
-        displayName: "K_weight",
-        name: "k_weight",
-        type: "string",
-        default: "",
-        description: "Use population-weighted distance for reverse subcommand.",
-      },
-      {
-        displayName: "Api Key",
-        name: "apiKey",
-        type: "string",
-        default: "",
-        description:
-          "The OpenCage API key for the opencage/opencagenow subcommands.",
-      },
-      {
-        displayName: "Rate Limit",
-        name: "rateLimit",
-        type: "string",
-        default: "",
-        description: "Maximum number of OpenCage API requests per second.",
-      },
-      {
-        displayName: "Reverse",
-        name: "reverse",
-        type: "boolean",
-        default: false,
-        description:
-          "Force reverse geocoding for opencage/opencagenow (treat the",
-      },
-      {
-        displayName: "No Annotations",
-        name: "noAnnotations",
-        type: "boolean",
-        default: false,
-        description:
-          "Omit OpenCage annotations (timezone, currency, etc.) from the",
-      },
-      {
-        displayName: "Cache Ttl",
-        name: "cacheTtl",
-        type: "string",
-        default: "",
-        description:
-          "Time-to-live for the persistent on-disk OpenCage result cache.",
-      },
-      {
-        displayName: "No Cache",
-        name: "noCache",
-        type: "boolean",
-        default: false,
-        description: "Disable the persistent on-disk OpenCage cache. Duplicate",
-      },
-      {
-        displayName: "Language",
-        name: "language",
-        type: "string",
-        default: "",
-        description:
-          "The language to use when geocoding. The language is specified as a ISO 639-1 code.",
-      },
-      {
-        displayName: "Invalid Result",
-        name: "invalidResult",
-        type: "string",
-        default: "",
-        description:
-          "The string to return when the geocode result is empty/invalid.",
-      },
-      {
-        displayName: "Jobs",
-        name: "jobs",
-        type: "string",
-        default: "",
-        description: "The number of jobs to run in parallel.",
-      },
-      {
-        displayName: "Batch",
-        name: "batch",
-        type: "string",
-        default: "",
-        description:
-          "The number of rows per batch to load into memory, before running in parallel.",
-      },
-      {
-        displayName: "Timeout",
-        name: "timeout",
-        type: "string",
-        default: "",
-        description: "Timeout for downloading Geonames cities index.",
-      },
-      {
-        displayName: "Cache Dir",
-        name: "cacheDir",
-        type: "string",
-        default: "",
-        description:
-          "The directory to use for caching the Geonames cities index",
-      },
-      {
-        displayName: "Older Than",
-        name: "olderThan",
-        type: "string",
-        default: "",
-        description: "Delete OpenCage cache entries older than this value.",
-      },
-      {
-        displayName: "Languages",
-        name: "languages",
-        type: "string",
-        default: "",
-        description:
-          "The comma-delimited, case-insensitive list of languages to use when building",
-      },
-      {
-        displayName: "Cities Url",
-        name: "citiesUrl",
-        type: "string",
-        default: "",
-        description:
-          "The URL to download the Geonames cities file from. There are several",
-      },
-      {
-        displayName: "Force",
-        name: "force",
-        type: "boolean",
-        default: false,
-        description:
-          "Force update the Geonames cities index. If not set, qsv will check if there",
-      },
-      {
-        displayName: "Delimiter",
-        name: "delimiter",
-        type: "string",
-        default: "",
-        description: "The field delimiter for reading CSV data.",
-      },
-      {
-        displayName: "Progressbar",
-        name: "progressbar",
-        type: "boolean",
-        default: false,
-        description:
-          "Show progress bars. Will also show the cache hit rate upon completion.",
-      },
+    {
+      displayName: 'Admin1',
+      name: 'admin1',
+      type: 'string',
+      default: '',
+      description: 'The comma-delimited, case-insensitive list of admin1s to filter for. If all uppercase, it will be treated as an admin1 code (e.g. US.NY, JP.40, CN.23). Otherwise, it will be treated as an admin1 name (e.g New York, Tokyo, Shanghai). Requires the --country option. However, if all admin1 codes have the same prefix (e.g. US.TX, US.NJ, US.CA), the country can be inferred from the admin1 code (in this example - US), and the --country option is not required. If specifying multiple admin1 filters, you can mix admin1 codes and names, and they are matched in priority order. Matches are made using a starts_with() comparison (i.e. "US" will match "US.NY", "US.NJ", etc. for admin1 code. "New" will match "New York", "New Jersey", "Newfoundland", etc. for admin1 name.) admin1 is the second priority filter, and will be applied after country filters. See https://download.geonames.org/export/dump/admin1CodesASCII.txt for recognized admin1 codes/names. REVERSE only option:',
+    },
+    {
+      displayName: 'Api Key',
+      name: 'apiKey',
+      type: 'string',
+      default: '',
+      description: 'The OpenCage API key for the opencage/opencagenow subcommands. If set, it takes precedence over the QSV_OPENCAGE_API_KEY environment variable. Get a free key at https://opencagedata.com/users/sign_up.',
+    },
+    {
+      displayName: 'Batch',
+      name: 'batch',
+      type: 'string',
+      default: '',
+      description: 'The number of rows per batch to load into memory, before running in parallel. Set to 0 to load all rows in one batch. [default: 50000]',
+    },
+    {
+      displayName: 'Cache Dir',
+      name: 'cacheDir',
+      type: 'string',
+      default: '',
+      description: 'The directory to use for caching the Geonames cities index and the persistent on-disk OpenCage result cache. If the directory does not exist, qsv will attempt to create it. If the QSV_CACHE_DIR envvar is set, it will be used instead. [default: ~/.qsv-cache] CACHE-PRUNE only option:',
+    },
+    {
+      displayName: 'Cache Ttl',
+      name: 'cacheTtl',
+      type: 'string',
+      default: '',
+      description: 'Time-to-live for the persistent on-disk OpenCage result cache. A value of 0 disables time-based expiration (entries are cached indefinitely). Use --no-cache to disable caching entirely. [default: 1209600]',
+    },
+    {
+      displayName: 'Cities Url',
+      name: 'citiesUrl',
+      type: 'string',
+      default: '',
+      description: 'The URL to download the Geonames cities file from. There are several available at https://download.geonames.org/export/dump/. cities500.zip   - cities with populations > 500; ~200k cities, 56mb cities1000.zip  - population > 1000; ~140k cities, 44mb cities5000.zip  - population > 5000; ~53k cities, 21mb cities15000.zip - population > 15000; ~26k cities, 13mb Note that the more cities are included, the larger the local index file will be, lookup times will be slower, and the search results will be different. For convenience, if this is set to 500, 1000, 5000 or 15000, it will be converted to a geonames cities URL. [default: https://download.geonames.org/export/dump/cities15000.zip]',
+    },
+    {
+      displayName: 'Country',
+      name: 'country',
+      type: 'string',
+      default: '',
+      description: 'The comma-delimited, case-insensitive list of countries to filter for. Country is specified as a ISO 3166-1 alpha-2 (two-letter) country code. https://en.wikipedia.org/wiki/ISO_3166-2 It is the topmost priority filter, and will be applied first. If multiple countries are specified, they are matched in priority order. For suggest, this will limit the search to the specified countries. For reverse, this ensures that the returned city is in the specified countries (especially when geocoding coordinates near country borders). If the coordinate is outside the specified countries, the returned city will be the closest city as the crow flies in the specified countries.',
+    },
+    {
+      displayName: 'Delimiter',
+      name: 'delimiter',
+      type: 'string',
+      default: '',
+      description: 'The field delimiter for reading CSV data. Must be a single character. (default: ,)',
+    },
+    {
+      displayName: 'Force',
+      name: 'force',
+      type: 'boolean',
+      default: false,
+      description: 'Force update the Geonames cities index. If not set, qsv will check if there are updates available at Geonames.org before updating the index.',
+    },
+    {
+      displayName: 'Invalid Result',
+      name: 'invalidResult',
+      type: 'string',
+      default: '',
+      description: 'The string to return when the geocode result is empty/invalid. If not set, the original value is used.',
+    },
+    {
+      displayName: 'Jobs',
+      name: 'jobs',
+      type: 'string',
+      default: '',
+      description: 'The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.',
+    },
+    {
+      displayName: 'K_weight',
+      name: 'k_weight',
+      type: 'string',
+      default: '',
+      description: 'Use population-weighted distance for reverse subcommand. (i.e. nearest.distance - k * city.population) Larger values will favor more populated cities. If not set (default), the population is not used and the nearest city is returned.',
+    },
+    {
+      displayName: 'Language',
+      name: 'language',
+      type: 'string',
+      default: '',
+      description: 'The language to use when geocoding. The language is specified as a ISO 639-1 code. Note that the Geonames index must have been built with the specified language using the `index-update` subcommand with the --languages option. If the language is not available, the first language in the index is used. [default: en]',
+    },
+    {
+      displayName: 'Languages',
+      name: 'languages',
+      type: 'string',
+      default: '',
+      description: 'The comma-delimited, case-insensitive list of languages to use when building the Geonames cities index. The languages are specified as a comma-separated list of ISO 639-2 codes. See https://download.geonames.org/export/dump/iso-languagecodes.txt to look up codes and https://download.geonames.org/export/dump/alternatenames/ for the supported language files. 253 languages are currently supported. [default: en]',
+    },
+    {
+      displayName: 'Min Score',
+      name: 'minScore',
+      type: 'string',
+      default: '',
+      description: 'The minimum Jaro-Winkler distance score. [default: 0.8]',
+    },
+    {
+      displayName: 'New Column',
+      name: 'newColumn',
+      type: 'string',
+      default: '',
+      description: 'Put the transformed values in a new column instead. Not valid when using the \'%dyncols:\' --formatstr option.',
+    },
+    {
+      displayName: 'No Annotations',
+      name: 'noAnnotations',
+      type: 'boolean',
+      default: false,
+      description: 'Omit OpenCage annotations (timezone, currency, etc.) from the result and from %json output.',
+    },
+    {
+      displayName: 'No Cache',
+      name: 'noCache',
+      type: 'boolean',
+      default: false,
+      description: 'Disable the persistent on-disk OpenCage cache. Duplicate queries within a run are still de-duplicated. 1. Use one of the predefined formats. 2. Use dynamic formatting to create a custom format. 3. Use the special format "%dyncols:" to dynamically add multiple columns to the output CSV using fields from a geocode result. PREDEFINED FORMATS: * \'%city-state\' - e.g. Brooklyn, New York * \'%city-country\' - Brooklyn, US * \'%city-state-country\' | \'%city-admin1-country\' - Brooklyn, New York US * \'%city-county-state\' | \'%city-admin2-admin1\' - Brooklyn, Kings County, New York * \'%city\' - Brooklyn * \'%state\' | \'%admin1\' - New York * \'%county\' | \'%admin2\' - Kings County * \'%country\' - US * \'%country_name\' - United States * \'%cityrecord\' - returns the full city record as a string * \'%admin1record\' - returns the full admin1 record as a string * \'%admin2record\' - returns the full admin2 record as a string * \'%lat-long\' - <latitude>, <longitude> * \'%location\' - (<latitude>, <longitude>) * \'%id\' - the Geonames ID * \'%capital\' - the capital * \'%continent\' - the continent (only valid for countryinfo subcommand) * \'%population\' - the population * \'%timezone\' - the timezone * \'%json\' - the full city record as JSON * \'%pretty-json\' - the full city record as pretty JSON * \'%+\' - use the subcommand\'s default format. suggest - \'%location\' suggestnow - \'{name}, {admin1} {country}: {latitude}, {longitude}\' reverse & reversenow - \'%city-admin1-country\' countryinfo - \'%country_name\' iplookup - \'%cityrecord\' iplookupnow - \'{name}, {admin1} {country}: {latitude}, {longitude}\' If an invalid format is specified, it will be treated as \'%+\'. Note that when using the JSON predefined formats with the now subcommands, the output will be valid JSON, as the "Location" header will be omitted. DYNAMIC FORMATTING: Alternatively, you can use dynamic formatting to create a custom format. To do so, set the --formatstr to a dynfmt template, enclosing field names in curly braces. The following ten cityrecord fields are available: id, name, latitude, longitude, country, admin1, admin2, capital, timezone, population Fifteen additional countryinfo field are also available: iso3, fips, area, country_population, continent, tld, currency_code, currency_name, phone, postal_code_format, postal_code_regex, languages, country_geonameid, neighbours, equivalent_fips_code For US places, two additional fields are available: us_county_fips_code and us_state_fips_code e.g. "City: {name}, State: {admin1}, Country: {country} {continent} - {languages}" If an invalid template is specified, "Invalid dynfmt template" is returned. Both predefined and dynamic formatting are cached. Subsequent calls with the same result will be faster as it will use the cached result instead of searching the Geonames index. DYNAMIC COLUMNS ("%dyncols:") FORMATTING: Finally, you can use the special format "%dyncols:" to dynamically add multiple columns to the output CSV using fields from a geocode result. To do so, set --formatstr to "%dyncols:" followed by a comma-delimited list of key:value pairs enclosed in curly braces. The key is the desired column name and the value is one of the same fields available for dynamic formatting. e.g. "%dyncols: {city_col:name}, {state_col:admin1}, {county_col:admin2}" will add three columns to the output CSV named city_col, state_col & county_col. Note that using "%dyncols:" will cause the command to geocode EACH row without using the cache, so it will be slower than predefined or dynamic formatting. Also, countryinfo and countryinfonow subcommands currently do not support "%dyncols:". [default: %+]',
+    },
+    {
+      displayName: 'Older Than',
+      name: 'olderThan',
+      type: 'string',
+      default: '',
+      description: 'Delete OpenCage cache entries older than this value. Accepts an absolute date/datetime (e.g. 2025-01-31) or a relative age with a unit suffix (s/m/h/d/w = seconds, minutes, hours, days or weeks; e.g. 30d, 2w, 48h). Required by the cache-prune subcommand.',
+    },
+    {
+      displayName: 'Progressbar',
+      name: 'progressbar',
+      type: 'boolean',
+      default: false,
+      description: 'Show progress bars. Will also show the cache hit rate upon completion. Not valid for stdin.',
+    },
+    {
+      displayName: 'Rate Limit',
+      name: 'rateLimit',
+      type: 'string',
+      default: '',
+      description: 'Maximum number of OpenCage API requests per second. The free tier allows 1 request/second (2,500/day). [default: 1]',
+    },
+    {
+      displayName: 'Rename',
+      name: 'rename',
+      type: 'string',
+      default: '',
+      description: 'New name for the transformed column.',
+    },
+    {
+      displayName: 'Reverse',
+      name: 'reverse',
+      type: 'boolean',
+      default: false,
+      description: 'Force reverse geocoding for opencage/opencagenow (treat the query as a "lat, long" WGS-84 coordinate). If not set, forward and reverse mode is auto-detected per row.',
+    },
+    {
+      displayName: 'Timeout',
+      name: 'timeout',
+      type: 'string',
+      default: '',
+      description: 'Timeout for downloading Geonames cities index. [default: 120]',
+    },
     ],
   },
 ];

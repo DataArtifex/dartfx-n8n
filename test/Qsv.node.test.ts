@@ -35,7 +35,53 @@ describe("Qsv Node Metadata & Structure", () => {
     expect(opValues).toContain("to");
   });
 
-  it("should include inputPath and outputPath across operations", () => {
+  it("should exclude non-data, terminal, and interactive commands (Finding 6e)", () => {
+    const operationProp = node.description.properties.find(
+      (p) => p.name === "operation",
+    );
+    const opValues = (operationProp?.options || []).map(
+      (opt: any) => opt.value,
+    );
+    expect(opValues).not.toContain("color");
+    expect(opValues).not.toContain("lens");
+    expect(opValues).not.toContain("prompt");
+    expect(opValues).not.toContain("clipboard");
+    expect(opValues).not.toContain("log");
+    expect(opValues).not.toContain("clean");
+    expect(opValues).not.toContain("help");
+  });
+
+  it("should tag feature-gated commands in dropdown descriptions (Finding 4)", () => {
+    const operationProp = node.description.properties.find(
+      (p) => p.name === "operation",
+    );
+    const sqlpOption = (operationProp?.options || []).find(
+      (opt: any) => opt.value === "sqlp",
+    );
+    expect(sqlpOption?.name).toContain("[Feature: polars]");
+
+    const synthOption = (operationProp?.options || []).find(
+      (opt: any) => opt.value === "synthesize",
+    );
+    expect(synthOption?.name).toContain("[Feature: synthesize]");
+  });
+
+  it("should include first-class positional properties across operations (Finding 7)", () => {
+    const selectionProp = node.description.properties.find(
+      (p) => p.name === "selection",
+    );
+    expect(selectionProp).toBeDefined();
+
+    const regexProp = node.description.properties.find(
+      (p) => p.name === "regex",
+    );
+    expect(regexProp).toBeDefined();
+
+    const sqlProp = node.description.properties.find((p) => p.name === "sql");
+    expect(sqlProp).toBeDefined();
+  });
+
+  it("should include inputPath across operations", () => {
     const inputPathProp = node.description.properties.find(
       (p) => p.name === "inputPath",
     );

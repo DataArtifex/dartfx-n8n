@@ -1,7 +1,7 @@
-import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-import { execFile } from "child_process";
-import { promisify } from "util";
+import type { IExecuteFunctions, INodeExecutionData } from 'n8n-workflow';
+import { NodeOperationError } from 'n8n-workflow';
+import { execFile } from 'child_process';
+import { promisify } from 'util';
 
 const execFileAsync = promisify(execFile);
 
@@ -9,73 +9,92 @@ export async function executeJoin(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
-  const inputPath = this.getNodeParameter("inputPath", itemIndex) as string;
+  const inputPath = this.getNodeParameter('inputPath', itemIndex) as string;
   if (!inputPath || !inputPath.trim()) {
     throw new NodeOperationError(
       this.getNode(),
-      "Input CSV file path is required.",
+      'Input CSV file path is required.',
       { itemIndex },
     );
   }
-  const outputPath =
-    (this.getNodeParameter("outputPath", itemIndex, "") as string) || "";
-  const additionalArgs =
-    (this.getNodeParameter("additionalArgs", itemIndex, "") as string) || "";
-  const options =
-    (this.getNodeParameter("options", itemIndex, {}) as any) || {};
+  const columns1 = (this.getNodeParameter('columns1', itemIndex) as string) || '';
+  const columns2 = (this.getNodeParameter('columns2', itemIndex) as string) || '';
+  const input2 = (this.getNodeParameter('input2', itemIndex) as string) || '';
+  if (!columns1 || !String(columns1).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "First File Join Columns" is required for join.',
+      { itemIndex },
+    );
+  }
+  if (!columns2 || !String(columns2).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "Second File Join Columns" is required for join.',
+      { itemIndex },
+    );
+  }
+  if (!input2 || !String(input2).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "Second Input File Path" is required for join.',
+      { itemIndex },
+    );
+  }
+  const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
+  const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
+  const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
-  const args: string[] = ["join"];
-
+  const args: string[] = ['join'];
   if (options.left === true) {
-    args.push("--left");
+    args.push('--left');
   }
   if (options.leftAnti === true) {
-    args.push("--left-anti");
+    args.push('--left-anti');
   }
   if (options.leftSemi === true) {
-    args.push("--left-semi");
+    args.push('--left-semi');
   }
   if (options.right === true) {
-    args.push("--right");
+    args.push('--right');
   }
   if (options.rightAnti === true) {
-    args.push("--right-anti");
+    args.push('--right-anti');
   }
   if (options.rightSemi === true) {
-    args.push("--right-semi");
+    args.push('--right-semi');
   }
   if (options.full === true) {
-    args.push("--full");
+    args.push('--full');
   }
   if (options.cross === true) {
-    args.push("--cross");
+    args.push('--cross');
   }
   if (options.nulls === true) {
-    args.push("--nulls");
+    args.push('--nulls');
   }
-  if (options.keysOutput !== undefined && options.keysOutput !== "") {
-    args.push("--keys-output", String(options.keysOutput));
+  if (options.keysOutput !== undefined && options.keysOutput !== '') {
+    args.push('--keys-output', String(options.keysOutput));
   }
   if (options.ignoreCase === true) {
-    args.push("--ignore-case");
+    args.push('--ignore-case');
   }
   if (options.ignoreLeadingZeros === true) {
-    args.push("--ignore-leading-zeros");
+    args.push('--ignore-leading-zeros');
   }
   if (options.noHeaders === true) {
-    args.push("--no-headers");
+    args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== "") {
-    args.push("--delimiter", String(options.delimiter));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
+
+  args.push(columns1.trim(), inputPath, columns2.trim(), input2.trim());
 
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
-      if (
-        (arg.startsWith('"') && arg.endsWith('"')) ||
-        (arg.startsWith("'") && arg.endsWith("'"))
-      ) {
+      if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
         return arg.slice(1, -1);
       }
       return arg;
@@ -84,21 +103,19 @@ export async function executeJoin(
   }
 
   if (outputPath.trim()) {
-    args.push("--output", outputPath.trim());
+    args.push('--output', outputPath.trim());
   }
-
-  args.push(inputPath);
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||
     process.env.QSV_BIN_PATH ||
     process.env.QSV_PATH ||
-    "qsv";
+    'qsv';
 
   try {
     const { stdout, stderr } = await execFileAsync(qsvBin, args, {
       maxBuffer: 50 * 1024 * 1024,
-      encoding: "utf8",
+      encoding: 'utf8',
     });
     let resultJson: any;
 
@@ -106,7 +123,7 @@ export async function executeJoin(
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: "qsv join",
+        command: 'qsv join',
         inputPath,
         rawOutput: stdout,
       };
@@ -114,7 +131,7 @@ export async function executeJoin(
 
     const returnJson: Record<string, any> = {
       success: true,
-      command: "join",
+      command: 'join',
       inputPath,
       result: resultJson,
     };
@@ -133,21 +150,18 @@ export async function executeJoin(
       },
     ];
   } catch (error: any) {
-    if (error.code === "ENOENT") {
+    if (error.code === 'ENOENT') {
       throw new NodeOperationError(
         this.getNode(),
         `The QSV CLI binary ('${qsvBin}') was not found`,
         {
           itemIndex,
-          description: `Please ensure 'qsv' is installed and available in the system PATH where n8n is running, or specify its absolute path via the DARTFX_QSV_BIN_PATH environment variable. (https://github.com/dathere/qsv)`,
+          description: `Please ensure 'qsv' is installed and available in the system PATH where n8n is running, or specify its absolute path via the DARTFX_QSV_BIN_PATH environment variable. (Docs: https://github.com/dathere/qsv/blob/master/docs/help/join.md)`,
         },
       );
     }
 
-    if (
-      error.code === "ERR_CHILD_PROCESS_STDIO_MAXBUFFER" ||
-      (error.message && error.message.includes("maxBuffer"))
-    ) {
+    if (error.code === 'ERR_CHILD_PROCESS_STDIO_MAXBUFFER' || (error.message && error.message.includes('maxBuffer'))) {
       throw new NodeOperationError(
         this.getNode(),
         `QSV execution exceeded maximum stdout buffer (50 MB)`,
@@ -158,27 +172,26 @@ export async function executeJoin(
       );
     }
 
-    const rawError = (error.stderr || error.message || "").trim();
+    const rawError = (error.stderr || error.message || '').trim();
 
     if (
-      rawError.includes("is not a qsv command") ||
-      rawError.includes("unrecognized subcommand") ||
-      rawError.includes("not available in this")
+      rawError.includes('with any of the allowed variants') ||
+      rawError.includes('Could not match') ||
+      rawError.includes('is not a qsv command') ||
+      rawError.includes('unrecognized subcommand') ||
+      rawError.includes('not available in this')
     ) {
       throw new NodeOperationError(
         this.getNode(),
         `Operation 'join' is not available in the installed QSV binary`,
         {
           itemIndex,
-          description: `The installed QSV binary at '${qsvBin}' does not include the 'join' feature. This feature may require a full feature build of QSV (e.g. qsv with all_features or a prebuilt binary with feature flags enabled). See https://github.com/dathere/qsv#feature-flags`,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'join' feature. This feature requires a QSV build with the corresponding Cargo feature enabled (or 'all_features'). See https://github.com/dathere/qsv/blob/master/docs/help/join.md and https://github.com/dathere/qsv#feature-flags`,
         },
       );
     }
 
-    if (
-      rawError.includes("No such file or directory") ||
-      rawError.includes("os error 2")
-    ) {
+    if (rawError.includes('No such file or directory') || rawError.includes('os error 2')) {
       throw new NodeOperationError(
         this.getNode(),
         `Input file not found: '${inputPath}'`,
@@ -190,10 +203,10 @@ export async function executeJoin(
     }
 
     if (
-      rawError.includes("Operation not permitted") ||
-      rawError.includes("os error 1") ||
-      rawError.includes("Permission denied") ||
-      rawError.includes("os error 13")
+      rawError.includes('Operation not permitted') ||
+      rawError.includes('os error 1') ||
+      rawError.includes('Permission denied') ||
+      rawError.includes('os error 13')
     ) {
       throw new NodeOperationError(
         this.getNode(),

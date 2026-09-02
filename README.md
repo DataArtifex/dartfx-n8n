@@ -17,15 +17,17 @@ A collection of custom [n8n](https://n8n.io/) community nodes to support **data 
 
 ## ⚡ Key Features
 
-- **File Path-First (Zero-Copy Architecture)**: Pass filesystem paths (`inputPath`, `outputPath`) between nodes to stream multi-gigabyte datasets directly through native Rust engines without overwhelming n8n memory.
-- **77+ Automated QSV Operations**: Full suite of high-performance tabular operations:
-  - **Profiling & Analysis**: `stats`, `frequency`, `schema`, `sniff`, `count`, `moarstats`, `pragmastat`
-  - **Transformation & Cleaning**: `apply`, `behead`, `dedup`, `denull`, `fill`, `flatten`, `fmt`, `replace`, `safenames`, `rename`, `pseudo`
+- **File Path-First (Zero-Copy Architecture)**: Pass filesystem paths (`inputPath`, `outputPath`) between nodes to stream multi-gigabyte datasets directly through native Rust engines without overwhelming n8n memory. Downstream nodes can chain output directly with `{{ $json.outputPath }}`.
+- **First-Class Positional & Typed Parameters**: Intuitive UI form fields for command-specific arguments (e.g. `selection` for `select`, `regex` for `search`, `sampleSize` for `sample`, `sql` for `sqlp`, `column`/`row`/`value` for `edit`) with precise docopt CLI argument ordering.
+- **71+ Automated QSV Operations**: Full suite of high-performance tabular operations:
+  - **Profiling & Analysis**: `stats`, `frequency`, `schema`, `sniff`, `count`, `moarstats`, `pragmastat`, `profile`
+  - **Transformation & Cleaning**: `apply`, `behead`, `dedup`, `denull`, `fill`, `flatten`, `fmt`, `replace`, `safenames`, `rename`, `pseudo`, `edit`
   - **Slicing, Search & Sampling**: `index`, `slice`, `search`, `searchset`, `select`, `sample`, `split`, `partition`
   - **High-Speed SQL & Joins**: `sqlp` (Polars SQL engine), `join`, `joinp`, `pivotp`, `diff`, `explode`, `implode`
-  - **Format Conversions**: `to` (Parquet, XLSX, SQLite, Postgres), `excel`, `json`, `jsonl`, `tojsonl`, `fixedwidth`, `geoconvert`
+  - **Format Conversions**: `to` (Parquet, XLSX, SQLite, Postgres, ODS, DataPackage), `excel`, `json`, `jsonl`, `tojsonl`, `fixedwidth`, `geoconvert`
   - **AI & Web Services**: `describegpt` (LLM metadata/chat), `fetch`, `fetchpost`, `geocode`
-  - **Advanced Scripting & Validation**: `luau` embedded scripting, `validate` (JSON Schema / RFC4180), `blake3` cryptographic hashing, `synthesize`
+  - **Advanced Scripting & Validation**: `luau` embedded scripting, `validate` (JSON Schema / RFC4180), `blake3` cryptographic hashing, `synthesize` (statistical test data generation)
+- **Feature-Gated Command Diagnostics**: Tagged feature requirements in UI dropdowns (`[Feature: polars]`, `[Feature: synthesize]`, `[Feature: luau]`) with actionable `NodeOperationError` guidance if a host binary lacks a compiled feature.
 - **Dynamic CLI Synchronizer**: `pnpm run generate:qsv` automatically queries `qsv --list` and keeps all node definitions and parameter forms synchronized with your installed QSV binary.
 
 ---
@@ -67,23 +69,31 @@ This community node executes the high-performance **[QSV CLI](https://github.com
 
 ### 2. Docker / Self-Hosted n8n Container
 
-If you run n8n using Docker, create a custom image that includes the `qsv` binary:
+If you run n8n using Docker, create a custom multi-stage Dockerfile that fetches the versioned `qsv` binary:
 
 ```dockerfile
+# Stage 1: Fetch and unpack the QSV binary
+FROM alpine:latest AS qsv-fetcher
+
+ARG QSV_VERSION=22.0.1
+RUN apk add --no-cache curl unzip \
+    && ARCH=$(uname -m) \
+    && if [ "$ARCH" = "x86_64" ]; then \
+         QSV_ARCH="x86_64-unknown-linux-musl"; \
+       elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then \
+         QSV_ARCH="aarch64-unknown-linux-gnu"; \
+       else \
+         QSV_ARCH="x86_64-unknown-linux-musl"; \
+       fi \
+    && curl -fsSL "https://github.com/dathere/qsv/releases/download/${QSV_VERSION}/qsv-${QSV_VERSION}-${QSV_ARCH}.zip" -o /tmp/qsv.zip \
+    && unzip -q -o /tmp/qsv.zip qsv -d /usr/local/bin/ \
+    && chmod +x /usr/local/bin/qsv
+
+# Stage 2: n8n runtime image
 FROM docker.n8n.io/n8nio/n8n:latest
 
 USER root
-# Install dependencies and download appropriate QSV prebuilt binary for host architecture
-RUN apk add --no-cache curl unzip bash \
-    && ARCH=$(uname -m) \
-    && if [ "$ARCH" = "x86_64" ]; then QSV_ARCH="x86_64-unknown-linux-musl"; \
-       elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then QSV_ARCH="aarch64-unknown-linux-musl"; \
-       else QSV_ARCH="x86_64-unknown-linux-musl"; fi \
-    && curl -fsSL "https://github.com/dathere/qsv/releases/latest/download/qsv-${QSV_ARCH}.zip" -o /tmp/qsv.zip \
-    && unzip -q -o /tmp/qsv.zip qsv -d /usr/local/bin \
-    && chmod +x /usr/local/bin/qsv \
-    && rm -f /tmp/qsv.zip
-
+COPY --from=qsv-fetcher /usr/local/bin/qsv /usr/local/bin/qsv
 USER node
 ```
 
