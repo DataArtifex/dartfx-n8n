@@ -49,7 +49,13 @@ Follow the [n8n Community Nodes installation guide](https://docs.n8n.io/integrat
 
 This community node executes the high-performance **[QSV CLI](https://github.com/dathere/qsv)** under the hood. The `qsv` binary **must be installed and accessible in the system `$PATH`** where n8n is running.
 
-### 1. Host Installation
+> [!IMPORTANT]
+> **n8n 3.0+ Docker Deployment Requirement:**
+> Starting with **n8n 3.0**, self-hosted n8n requires a **Docker-based deployment** (bare `npm` / `npx n8n` installations are deprecated/removed). Because the official n8n Docker image does not include the native `qsv` binary, you must either:
+> 1. Use a **custom multi-stage Dockerfile** (recommended below) to bake `qsv` into your runtime container.
+> 2. Mount a host-compiled `qsv` binary into `/usr/local/bin/qsv` in your container.
+
+### 1. Host Installation (n8n v1 / v2 or Local Development)
 
 - **macOS (Homebrew)**:
   ```bash
@@ -67,9 +73,9 @@ This community node executes the high-performance **[QSV CLI](https://github.com
   choco install qsv
   ```
 
-### 2. Docker / Self-Hosted n8n Container
+### 2. Docker / Self-Hosted n8n Container (Required for n8n 3.0+)
 
-If you run n8n using Docker, create a custom multi-stage Dockerfile that fetches the versioned `qsv` binary:
+If you run n8n using Docker (standard for n8n 3.0+), create a custom multi-stage Dockerfile that fetches the versioned `qsv` binary:
 
 ```dockerfile
 # Stage 1: Fetch and unpack the QSV binary
@@ -174,9 +180,25 @@ pnpm run dev
 
 ### 2. Testing with a Local n8n Instance
 
-#### Method A: Direct Local Link with `pnpm link <dir>` — _Recommended_
+#### Method A: Docker Volume Mount (Standard & Required for n8n 3.0+)
 
-In `pnpm`, you link directly to the local package folder in one step:
+For n8n 3.0+ or any Docker-based instance, mount your local built repository into the container's custom nodes folder:
+
+```bash
+docker run -it --rm \
+  --name n8n \
+  -p 5678:5678 \
+  -v ~/.n8n:/home/node/.n8n \
+  -v $(pwd):/home/node/.n8n/custom/node_modules/n8n-nodes-dartfx:ro \
+  -v /path/to/local/qsv:/usr/local/bin/qsv:ro \
+  docker.n8n.io/n8nio/n8n:latest
+```
+
+_(Note: `qsv` CLI must be mounted or baked into the Docker container's `$PATH` for QSV nodes to execute)._
+
+#### Method B: Direct Local Link with `pnpm link <dir>` (n8n v1 / v2 Bare CLI)
+
+If running an older n8n v1 or v2 instance directly via Node / npm on your host machine:
 
 ```bash
 mkdir -p ~/.n8n/custom
@@ -190,9 +212,9 @@ n8n start
 > **🔄 Do changes auto-refresh?**
 >
 > - **Recompilation**: Running `pnpm run dev` automatically recompiles TypeScript into `dist/` on save.
-> - **n8n Process**: **No**, n8n caches loaded node modules in memory on startup. You must **stop and restart `n8n start`** (and reload your browser tab) whenever you update node code for changes to take effect.
+> - **n8n Process**: **No**, n8n caches loaded node modules in memory on startup. You must **stop and restart n8n** (and reload your browser tab) whenever you update node code for changes to take effect.
 
-#### Method B: Traditional 2-Step `npm link`
+#### Method C: Traditional 2-Step `npm link` (n8n v1 / v2 Bare CLI)
 
 ```bash
 # Step 1: Register package globally
@@ -207,21 +229,6 @@ npm link n8n-nodes-dartfx
 # Start n8n
 n8n start
 ```
-
-#### Method C: Docker Volume Mount
-
-If running n8n in Docker, mount the built package into the container's custom nodes folder:
-
-```bash
-docker run -it --rm \
-  --name n8n \
-  -p 5678:5678 \
-  -v ~/.n8n:/home/node/.n8n \
-  -v $(pwd):/home/node/.n8n/custom/node_modules/n8n-nodes-dartfx:ro \
-  docker.n8n.io/n8nio/n8n
-```
-
-_(Note: `qsv` CLI must be installed and accessible in the Docker container's `$PATH` for QSV nodes to execute)._
 
 ---
 

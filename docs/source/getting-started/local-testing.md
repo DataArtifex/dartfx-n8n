@@ -30,9 +30,25 @@ pnpm run dev
 
 ## 🔗 2. Linking to Local n8n
 
-### Method A: Direct Local Linking (`pnpm link <dir>`) — Recommended
+### Method A: Docker Volume Mount (Standard & Required for n8n 3.0+)
 
-In `pnpm`, link directly to the package directory in a single step:
+Starting with **n8n 3.0**, n8n runs exclusively within a Docker container. Mount your local workspace and the `qsv` binary into the container:
+
+```bash
+docker run -it --rm \
+  --name n8n \
+  -p 5678:5678 \
+  -v ~/.n8n:/home/node/.n8n \
+  -v $(pwd):/home/node/.n8n/custom/node_modules/n8n-nodes-dartfx:ro \
+  -v /path/to/local/qsv:/usr/local/bin/qsv:ro \
+  docker.n8n.io/n8nio/n8n:latest
+```
+
+_(Note: If your local machine is macOS/Windows, provide a Linux-compatible `qsv` binary or use the multi-stage Docker build from [Installation & Prerequisites](installation.md#docker-deployment-mandatory-for-n8n-30))._
+
+### Method B: Direct Local Linking (`pnpm link <dir>`) — n8n v1 / v2 Bare CLI
+
+If developing against a legacy n8n v1 or v2 instance running directly on your host:
 
 ```bash
 mkdir -p ~/.n8n/custom
@@ -43,7 +59,7 @@ pnpm link /path/to/dartfx-n8n
 n8n start
 ```
 
-### Method B: Traditional 2-Step `npm link`
+### Method C: Traditional 2-Step `npm link` — n8n v1 / v2 Bare CLI
 
 ```bash
 # Step 1: In the dartfx-n8n directory
@@ -57,19 +73,6 @@ npm link n8n-nodes-dartfx
 
 # Start n8n
 n8n start
-```
-
-### Method C: Docker Volume Mount
-
-If running n8n via Docker, mount your local workspace into the container:
-
-```bash
-docker run -it --rm \
-  --name n8n \
-  -p 5678:5678 \
-  -v ~/.n8n:/home/node/.n8n \
-  -v $(pwd):/home/node/.n8n/custom/node_modules/n8n-nodes-dartfx:ro \
-  docker.n8n.io/n8nio/n8n
 ```
 
 ---

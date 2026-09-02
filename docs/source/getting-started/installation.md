@@ -58,21 +58,24 @@ QSV uses Rust Cargo feature flags to modularly compile high-performance sub-engi
 
 ## 📦 Installing in Self-Hosted n8n
 
-You can install `n8n-nodes-dartfx` directly through the n8n web interface:
+### n8n 3.0+ (Docker-Based Deployments)
 
-1. Open your n8n dashboard.
-2. Navigate to **Settings** > **Community Nodes**.
-3. Click **Install**.
-4. Enter the package name:
-   ```text
-   n8n-nodes-dartfx
-   ```
-5. Check the risk agreement checkbox and click **Install**.
-6. Once installation completes, the **QSV Data Wrangler** node will appear in your node catalog when building workflows.
+Starting with **n8n 3.0**, all self-hosted n8n instances require a **Docker-based deployment** (standalone `npm` / `npx n8n` installations are no longer supported).
+
+Because `n8n-nodes-dartfx` invokes the native `qsv` CLI binary:
+1. **Container Image**: Use a custom Docker image extending `docker.n8n.io/n8nio/n8n` that copies the pre-built `qsv` binary into `/usr/local/bin/qsv` (see Dockerfile below).
+2. **Community Nodes Installation**: Install via the n8n UI (**Settings** > **Community Nodes** > install `n8n-nodes-dartfx`). Ensure `/home/node/.n8n` is mounted to a **persistent volume** so installed community packages persist across container restarts.
+
+### n8n v1 / v2 (Legacy Host / Bare npm Deployments)
+
+If you are running an existing n8n v1 or v2 instance directly on a host machine:
+1. Install `qsv` on your host OS (`brew install qsv`, scoop, or cargo).
+2. Open your n8n dashboard > **Settings** > **Community Nodes**.
+3. Install `n8n-nodes-dartfx`.
 
 ---
 
-## 🐳 Docker Deployment
+## 🐳 Docker Deployment (Mandatory for n8n 3.0+)
 
 When deploying n8n via Docker, use a multi-stage Dockerfile that fetches the versioned QSV release binary:
 

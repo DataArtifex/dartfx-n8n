@@ -96,14 +96,26 @@ Always use `pnpm` for managing Node dependencies and scripts.
 
 ### 🧪 Local Testing with n8n
 
-To test nodes directly inside a local n8n instance:
+#### Option 1: Docker Volume Mount (Standard & Required for n8n 3.0+)
+
+```bash
+docker run -it --rm \
+  --name n8n \
+  -p 5678:5678 \
+  -v ~/.n8n:/home/node/.n8n \
+  -v $(pwd):/home/node/.n8n/custom/node_modules/n8n-nodes-dartfx:ro \
+  -v /path/to/local/qsv:/usr/local/bin/qsv:ro \
+  docker.n8n.io/n8nio/n8n:latest
+```
+
+#### Option 2: Bare CLI Linking (n8n v1 / v2 only)
 
 1. In `dartfx-n8n`:
    ```bash
    pnpm run build
    pnpm link --global
    ```
-2. In your local n8n installation directory (`~/.n8n/custom` or local test project):
+2. In your local n8n installation directory (`~/.n8n/custom`):
    ```bash
    pnpm link --global n8n-nodes-dartfx
    n8n start
