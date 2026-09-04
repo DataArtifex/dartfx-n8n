@@ -64,8 +64,11 @@ scratch/
 # ==========================================
 # Local QSV / Data Test Artifacts
 # ==========================================
+*.idx
+*.csv.idx
 *.qsv.idx
 *.stats.csv
+*.stats.csv.*
 *.schema.json
 test-output/
 
