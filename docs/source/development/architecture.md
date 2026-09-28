@@ -1,6 +1,6 @@
 # Architecture & Developer Guide
 
-This document details the internal architecture and development patterns of `n8n-nodes-dartfx`.
+This document details the internal architecture and development patterns of `@dartfx/n8n-nodes`.
 
 ---
 

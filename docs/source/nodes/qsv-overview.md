@@ -1,12 +1,12 @@
 # QSV Node Overview
 
-The **QSV Node** (`n8n-nodes-dartfx.qsv`) provides high-performance tabular data wrangling inside n8n workflows by wrapping the [datHere QSV](https://github.com/dathere/qsv) Rust command-line suite.
+The **QSV Node** (`@dartfx/n8n-nodes.qsv`) provides high-performance tabular data wrangling inside n8n workflows by wrapping the [datHere QSV](https://github.com/dathere/qsv) Rust command-line suite.
 
 ---
 
 ## ⚡ Zero-Copy (File Path-First) Architecture
 
-A key differentiator of `n8n-nodes-dartfx` is its **zero-copy dataflow model**:
+A key differentiator of `@dartfx/n8n-nodes` is its **zero-copy dataflow model**:
 
 ### The Problem with Large Binaries in n8n
 
@@ -14,7 +14,7 @@ Standard n8n nodes often pass full file buffers between nodes in memory (`items[
 
 ### The Solution: Filesystem Paths
 
-`n8n-nodes-dartfx` relies on filesystem paths:
+`@dartfx/n8n-nodes` relies on filesystem paths:
 
 1. Upstream nodes download or prepare data on disk and emit an `inputPath` (e.g. `/data/incoming.csv`).
 2. The QSV Node receives `inputPath`, executes multi-threaded Rust routines with SIMD vectorization and memory-mapped IO, and writes directly to disk or stdout.

@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "n8n-nodes-dartfx"
+project = "@dartfx/n8n-nodes"
 copyright = "2026, Data Artifex"
 author = "Data Artifex"
 release = "0.1.0"

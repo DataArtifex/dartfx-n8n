@@ -82,7 +82,7 @@ When a tag matching `v*` (e.g., `v0.1.1`) is pushed:
 
 For the GitHub Action to publish to npm:
 
-1. Generate an npm **Automation Token** (or fine-grained Granular Access Token with _Read & Write_ permissions for `n8n-nodes-dartfx`) on [npmjs.com](https://www.npmjs.com/).
+1. Generate an npm **Automation Token** (or fine-grained Granular Access Token with _Read & Write_ permissions for `@dartfx/n8n-nodes`) on [npmjs.com](https://www.npmjs.com/).
 2. In your GitHub repository, navigate to **Settings > Secrets and variables > Actions**.
 3. Create a new repository secret named:
    ```text
@@ -130,10 +130,10 @@ If you want to test installing the node in a real live n8n instance from npm **w
    ```
 
 3. **Verify in n8n**:
-   - Standard installs (`n8n-nodes-dartfx` or `npm install n8n-nodes-dartfx`) will **not** receive this beta version; they continue receiving `latest`.
+   - Standard installs (`@dartfx/n8n-nodes` or `npm install @dartfx/n8n-nodes`) will **not** receive this beta version; they continue receiving `latest`.
    - In your test n8n instance, install using the specific tag:
      ```text
-     n8n-nodes-dartfx@beta
+     @dartfx/n8n-nodes@beta
      ```
 
 4. **Promote to Production Release**:

@@ -1,6 +1,6 @@
 # Local Testing & Development
 
-This guide explains how to test `n8n-nodes-dartfx` inside a local n8n instance during development.
+This guide explains how to test `@dartfx/n8n-nodes` inside a local n8n instance during development.
 
 ---
 
@@ -39,7 +39,7 @@ docker run -it --rm \
   --name n8n \
   -p 5678:5678 \
   -v ~/.n8n:/home/node/.n8n \
-  -v $(pwd):/home/node/.n8n/custom/node_modules/n8n-nodes-dartfx:ro \
+  -v $(pwd):/home/node/.n8n/custom/node_modules/@dartfx/n8n-nodes:ro \
   -v /path/to/local/qsv:/usr/local/bin/qsv:ro \
   docker.n8n.io/n8nio/n8n:latest
 ```
@@ -69,7 +69,7 @@ npm link
 # Step 2: In the n8n custom directory
 mkdir -p ~/.n8n/custom
 cd ~/.n8n/custom
-npm link n8n-nodes-dartfx
+npm link @dartfx/n8n-nodes
 
 # Start n8n
 n8n start
