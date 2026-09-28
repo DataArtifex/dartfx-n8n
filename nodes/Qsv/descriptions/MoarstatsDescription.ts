@@ -56,14 +56,14 @@ export const MoarstatsDescription: INodeProperties[] = [
       name: 'advanced',
       type: 'boolean',
       default: false,
-      description: 'Compute Kurtosis, Shannon Entropy, Bimodality Coefficient, Jarque-Bera, Gini Coefficient, Atkinson Index, Theil Index, Mean Absolute Deviation, and Simpson\'s Diversity Index. These advanced statistics computations require reading the original CSV file to collect all values for computation and are computationally expensive. Further, Entropy computation requires the frequency command to be run with --limit 0 to collect all frequencies. An index will be auto-created for the original CSV file if it doesn\'t already exist to enable parallel processing.',
+      description: 'Compute Moment Skewness, Kurtosis, Shannon Entropy, Bimodality Coefficient, Jarque-Bera, Gini Coefficient, Atkinson Index, Theil Index, Mean Absolute Deviation, Hoover Index, L-moment ratios, Lag-1 Autocorrelation, Benford MAD and Simpson\'s Diversity Index. These advanced statistics computations require reading the original CSV file to collect all values for computation and are computationally expensive. Further, Entropy computation requires the frequency command to be run with --limit 0 to collect all frequencies. An index will be auto-created for the original CSV file if it doesn\'t already exist to enable parallel processing.',
     },
     {
       displayName: 'Bivariate',
       name: 'bivariate',
       type: 'boolean',
       default: false,
-      description: 'Enable bivariate statistics computation. Requires indexed CSV file (index will be auto-created if missing). Computes pairwise correlations, covariances, mutual information, and normalized mutual information between columns. The bivariate statistics are saved to a separate file in the same directory as the input: <FILESTEM>.stats.bivariate.csv.',
+      description: 'Enable bivariate statistics computation. Requires indexed CSV file (index will be auto-created if missing). Computes the pairwise statistics selected with --bivariate-stats between columns (pearson & covariance by default). The bivariate statistics are saved to a separate file in the same directory as the input: <FILESTEM>.stats.bivariate.csv.',
     },
     {
       displayName: 'Bivariate Batch',
@@ -77,14 +77,14 @@ export const MoarstatsDescription: INodeProperties[] = [
       name: 'bivariateStats',
       type: 'string',
       default: '',
-      description: ' Comma-separated list of bivariate statistics to compute. nmi (normalized mutual information), u (Theil\'s directed uncertainty coefficient; emits u_field2_given_field1 and u_field1_given_field2) Use "all" to compute all statistics or "fast" to compute only pearson & covariance, which is much faster as it doesn\'t require storing all values and uses streaming algorithms. [default: fast]',
+      description: ' Comma-separated list of bivariate statistics to compute. nmi (normalized mutual information), u (Theil\'s directed uncertainty coefficient; emits u_field2_given_field1 and u_field1_given_field2), cramersv (Cramér\'s V) and regression (slope, intercept & r_squared). Use "all" to compute all statistics or "fast" to compute only pearson & covariance, which is much faster as it doesn\'t require storing all values and uses streaming algorithms. [default: fast]',
     },
     {
       displayName: 'Cardinality Threshold',
       name: 'cardinalityThreshold',
       type: 'string',
       default: '',
-      description: ' Skip mutual information (mi/nmi/u) for field pairs where either field\'s cardinality exceeds this threshold. Such pairs also skip building their joint-frequency table, which is the dominant memory cost of --bivariate-stats all. Defaults to half the row count, floored at 1000, so it stays inert on small inputs and scales with large ones. Mutual information between near-unique columns saturates at log(n) and is noise regardless of how efficiently it is computed.',
+      description: ' Skip mutual information (mi/nmi/u) and cramersv for field pairs where either field\'s cardinality exceeds this threshold. Such pairs also skip building their joint-frequency table, which is the dominant memory cost of --bivariate-stats all. Defaults to half the row count, floored at 1000, so it stays inert on small inputs and scales with large ones. Mutual information between near-unique columns saturates at log(n) and is noise regardless of how efficiently it is computed. All-unique fields always skip these statistics, regardless of this threshold.',
     },
     {
       displayName: 'Epsilon',

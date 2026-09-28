@@ -83,7 +83,7 @@ When deploying n8n via Docker, use a multi-stage Dockerfile that fetches the ver
 # Stage 1: Fetch and unpack the QSV binary
 FROM alpine:latest AS qsv-fetcher
 
-ARG QSV_VERSION=22.0.1
+ARG QSV_VERSION=23.0.1
 RUN apk add --no-cache curl unzip \
     && ARCH=$(uname -m) \
     && if [ "$ARCH" = "x86_64" ]; then \

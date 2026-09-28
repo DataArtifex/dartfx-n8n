@@ -80,6 +80,13 @@ export const FetchpostDescription: INodeProperties[] = [
       description: 'Allow cookies.',
     },
     {
+      displayName: 'Default Encoding',
+      name: 'defaultEncoding',
+      type: 'string',
+      default: '',
+      description: 'Fallback character encoding used to decode a response body when the server does NOT send a charset parameter in its Content-Type header. Accepts WHATWG encoding labels, e.g. utf-8, windows-1252, iso-8859-1, shift_jis, euc-jp, koi8-r. When the server DOES send a charset, the server always wins and this option is ignored. [default: utf-8]',
+    },
+    {
       displayName: 'Delimiter',
       name: 'delimiter',
       type: 'string',

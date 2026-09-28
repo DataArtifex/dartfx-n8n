@@ -90,6 +90,7 @@
 | **`jsonl`**      | Converts newline-delimited JSON (JSON Lines) streams into CSV.                                                     |
 | **`tojsonl`**    | Converts CSV datasets into JSON Lines files.                                                                       |
 | **`fixedwidth`** | Parses fixed-width text files into delimited CSV columns.                                                          |
+| **`readstat`**   | Converts SAS (`.sas7bdat`, `.xpt`), Stata (`.dta`), and SPSS (`.sav`, `.zsav`, `.por`) datasets to CSV with metadata extraction. |
 | **`geoconvert`** | Converts spatial formats (GeoJSON, Shapefile, CSV coordinates) back and forth.                                     |
 | **`snappy`**     | High-speed stream compression/decompression using Google's Snappy algorithm.                                       |
 

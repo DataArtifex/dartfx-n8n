@@ -124,6 +124,9 @@ export async function executeDescribegpt(
   if (options.language !== undefined && options.language !== '') {
     args.push('--language', String(options.language));
   }
+  if (options.tourAudience !== undefined && options.tourAudience !== '') {
+    args.push('--tour-audience', String(options.tourAudience));
+  }
   if (options.addlProps !== undefined && options.addlProps !== '') {
     args.push('--addl-props', String(options.addlProps));
   }

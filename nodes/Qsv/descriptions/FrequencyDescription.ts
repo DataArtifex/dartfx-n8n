@@ -73,6 +73,13 @@ export const FrequencyDescription: INodeProperties[] = [
       description: 'The field delimiter for reading CSV data. Must be a single character. (default: ,)',
     },
     {
+      displayName: 'Flexible',
+      name: 'flexible',
+      type: 'boolean',
+      default: false,
+      description: 'Allow records with a varying number of fields. Without this, a "ragged" record (one with more or fewer fields than the header) is an error. With it, extra fields are ignored and a SHORT record contributes no value at all for its missing columns (not even a null), so those columns are counted fewer times. Note that field selection stops at the first missing column, so an out-of-order selection (e.g. `3,1`) makes a short record skip columns that ARE present.',
+    },
+    {
       displayName: 'Force',
       name: 'force',
       type: 'boolean',

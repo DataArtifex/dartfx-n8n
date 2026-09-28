@@ -124,6 +124,9 @@ export async function executeFrequency(
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
+  if (options.flexible === true) {
+    args.push('--flexible');
+  }
   if (options.memcheck === true) {
     args.push('--memcheck');
   }

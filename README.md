@@ -52,6 +52,7 @@ This community node executes the high-performance **[QSV CLI](https://github.com
 > [!IMPORTANT]
 > **n8n 3.0+ Docker Deployment Requirement:**
 > Starting with **n8n 3.0**, self-hosted n8n requires a **Docker-based deployment** (bare `npm` / `npx n8n` installations are deprecated/removed). Because the official n8n Docker image does not include the native `qsv` binary, you must either:
+>
 > 1. Use a **custom multi-stage Dockerfile** (recommended below) to bake `qsv` into your runtime container.
 > 2. Mount a host-compiled `qsv` binary into `/usr/local/bin/qsv` in your container.
 
@@ -81,7 +82,8 @@ If you run n8n using Docker (standard for n8n 3.0+), create a custom multi-stage
 # Stage 1: Fetch and unpack the QSV binary
 FROM alpine:latest AS qsv-fetcher
 
-ARG QSV_VERSION=22.0.1
+# See https://github.com/dathere/qsv/releases for latest
+ARG QSV_VERSION=23.0.1
 RUN apk add --no-cache curl unzip \
     && ARCH=$(uname -m) \
     && if [ "$ARCH" = "x86_64" ]; then \
@@ -141,7 +143,7 @@ Node collections that wrap host binaries declare and verify their target CLI ver
 
 | Node Collection               | Host Requirement        | Tested / Target CLI Version | Notes                                             |
 | :---------------------------- | :---------------------- | :-------------------------- | :------------------------------------------------ |
-| **QSV Data Wrangler** (`qsv`) | `qsv` binary in `$PATH` | `v22.0.1` (`>= 22.0.0`)     | Generated dynamically via `pnpm run generate:qsv` |
+| **QSV Data Wrangler** (`qsv`) | `qsv` binary in `$PATH` | `v23.0.1` (`>= 23.0.0`)     | Generated dynamically via `pnpm run generate:qsv` |
 | **DartFx FAIR Nodes**         | None (pure JS/TS)       | N/A                         | Fully self-contained                              |
 
 ### 3. Workflow Upgrade Behavior in n8n

@@ -51,6 +51,9 @@ export async function executePivotp(
   if (options.validate === true) {
     args.push('--validate');
   }
+  if (options.maxColumns !== undefined && options.maxColumns !== '') {
+    args.push('--max-columns', String(options.maxColumns));
+  }
   if (options.tryParsedates === true) {
     args.push('--try-parsedates');
   }

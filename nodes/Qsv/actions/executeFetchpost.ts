@@ -49,6 +49,9 @@ export async function executeFetchpost(
   if (options.timeout !== undefined && options.timeout !== '') {
     args.push('--timeout', String(options.timeout));
   }
+  if (options.defaultEncoding !== undefined && options.defaultEncoding !== '') {
+    args.push('--default-encoding', String(options.defaultEncoding));
+  }
   if (options.httpHeader !== undefined && options.httpHeader !== '') {
     args.push('--http-header', String(options.httpHeader));
   }

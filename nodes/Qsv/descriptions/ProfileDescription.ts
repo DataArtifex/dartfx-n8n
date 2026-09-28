@@ -63,7 +63,7 @@ export const ProfileDescription: INodeProperties[] = [
       name: 'catalog',
       type: 'boolean',
       default: false,
-      description: 'Wrap the emitted DCAT-US v3 Dataset inside a dcat:Catalog envelope (Catalog{dataset:[...]}). Useful for federation harvesters (data.gov, CKAN ingest) that expect Catalog-shaped top-level metadata. Default: off (Dataset-only, backwards-compatible).',
+      description: 'Wrap the emitted DCAT-US v3 Dataset inside a Catalog envelope (Catalog{dataset:[...]}). Useful for federation harvesters (data.gov, CKAN ingest) that expect Catalog-shaped top-level metadata. Default: off (Dataset-only, backwards-compatible).',
     },
     {
       displayName: 'Croissant Frequency',
@@ -84,7 +84,7 @@ export const ProfileDescription: INodeProperties[] = [
       name: 'dcatLegacyLicense',
       type: 'boolean',
       default: false,
-      description: 'Transitional: re-emit dct:license on the Dataset alongside the v3-required Distribution-level copy. Default: off (strict v3, license on Distribution only).',
+      description: 'Also emit `license` on the Dataset, alongside the Distribution-level copy. Both are valid DCAT-US v3 (the Dataset-level property was added upstream), but the migration guide directs publishers to put license on each Distribution, so that is what qsv emits by default. Default: off.',
     },
     {
       displayName: 'Delimiter',
@@ -105,7 +105,7 @@ export const ProfileDescription: INodeProperties[] = [
       name: 'initialContext',
       type: 'string',
       default: '',
-      description: 'JSON file providing seed values for the package / resource dicts plus optional JSON-Pointer overrides for the final projection block. Replaces the older --package-meta / --resource-meta flags. Top-level keys: `package`, `resource`, `dataset_info`. Each leaf value may be wrapped as {"value": ..., "force": true} to mark it as overriding any value discovered from URL DCAT markup AND any value qsv inferred. Force is honored across all three subtrees: dataset_info entries override their target path verbatim; package / resource entries route through the active profile\'s `field_mappings:` table (e.g. `package.title force=true` lands at `/projection/dct:title`, beating inference and discovery). Forced values for slots the profile does not surface are silently dropped (no-op). See tests/resources/profile/dcat-init-context.README.md for a fully-populated example.',
+      description: 'JSON file providing seed values for the package / resource dicts plus optional JSON-Pointer overrides for the final projection block. Replaces the older --package-meta / --resource-meta flags. Top-level keys: `package`, `resource`, `dataset_info`. Each leaf value may be wrapped as {"value": ..., "force": true} to mark it as overriding any value discovered from URL DCAT markup AND any value qsv inferred. Force is honored across all three subtrees: dataset_info entries override their target path verbatim; package / resource entries route through the active profile\'s `field_mappings:` table (e.g. `package.title force=true` lands at `/projection/title`, beating inference and discovery). Forced values for slots the profile does not surface are silently dropped (no-op). See tests/resources/profile/dcat-init-context.README.md for a fully-populated example.',
     },
     {
       displayName: 'Jobs',
@@ -168,7 +168,7 @@ export const ProfileDescription: INodeProperties[] = [
       name: 'strict',
       type: 'boolean',
       default: false,
-      description: 'With --validate, fail the command on JSON Schema violations or non-Info external- validator findings (Required/Recommended severities) instead of just warning. Note: RFC4180 structural failures from `qsv validate` (emitted when a spec declares `validators`) are always appended as warnings, regardless of this flag.',
+      description: 'With --validate, fail the command on Required-severity schema violations, or on non-Info external-validator findings, instead of just warning. Severity comes from the DCAT-US v3 schema\'s own requirementLevel annotations, so a missing mandatory property aborts while a recommended-field advisory does not. Note: RFC4180 structural failures from `qsv validate` (emitted when a spec declares `validators`) are always appended as warnings, regardless of this flag.',
     },
     {
       displayName: 'Validate',

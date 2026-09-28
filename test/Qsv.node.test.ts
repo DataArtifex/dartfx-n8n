@@ -33,6 +33,7 @@ describe("Qsv Node Metadata & Structure", () => {
     expect(opValues).toContain("join");
     expect(opValues).toContain("sqlp");
     expect(opValues).toContain("to");
+    expect(opValues).toContain("readstat");
   });
 
   it("should exclude non-data, terminal, and interactive commands (Finding 6e)", () => {

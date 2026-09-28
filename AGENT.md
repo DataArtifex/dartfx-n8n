@@ -19,7 +19,7 @@ Primary components:
 - **Language**: TypeScript (ES2022 / CommonJS for n8n node loader)
 - **Process Orchestration**: `child_process.execFile` (via Node.js `util.promisify`) for lightweight, async subprocess execution with zero external runtime dependencies
 - **External Dependencies**:
-  - `qsv` CLI (Rust binary, version >= 22.0.0) available in `$PATH`
+  - `qsv` CLI (Rust binary, version >= 23.0.0) available in `$PATH`
 
 ---
 
@@ -35,7 +35,7 @@ Primary components:
 
 ### 2. Dynamic Node Generation from QSV CLI
 
-- QSV evolves rapidly with over 77 subcommands and hundreds of flags.
+- QSV evolves rapidly with over 79 subcommands and hundreds of flags.
 - **`scripts/generate-qsv-nodes.ts`** dynamically discovers installed commands via `qsv --list` and inspects `qsv <command> --help` to extract:
   - Command descriptions and parameter lists (`--flags`, `--options <arg>`, positional inputs).
   - Type mappings (boolean flags -> `boolean`, strings -> `string`, numbers -> `number`, options with presets -> `options`).
@@ -45,7 +45,7 @@ Primary components:
 ### 3. Versioning & External Dependency Decoupling
 
 - **Package SemVer (`n8n-nodes-dartfx`)**: The package adheres strictly to Semantic Versioning starting at `0.1.0`. It is intentionally decoupled from any specific tool's versioning numbers because it contains multiple node collections.
-- **Node-level Dependency Binding**: Dynamic wrappers like QSV inspect the installed binary during `pnpm run generate:qsv` to capture the target CLI version (e.g. `22.0.1`) and embed it in node notices and descriptions.
+- **Node-level Dependency Binding**: Dynamic wrappers like QSV inspect the installed binary during `pnpm run generate:qsv` to capture the target CLI version (e.g. `23.0.1`) and embed it in node notices and descriptions.
 - **Graceful Error Handling**: If a host binary is missing (`ENOENT`), clear actionable guidance pointing to binary installation paths and environment variables (`DARTFX_QSV_BIN_PATH`) is returned.
 
 ---

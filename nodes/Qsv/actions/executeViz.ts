@@ -118,6 +118,9 @@ export async function executeViz(
   if (options.featureNameKey !== undefined && options.featureNameKey !== '') {
     args.push('--feature-name-key', String(options.featureNameKey));
   }
+  if (options.checkGeojsonKey === true) {
+    args.push('--check-geojson-key');
+  }
   if (options.denominatorKey !== undefined && options.denominatorKey !== '') {
     args.push('--denominator-key', String(options.denominatorKey));
   }
@@ -136,6 +139,9 @@ export async function executeViz(
   if (options.geocodeAdmin1 !== undefined && options.geocodeAdmin1 !== '') {
     args.push('--geocode-admin1', String(options.geocodeAdmin1));
   }
+  if (options.regionState !== undefined && options.regionState !== '') {
+    args.push('--region-state', String(options.regionState));
+  }
   if (options.noSnap === true) {
     args.push('--no-snap');
   }
@@ -150,6 +156,9 @@ export async function executeViz(
   }
   if (options.previewThreshold !== undefined && options.previewThreshold !== '') {
     args.push('--preview-threshold', String(options.previewThreshold));
+  }
+  if (options.tourSteps !== undefined && options.tourSteps !== '') {
+    args.push('--tour-steps', String(options.tourSteps));
   }
   if (options.heatmapDensity !== undefined && options.heatmapDensity !== '') {
     args.push('--heatmap-density', String(options.heatmapDensity));
@@ -180,6 +189,9 @@ export async function executeViz(
   }
   if (options.dictionaryContext !== undefined && options.dictionaryContext !== '') {
     args.push('--dictionary-context', String(options.dictionaryContext));
+  }
+  if (options.tourAudience !== undefined && options.tourAudience !== '') {
+    args.push('--tour-audience', String(options.tourAudience));
   }
   if (options.dictInfo === true) {
     args.push('--dict-info');

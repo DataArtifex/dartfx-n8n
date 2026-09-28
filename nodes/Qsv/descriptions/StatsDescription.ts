@@ -77,7 +77,7 @@ export const StatsDescription: INodeProperties[] = [
       name: 'cardinalityMethod',
       type: 'string',
       default: '',
-      description: 'Algorithm used to compute the --cardinality column. Choices: exact  - track every unique value in a frequency map (current behavior). O(cardinality) memory per column. Subject to --mode-cardinality-cap, which emits the ">=<n>" sentinel on overflow. approx - use HyperLogLog (Apache DataSketches port, lg_k=12). O(1) memory per column (~5KB), ~1.5% relative standard error. Notes: * --mode-cardinality-cap no longer affects the cardinality column under approx; the ">=<n>" sentinel is never emitted. * The cap STILL governs mode/antimode tracking (mode columns still emit "*HIGH_CARDINALITY" on overflow). * --infer-boolean forces exact (boolean inference needs cardinality == 2 exactness); a one-time warning is emitted. * Reproducible across --jobs values: the HLL union used at merge time is associative and order-invariant, so chunk completion order does not affect the final estimate. * Requires a little-endian target. Apache DataSketches does not support big-endian platforms (e.g., s390x); on those builds, this choice is rejected. [default: exact]',
+      description: 'Algorithm used to compute the --cardinality column. Choices: exact  - track every unique value in a frequency map (current behavior). O(cardinality) memory per column. Subject to --mode-cardinality-cap, which emits the ">=<n>" sentinel on overflow. approx - use HyperLogLog (Apache DataSketches port, lg_k=12). O(1) memory per column (~5KB), ~1.5% relative standard error. Notes: * --mode-cardinality-cap no longer affects the cardinality column under approx; the ">=<n>" sentinel is never emitted. * The cap STILL governs mode/antimode tracking (mode columns still emit "*HIGH_CARDINALITY" on overflow). * --infer-boolean forces exact (boolean inference needs cardinality == 2 exactness); a one-time warning is emitted. * Reproducible across PARALLEL --jobs values: the HLL union used at merge time is associative and order-invariant, so chunk completion order does not affect the final estimate. --jobs 1 never reaches that union and so can report a different estimate than a parallel run - pin --jobs when comparing cardinality across runs. * Requires a little-endian target. Apache DataSketches does not support big-endian platforms (e.g., s390x); on those builds, this choice is rejected. [default: exact]',
     },
     {
       displayName: 'Dates Whitelist',
@@ -99,6 +99,13 @@ export const StatsDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Compute all statistics available.',
+    },
+    {
+      displayName: 'Flexible',
+      name: 'flexible',
+      type: 'boolean',
+      default: false,
+      description: 'Allow records with a varying number of fields. Without this, a "ragged" record (one with more or fewer fields than the header) is an error. With it, extra fields are ignored and a SHORT record contributes no value at all for its missing columns (not even a null), so those columns are computed over fewer observations. Note that field selection stops at the first missing column, so an out-of-order selection (e.g. `3,1`) makes a short record skip columns that ARE present.',
     },
     {
       displayName: 'Force',

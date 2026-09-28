@@ -5,7 +5,7 @@ import { promisify } from 'util';
 
 const execFileAsync = promisify(execFile);
 
-export async function executeFetch(
+export async function executeReadstat(
   this: IExecuteFunctions,
   itemIndex: number,
 ): Promise<INodeExecutionData[]> {
@@ -21,81 +21,30 @@ export async function executeFetch(
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
-  const args: string[] = ['fetch'];
-  if (options.urlTemplate !== undefined && options.urlTemplate !== '') {
-    args.push('--url-template', String(options.urlTemplate));
+  const args: string[] = ['readstat'];
+  if (options.metadata !== undefined && options.metadata !== '') {
+    args.push('--metadata', String(options.metadata));
   }
-  if (options.newColumn !== undefined && options.newColumn !== '') {
-    args.push('--new-column', String(options.newColumn));
+  if (options.valueLabels === true) {
+    args.push('--value-labels');
   }
-  if (options.jaq !== undefined && options.jaq !== '') {
-    args.push('--jaq', String(options.jaq));
+  if (options.sentinelsAs !== undefined && options.sentinelsAs !== '') {
+    args.push('--sentinels-as', String(options.sentinelsAs));
   }
-  if (options.jaqfile !== undefined && options.jaqfile !== '') {
-    args.push('--jaqfile', String(options.jaqfile));
+  if (options.sentinelsEmbedded === true) {
+    args.push('--sentinels-embedded');
   }
-  if (options.pretty === true) {
-    args.push('--pretty');
+  if (options.sentinelsColumns !== undefined && options.sentinelsColumns !== '') {
+    args.push('--sentinels-columns', String(options.sentinelsColumns));
   }
-  if (options.rateLimit !== undefined && options.rateLimit !== '') {
-    args.push('--rate-limit', String(options.rateLimit));
+  if (options.jobs !== undefined && options.jobs !== '') {
+    args.push('--jobs', String(options.jobs));
   }
-  if (options.timeout !== undefined && options.timeout !== '') {
-    args.push('--timeout', String(options.timeout));
-  }
-  if (options.defaultEncoding !== undefined && options.defaultEncoding !== '') {
-    args.push('--default-encoding', String(options.defaultEncoding));
-  }
-  if (options.httpHeader !== undefined && options.httpHeader !== '') {
-    args.push('--http-header', String(options.httpHeader));
-  }
-  if (options.maxRetries !== undefined && options.maxRetries !== '') {
-    args.push('--max-retries', String(options.maxRetries));
-  }
-  if (options.maxErrors !== undefined && options.maxErrors !== '') {
-    args.push('--max-errors', String(options.maxErrors));
-  }
-  if (options.storeError === true) {
-    args.push('--store-error');
-  }
-  if (options.cookies === true) {
-    args.push('--cookies');
-  }
-  if (options.userAgent !== undefined && options.userAgent !== '') {
-    args.push('--user-agent', String(options.userAgent));
-  }
-  if (options.report !== undefined && options.report !== '') {
-    args.push('--report', String(options.report));
-  }
-  if (options.noCache === true) {
-    args.push('--no-cache');
-  }
-  if (options.memCacheSize !== undefined && options.memCacheSize !== '') {
-    args.push('--mem-cache-size', String(options.memCacheSize));
-  }
-  if (options.diskCache === true) {
-    args.push('--disk-cache');
-  }
-  if (options.diskCacheDir !== undefined && options.diskCacheDir !== '') {
-    args.push('--disk-cache-dir', String(options.diskCacheDir));
-  }
-  if (options.redisCache === true) {
-    args.push('--redis-cache');
-  }
-  if (options.cacheError === true) {
-    args.push('--cache-error');
-  }
-  if (options.flushCache === true) {
-    args.push('--flush-cache');
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
+  if (options.batch !== undefined && options.batch !== '') {
+    args.push('--batch', String(options.batch));
   }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
-  }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
   }
 
 
@@ -133,7 +82,7 @@ export async function executeFetch(
       resultJson = JSON.parse(stdout);
     } catch {
       resultJson = {
-        command: 'qsv fetch',
+        command: 'qsv readstat',
         inputPath,
         rawOutput: stdout,
       };
@@ -141,7 +90,7 @@ export async function executeFetch(
 
     const returnJson: Record<string, any> = {
       success: true,
-      command: 'fetch',
+      command: 'readstat',
       inputPath,
       result: resultJson,
     };
@@ -166,7 +115,7 @@ export async function executeFetch(
         `The QSV CLI binary ('${qsvBin}') was not found`,
         {
           itemIndex,
-          description: `Please ensure 'qsv' is installed and available in the system PATH where n8n is running, or specify its absolute path via the DARTFX_QSV_BIN_PATH environment variable. (Docs: https://github.com/dathere/qsv/blob/master/docs/help/fetch.md)`,
+          description: `Please ensure 'qsv' is installed and available in the system PATH where n8n is running, or specify its absolute path via the DARTFX_QSV_BIN_PATH environment variable. (Docs: https://github.com/dathere/qsv/blob/master/docs/help/readstat.md)`,
         },
       );
     }
@@ -177,7 +126,7 @@ export async function executeFetch(
         `QSV execution exceeded maximum stdout buffer (50 MB)`,
         {
           itemIndex,
-          description: `qsv fetch returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
+          description: `qsv readstat returned more data than could fit into memory. Specify an 'Output File Path' to stream results directly to disk instead.`,
         },
       );
     }
@@ -193,10 +142,10 @@ export async function executeFetch(
     ) {
       throw new NodeOperationError(
         this.getNode(),
-        `Operation 'fetch' is not available in the installed QSV binary`,
+        `Operation 'readstat' is not available in the installed QSV binary`,
         {
           itemIndex,
-          description: `The installed QSV binary at '${qsvBin}' does not include the 'fetch' feature. This feature requires a QSV build with the corresponding Cargo feature enabled (or 'all_features'). See https://github.com/dathere/qsv/blob/master/docs/help/fetch.md and https://github.com/dathere/qsv#feature-flags`,
+          description: `The installed QSV binary at '${qsvBin}' does not include the 'readstat' feature. This feature requires a QSV build with the corresponding Cargo feature enabled (or 'all_features'). See https://github.com/dathere/qsv/blob/master/docs/help/readstat.md and https://github.com/dathere/qsv#feature-flags`,
         },
       );
     }
@@ -207,7 +156,7 @@ export async function executeFetch(
         `Input file not found: '${inputPath}'`,
         {
           itemIndex,
-          description: `qsv fetch could not find the file at '${inputPath}'. Check for typos, or if n8n is running in Docker, ensure the host directory is mounted into the container.`,
+          description: `qsv readstat could not find the file at '${inputPath}'. Check for typos, or if n8n is running in Docker, ensure the host directory is mounted into the container.`,
         },
       );
     }
@@ -223,14 +172,14 @@ export async function executeFetch(
         `Permission denied accessing file: '${inputPath}'`,
         {
           itemIndex,
-          description: `qsv fetch was denied read access to '${inputPath}'. On macOS, check Full Disk Access or Removable Volumes permissions for the application running n8n.`,
+          description: `qsv readstat was denied read access to '${inputPath}'. On macOS, check Full Disk Access or Removable Volumes permissions for the application running n8n.`,
         },
       );
     }
 
     throw new NodeOperationError(
       this.getNode(),
-      `Failed executing 'qsv fetch': ${rawError}`,
+      `Failed executing 'qsv readstat': ${rawError}`,
       { itemIndex },
     );
   }
