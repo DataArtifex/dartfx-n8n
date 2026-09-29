@@ -1,5 +1,5 @@
 {
-  "node": "@dartfx/n8n-nodes.qsv",
+  "node": "@dartfx/n8n-nodes-dartfx.qsv",
   "nodeVersion": "1.0",
   "codexVersion": "1.0",
   "categories": ["Data & Storage", "Utility", "Development"],

@@ -1,6 +1,6 @@
 # Release & Deployment Guide
 
-This document defines the lifecycle, versioning rules, and workflows for **Staging** (isolated pre-release testing) and **Production** (general availability) deployments of `@dartfx/n8n-nodes`.
+This document defines the lifecycle, versioning rules, and workflows for **Staging** (isolated pre-release testing) and **Production** (general availability) deployments of `@dartfx/n8n-nodes-dartfx`.
 
 ---
 
@@ -12,7 +12,7 @@ This document defines the lifecycle, versioning rules, and workflows for **Stagi
 | **SemVer Format** | `0.1.0-staging.0` (pre-release) | `0.1.0` (stable release) |
 | **Git Tag Created?** | **No** (`--no-git-tag-version`) | **Yes** (`v0.1.0` annotated tag) |
 | **Triggers CI/CD?** | No (manual CLI push) | **Yes** (GitHub Actions triggers on `v*` tag) |
-| **Who Receives It?** | Only test instances specifying `@staging` | All users installing `@dartfx/n8n-nodes` |
+| **Who Receives It?** | Only test instances specifying `@staging` | All users installing `@dartfx/n8n-nodes-dartfx` |
 | **Git Hygiene Check** | Bypassed (`--no-git-checks`) | Enforced (clean working tree on `main`) |
 | **npm Provenance** | Optional | **Enforced** (`--provenance` via OIDC) |
 
@@ -50,20 +50,15 @@ pnpm version 0.1.0-staging.0 --no-git-tag-version
 
 ### 3. Publish to npm under the `staging` Tag
 ```bash
-# Load authentication token from .env
-export $(cat .env | xargs)
-export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
-
-# Publish with staging dist-tag
 pnpm publish --tag staging --access public --no-git-checks
 ```
 
 ### 4. Verify in a Live n8n Instance
 In n8n (**Settings > Community Nodes > Install**), specify:
 ```text
-@dartfx/n8n-nodes@staging
+@dartfx/n8n-nodes-dartfx@staging
 ```
-*(or by explicit version `@dartfx/n8n-nodes@0.1.0-staging.0`)*
+*(or by explicit version `@dartfx/n8n-nodes-dartfx@0.1.0-staging.0`)*
 
 ---
 
@@ -111,7 +106,7 @@ Production releases are triggered only when an annotated version tag (e.g. `v0.1
 If you have already thoroughly tested a staging build on npm and want to promote it to `latest` without rebuilding:
 
 ```bash
-npm dist-tag add @dartfx/n8n-nodes@0.1.0-staging.0 latest
+npm dist-tag add @dartfx/n8n-nodes-dartfx@0.1.0-staging.0 latest
 ```
 
 ---
@@ -119,9 +114,6 @@ npm dist-tag add @dartfx/n8n-nodes@0.1.0-staging.0 latest
 ### Option C: Manual CLI Production Publish (Fallback)
 
 ```bash
-export $(cat .env | xargs)
-export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
-
 pnpm publish --tag latest --access public
 ```
 
@@ -134,17 +126,15 @@ pnpm publish --tag latest --access public
 npm supports **Trusted Publishers** via OpenID Connect (OIDC), eliminating static tokens from GitHub Actions.
 
 #### 1. Bootstrap: Initial First-Time Publish
-Because `@dartfx/n8n-nodes` is a brand new package, it must be published **once** manually with your personal access token before npm exposes package settings:
+Because `@dartfx/n8n-nodes-dartfx` is a brand new package, it must be published **once** manually with your personal access token before npm exposes package settings:
 ```bash
-export $(cat .env | xargs)
-export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
 pnpm publish --tag staging --access public --no-git-checks
 ```
 
 #### 2. Configure Trusted Publisher on npmjs.com
 Once the package exists on npm:
 1. Log in to [npmjs.com](https://www.npmjs.com/) and open the package access page:
-   `https://www.npmjs.com/package/@dartfx/n8n-nodes/access`
+   `https://www.npmjs.com/package/@dartfx/n8n-nodes-dartfx/access`
 2. Under **Trusted Publishers**, click **Add Trusted Publisher**.
 3. Choose **GitHub Actions** and fill in:
    - **GitHub Organization / Owner**: `DataArtifex`

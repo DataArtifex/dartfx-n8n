@@ -1,6 +1,6 @@
-# n8n Community Nodes for Data Artifex (`@dartfx/n8n-nodes`)
+# n8n Community Nodes for Data Artifex (`@dartfx/n8n-nodes-dartfx`)
 
-[![npm version](https://img.shields.io/npm/v/@dartfx/n8n-nodes.svg)](https://www.npmjs.com/package/@dartfx/n8n-nodes)
+[![npm version](https://img.shields.io/npm/v/@dartfx/n8n-nodes-dartfx.svg)](https://www.npmjs.com/package/@dartfx/n8n-nodes-dartfx)
 [![CI](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/ci.yml/badge.svg)](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/ci.yml)
 [![Docs](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/sphinx.yaml/badge.svg)](https://dataartifex.github.io/dartfx-n8n/)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/DataArtifex/dartfx-n8n)
@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > [!NOTE]
-> **Initial Release (`v0.1.0`)**: This is the initial public release of `@dartfx/n8n-nodes`. Node APIs, parameters, and operation interfaces are actively expanding. Please report any issues or feature requests on [GitHub Issues](https://github.com/DataArtifex/dartfx-n8n/issues).
+> **Initial Release (`v0.1.0`)**: This is the initial public release of `@dartfx/n8n-nodes-dartfx`. Node APIs, parameters, and operation interfaces are actively expanding. Please report any issues or feature requests on [GitHub Issues](https://github.com/DataArtifex/dartfx-n8n/issues).
 
 A collection of custom [n8n](https://n8n.io/) community nodes to support **data FAIRification** pipelines and high-performance tabular data wrangling using [datHere QSV](https://github.com/dathere/qsv), Data Artifex packages, and other tools.
 
@@ -40,7 +40,7 @@ Follow the [n8n Community Nodes installation guide](https://docs.n8n.io/integrat
 
 1. Go to **Settings > Community Nodes**.
 2. Select **Install**.
-3. Enter `@dartfx/n8n-nodes`.
+3. Enter `@dartfx/n8n-nodes-dartfx`.
 4. Agree to the risks and select **Install**.
 
 ---
@@ -129,7 +129,7 @@ DARTFX_QSV_BIN_PATH=/opt/custom/bin/qsv
 
 This package follows a decoupled versioning model to support multiple independent node collections (e.g. QSV, Data Artifex FAIRification, Harvester):
 
-### 1. Package Semantic Versioning (`@dartfx/n8n-nodes`)
+### 1. Package Semantic Versioning (`@dartfx/n8n-nodes-dartfx`)
 
 - The package follows standard [Semantic Versioning](https://semver.org/) (starting at `0.1.0`).
 - Package releases are **independent** of external CLI versioning numbers.
@@ -191,7 +191,7 @@ docker run -it --rm \
   --name n8n \
   -p 5678:5678 \
   -v ~/.n8n:/home/node/.n8n \
-  -v $(pwd):/home/node/.n8n/custom/node_modules/@dartfx/n8n-nodes:ro \
+  -v $(pwd):/home/node/.n8n/custom/node_modules/@dartfx/n8n-nodes-dartfx:ro \
   -v /path/to/local/qsv:/usr/local/bin/qsv:ro \
   docker.n8n.io/n8nio/n8n:latest
 ```
@@ -226,7 +226,7 @@ npm link
 # Step 2: Link into n8n custom directory
 mkdir -p ~/.n8n/custom
 cd ~/.n8n/custom
-npm link @dartfx/n8n-nodes
+npm link @dartfx/n8n-nodes-dartfx
 
 # Start n8n
 n8n start
@@ -297,16 +297,15 @@ To test the package in a live n8n instance without replacing or affecting the pr
 
 3. **Publish to npm with the `staging` dist-tag:**
    ```bash
-   export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
    pnpm publish --tag staging --access public --no-git-checks
    ```
 
 4. **Install and verify in n8n:**
    In n8n (**Settings > Community Nodes > Install**), specify:
    ```text
-   @dartfx/n8n-nodes@staging
+   @dartfx/n8n-nodes-dartfx@staging
    ```
-   *(or exact version `@dartfx/n8n-nodes@0.1.0-staging.0`)*
+   *(or exact version `@dartfx/n8n-nodes-dartfx@0.1.0-staging.0`)*
 
 ---
 
@@ -332,13 +331,12 @@ git push origin main --follow-tags
 Promote a tested staging release to `latest` without rebuilding:
 
 ```bash
-npm dist-tag add @dartfx/n8n-nodes@0.1.0-staging.0 latest
+npm dist-tag add @dartfx/n8n-nodes-dartfx@0.1.0-staging.0 latest
 ```
 
 #### Option C: Manual CLI Production Publish
 
 ```bash
-export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
 pnpm publish --tag latest --access public
 ```
 

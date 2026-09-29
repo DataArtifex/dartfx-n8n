@@ -1,6 +1,6 @@
 # Installation & Prerequisites
 
-This page covers prerequisites, platform architecture compatibility, and installation options for `@dartfx/n8n-nodes`.
+This page covers prerequisites, platform architecture compatibility, and installation options for `@dartfx/n8n-nodes-dartfx`.
 
 ---
 
@@ -10,7 +10,7 @@ Before installing the node package, ensure the following requirements are met:
 
 ### 1. `qsv` CLI Binary
 
-`@dartfx/n8n-nodes` orchestrates the high-performance Rust binary **`qsv`**. The `qsv` executable must be installed on the host running your n8n instance and available in the system `$PATH` (or specified via `DARTFX_QSV_BIN_PATH`).
+`@dartfx/n8n-nodes-dartfx` orchestrates the high-performance Rust binary **`qsv`**. The `qsv` executable must be installed on the host running your n8n instance and available in the system `$PATH` (or specified via `DARTFX_QSV_BIN_PATH`).
 
 - **macOS / Linux (via Homebrew)**:
   ```bash
@@ -52,7 +52,7 @@ QSV uses Rust Cargo feature flags to modularly compile high-performance sub-engi
 | **Metadata Profiling** | `profile` | macOS Darwin, `all_features` builds | `profile` |
 
 > [!NOTE]
-> If a workflow executes an operation not compiled into your host's QSV binary, `@dartfx/n8n-nodes` raises an actionable `NodeOperationError` explaining which Cargo feature is required.
+> If a workflow executes an operation not compiled into your host's QSV binary, `@dartfx/n8n-nodes-dartfx` raises an actionable `NodeOperationError` explaining which Cargo feature is required.
 
 ---
 
@@ -62,16 +62,16 @@ QSV uses Rust Cargo feature flags to modularly compile high-performance sub-engi
 
 Starting with **n8n 3.0**, all self-hosted n8n instances require a **Docker-based deployment** (standalone `npm` / `npx n8n` installations are no longer supported).
 
-Because `@dartfx/n8n-nodes` invokes the native `qsv` CLI binary:
+Because `@dartfx/n8n-nodes-dartfx` invokes the native `qsv` CLI binary:
 1. **Container Image**: Use a custom Docker image extending `docker.n8n.io/n8nio/n8n` that copies the pre-built `qsv` binary into `/usr/local/bin/qsv` (see Dockerfile below).
-2. **Community Nodes Installation**: Install via the n8n UI (**Settings** > **Community Nodes** > install `@dartfx/n8n-nodes`). Ensure `/home/node/.n8n` is mounted to a **persistent volume** so installed community packages persist across container restarts.
+2. **Community Nodes Installation**: Install via the n8n UI (**Settings** > **Community Nodes** > install `@dartfx/n8n-nodes-dartfx`). Ensure `/home/node/.n8n` is mounted to a **persistent volume** so installed community packages persist across container restarts.
 
 ### n8n v1 / v2 (Legacy Host / Bare npm Deployments)
 
 If you are running an existing n8n v1 or v2 instance directly on a host machine:
 1. Install `qsv` on your host OS (`brew install qsv`, scoop, or cargo).
 2. Open your n8n dashboard > **Settings** > **Community Nodes**.
-3. Install `@dartfx/n8n-nodes`.
+3. Install `@dartfx/n8n-nodes-dartfx`.
 
 ---
 

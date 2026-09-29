@@ -1,12 +1,12 @@
-# 🤖 Agent Intelligence & Project Guidance: `dartfx-n8n` (`@dartfx/n8n-nodes`)
+# 🤖 Agent Intelligence & Project Guidance: `dartfx-n8n` (`@dartfx/n8n-nodes-dartfx`)
 
-Welcome, Agent. This document provides essential architectural context, conventions, and instructions for working on the **`dartfx-n8n`** repository (npm package: `@dartfx/n8n-nodes`).
+Welcome, Agent. This document provides essential architectural context, conventions, and instructions for working on the **`dartfx-n8n`** repository (npm package: `@dartfx/n8n-nodes-dartfx`).
 
 ---
 
 ## 🚀 Project Overview & Mission
 
-`@dartfx/n8n-nodes` is a collection of custom **n8n Community Nodes** designed to power end-to-end **data FAIRification** pipelines (Findable, Accessible, Interoperable, Reusable) and high-performance tabular data wrangling.
+`@dartfx/n8n-nodes-dartfx` is a collection of custom **n8n Community Nodes** designed to power end-to-end **data FAIRification** pipelines (Findable, Accessible, Interoperable, Reusable) and high-performance tabular data wrangling.
 
 Primary components:
 
@@ -44,7 +44,7 @@ Primary components:
 
 ### 3. Versioning & External Dependency Decoupling
 
-- **Package SemVer (`@dartfx/n8n-nodes`)**: The package adheres strictly to Semantic Versioning starting at `0.1.0`. It is intentionally decoupled from any specific tool's versioning numbers because it contains multiple node collections.
+- **Package SemVer (`@dartfx/n8n-nodes-dartfx`)**: The package adheres strictly to Semantic Versioning starting at `0.1.0`. It is intentionally decoupled from any specific tool's versioning numbers because it contains multiple node collections.
 - **Node-level Dependency Binding**: Dynamic wrappers like QSV inspect the installed binary during `pnpm run generate:qsv` to capture the target CLI version (e.g. `23.0.1`) and embed it in node notices and descriptions.
 - **Graceful Error Handling**: If a host binary is missing (`ENOENT`), clear actionable guidance pointing to binary installation paths and environment variables (`DARTFX_QSV_BIN_PATH`) is returned.
 
@@ -56,7 +56,7 @@ Primary components:
 dartfx-n8n/
 ├── AGENT.md                      # This guide
 ├── README.md                     # User and developer documentation
-├── package.json                  # npm manifest for @dartfx/n8n-nodes
+├── package.json                  # npm manifest for @dartfx/n8n-nodes-dartfx
 ├── tsconfig.json                 # TypeScript compiler configuration
 ├── gulpfile.js                   # Build pipeline for static node assets (svg, json)
 ├── scripts/
@@ -103,7 +103,7 @@ docker run -it --rm \
   --name n8n \
   -p 5678:5678 \
   -v ~/.n8n:/home/node/.n8n \
-  -v $(pwd):/home/node/.n8n/custom/node_modules/@dartfx/n8n-nodes:ro \
+  -v $(pwd):/home/node/.n8n/custom/node_modules/@dartfx/n8n-nodes-dartfx:ro \
   -v /path/to/local/qsv:/usr/local/bin/qsv:ro \
   docker.n8n.io/n8nio/n8n:latest
 ```
@@ -117,7 +117,7 @@ docker run -it --rm \
    ```
 2. In your local n8n installation directory (`~/.n8n/custom`):
    ```bash
-   pnpm link --global @dartfx/n8n-nodes
+   pnpm link --global @dartfx/n8n-nodes-dartfx
    n8n start
    ```
 
