@@ -1,6 +1,6 @@
 {
   "name": "@dartfx/n8n-nodes",
-  "version": "0.1.0",
+  "version": "0.1.0-staging.0",
   "description": "n8n community nodes for Data Artifex FAIRification and QSV high-performance tabular data wrangling (requires 'qsv' CLI on host)",
   "keywords": [
     "n8n-community-node-package",
@@ -54,7 +54,6 @@
       "dist/nodes/Qsv/Qsv.node.js"
     ]
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.4",
