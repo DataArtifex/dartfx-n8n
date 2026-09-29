@@ -78,17 +78,53 @@ When a tag matching `v*` (e.g., `v0.1.1`) is pushed:
 
 ---
 
-## 🔐 One-Time Setup: NPM Authentication Token
+## 🔐 NPM Authentication & OIDC Trusted Publishers
 
-For the GitHub Action to publish to npm:
+### Method 1: Modern Tokenless OIDC via Trusted Publishers (Recommended)
 
-1. Generate an npm **Automation Token** (or fine-grained Granular Access Token with _Read & Write_ permissions for `@dartfx/n8n-nodes`) on [npmjs.com](https://www.npmjs.com/).
-2. In your GitHub repository, navigate to **Settings > Secrets and variables > Actions**.
-3. Create a new repository secret named:
-   ```text
-   NPM_TOKEN
+npm now supports **Trusted Publishers** via OpenID Connect (OIDC). This eliminates static long-lived tokens in GitHub Actions:
+
+#### 1. Bootstrap: Initial First-Time Publish
+Because `@dartfx/n8n-nodes` is a new package, it must be published **once** manually with a personal access token before the npm package settings become available:
+
+```bash
+# In your local shell with DARTFX_NODE_AUTH_TOKEN in .env:
+export $(cat .env | xargs)
+export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
+pnpm publish --tag staging --access public --no-git-checks
+```
+
+#### 2. Configure Trusted Publisher on npmjs.com
+Once the initial version is on npm:
+1. Log in to [npmjs.com](https://www.npmjs.com/) and open the package access page:
+   `https://www.npmjs.com/package/@dartfx/n8n-nodes/access`
+2. Scroll to **Trusted Publishers** and click **Add Trusted Publisher**.
+3. Choose **GitHub Actions** and fill in:
+   - **GitHub Organization / Owner**: `DataArtifex`
+   - **Repository**: `dartfx-n8n`
+   - **Workflow filename**: `publish.yml`
+   - **Environment**: *(Leave blank unless using GitHub Environments)*
+4. Click **Add Publisher**.
+
+From this point forward, GitHub Actions publishes releases **100% tokenless via OIDC** with verified provenance attestation (`id-token: write`).
+
+---
+
+### Method 2: Traditional Static Token (Local CLI / Fallback)
+
+For local CLI releases or until OIDC Trusted Publishing is configured:
+
+1. Generate an npm **Automation Token** (or granular access token with _Read & Write_ permissions for `@dartfx/n8n-nodes`) on [npmjs.com](https://www.npmjs.com/).
+2. In your local `.env` file:
+   ```bash
+   DARTFX_NODE_AUTH_TOKEN="npm_xxxxxxxxxxxx"
    ```
-4. Paste your npm token as the value.
+3. Load it in your terminal when publishing:
+   ```bash
+   export $(cat .env | xargs)
+   export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
+   ```
+4. In GitHub Actions (as fallback), configure `DARTFX_NODE_AUTH_TOKEN` (or `NODE_AUTH_TOKEN` / `NPM_TOKEN`) under **Settings > Secrets and variables > Actions**.
 
 ---
 

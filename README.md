@@ -266,4 +266,84 @@ and then reference the path inside n8n as `/data/myfile.csv`.
 
 ---
 
-See [AGENT.md](AGENT.md) for full architecture and development workflows, and [RELEASING.md](RELEASING.md) for publishing and versioning instructions.
+## 🚀 Deployment & Publishing (Staging & Production)
+
+### 🔐 1. Authentication Setup
+
+Publishing scoped packages under the `@dartfx` organization requires an npm access token. You can provide this using `DARTFX_NODE_AUTH_TOKEN` (with `NODE_AUTH_TOKEN` / `NPM_TOKEN` as fallbacks):
+
+- **In your local shell:**
+  ```bash
+  export DARTFX_NODE_AUTH_TOKEN="npm_xxxxxxxxxxxx"
+  # Set NODE_AUTH_TOKEN for pnpm/npm tooling:
+  export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
+  ```
+- **In GitHub Actions Secrets:**
+  Set `DARTFX_NODE_AUTH_TOKEN` (or `NODE_AUTH_TOKEN` / `NPM_TOKEN`) in **Settings > Secrets and variables > Actions**.
+
+---
+
+### 🧪 2. Staging Deployment (Isolated Pre-Release)
+
+To test the package in a live n8n instance without replacing or affecting the production `latest` release:
+
+1. **Simulate package build & inspect tarball (Zero Risk):**
+   ```bash
+   pnpm publish --dry-run --no-git-checks
+   ```
+
+2. **Set a pre-release version without creating a Git tag:**
+   ```bash
+   pnpm version 0.1.0-staging.0 --no-git-tag-version
+   ```
+
+3. **Publish to npm with the `staging` dist-tag:**
+   ```bash
+   export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
+   pnpm publish --tag staging --access public --no-git-checks
+   ```
+
+4. **Install and verify in n8n:**
+   In n8n (**Settings > Community Nodes > Install**), specify:
+   ```text
+   @dartfx/n8n-nodes@staging
+   ```
+   *(or exact version `@dartfx/n8n-nodes@0.1.0-staging.0`)*
+
+---
+
+### 🚢 3. Production Deployment
+
+#### Option A: Automated via Git Tag & GitHub Actions (Recommended)
+
+Pushing an annotated version tag triggers the [.github/workflows/publish.yml](.github/workflows/publish.yml) workflow:
+
+```bash
+# 1. Clean working tree and run checks
+pnpm run lint && pnpm run test && pnpm run build
+
+# 2. Bump production version and create git tag
+pnpm version patch -m "chore(release): %s"  # or minor / major
+
+# 3. Push commit and tag to GitHub
+git push origin main --follow-tags
+```
+
+#### Option B: Promote Existing Staged Version to Production
+
+Promote a tested staging release to `latest` without rebuilding:
+
+```bash
+npm dist-tag add @dartfx/n8n-nodes@0.1.0-staging.0 latest
+```
+
+#### Option C: Manual CLI Production Publish
+
+```bash
+export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
+pnpm publish --tag latest --access public
+```
+
+---
+
+See [AGENT.md](AGENT.md) for full architecture and development workflows, and [RELEASING.md](RELEASING.md) for detailed release policies and semver guide.
