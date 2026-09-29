@@ -270,15 +270,13 @@ and then reference the path inside n8n as `/data/myfile.csv`.
 
 ### 🔐 1. Authentication Setup
 
-Publishing scoped packages under the `@dartfx` organization requires an npm access token. You can provide this using `DARTFX_NODE_AUTH_TOKEN` (with `NODE_AUTH_TOKEN` / `NPM_TOKEN` as fallbacks):
+Publishing scoped packages under the `@dartfx` organization requires an npm access token:
 
-- **In your local shell:**
+- **In your local environment (user-level `~/.npmrc`):**
   ```bash
-  export DARTFX_NODE_AUTH_TOKEN="npm_xxxxxxxxxxxx"
-  # Set NODE_AUTH_TOKEN for pnpm/npm tooling:
-  export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
+  pnpm config set "//registry.npmjs.org/:_authToken" "YOUR_NPM_TOKEN" --location=global
   ```
-- **In GitHub Actions Secrets:**
+- **In GitHub Actions Secrets (CI/CD):**
   Set `DARTFX_NODE_AUTH_TOKEN` (or `NODE_AUTH_TOKEN` / `NPM_TOKEN`) in **Settings > Secrets and variables > Actions**.
 
 ---

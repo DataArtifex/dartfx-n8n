@@ -161,13 +161,8 @@ Subsequent automated releases via [.github/workflows/publish.yml](.github/workfl
 
 For local CLI releases:
 1. Generate an npm **Automation Token** on [npmjs.com](https://www.npmjs.com/).
-2. Add to `.env`:
+2. Add your token to your user's global `~/.npmrc`:
    ```bash
-   DARTFX_NODE_AUTH_TOKEN="npm_xxxxxxxxxxxx"
+   pnpm config set "//registry.npmjs.org/:_authToken" "$NODE_AUTH_TOKEN" --location=global
    ```
-3. Load it before publishing:
-   ```bash
-   export $(cat .env | xargs)
-   export NODE_AUTH_TOKEN="${DARTFX_NODE_AUTH_TOKEN:-$NODE_AUTH_TOKEN}"
-   ```
-4. In GitHub Actions (as fallback), configure `DARTFX_NODE_AUTH_TOKEN` in **Settings > Secrets and variables > Actions**.
+3. In GitHub Actions (as fallback), configure `DARTFX_NODE_AUTH_TOKEN` in **Settings > Secrets and variables > Actions**.
