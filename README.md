@@ -105,6 +105,36 @@ COPY --from=qsv-fetcher /usr/local/bin/qsv /usr/local/bin/qsv
 USER node
 ```
 
+#### Docker Compose Example (`docker-compose.yml`)
+
+```yaml
+services:
+  n8n:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_COMMUNITY_PACKAGES_ENABLED=true
+      - DARTFX_QSV_BIN_PATH=/usr/local/bin/qsv
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./data:/data
+
+volumes:
+  n8n_data:
+```
+
+> [!TIP]
+> **Pre-Baking `@dartfx/n8n-nodes-dartfx` (Immutable Containers):**
+> If you want the community node package pre-installed inside the image (no in-app installation step required), add this to the end of your `Dockerfile`:
+> ```dockerfile
+> USER node
+> RUN cd ~/.n8n && npm install @dartfx/n8n-nodes-dartfx
+> ```
+
 ### 3. Environment Variables (Custom Binary Path)
 
 If `qsv` is installed in a non-standard location or outside your default `$PATH`, configure one of the following environment variables on your n8n instance:

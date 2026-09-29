@@ -126,3 +126,11 @@ services:
 volumes:
   n8n_data:
 ```
+
+> [!TIP]
+> **Pre-Baking `@dartfx/n8n-nodes-dartfx` (Immutable Containers):**
+> If you want the package pre-installed inside the image so users don't need to manually install via the UI, add this to the end of your `Dockerfile`:
+> ```dockerfile
+> USER node
+> RUN cd ~/.n8n && npm install @dartfx/n8n-nodes-dartfx
+> ```
