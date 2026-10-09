@@ -14,7 +14,24 @@ export const CatDescription: INodeProperties[] = [
       },
     },
   },
-
+  {
+    displayName: 'Subcommand',
+    name: 'subcommand',
+    type: 'options',
+    required: true,
+    default: 'columns',
+    options: [
+        { name: 'columns', value: 'columns' },
+        { name: 'rows', value: 'rows' },
+        { name: 'rowskey', value: 'rowskey' },
+    ],
+    description: 'Subcommand to execute. Valid values: columns, rows, rowskey',
+    displayOptions: {
+      show: {
+        operation: ['cat'],
+      },
+    },
+  },
   {
     displayName: 'Output File Path',
     name: 'outputPath',
@@ -69,15 +86,15 @@ export const CatDescription: INodeProperties[] = [
       displayName: 'Group',
       name: 'group',
       type: 'string',
-      default: '',
-      description: 'When concatenating with rowskey, you can specify a grouping value which will be used as the first column in the output. This is useful when you want to know which file a row came from. Valid values are \'fullpath\', \'parentdirfname\', \'parentdirfstem\', \'fname\', \'fstem\' and \'none\'. A new column will be added to the beginning of each row using --group-name. If \'none\' is specified, no grouping column will be added. [default: none]',
+      default: 'none',
+      description: 'When concatenating with rowskey, you can specify a grouping value which will be used as the first column in the output. This is useful when you want to know which file a row came from. Valid values are \'fullpath\', \'parentdirfname\', \'parentdirfstem\', \'fname\', \'fstem\' and \'none\'. A new column will be added to the beginning of each row using --group-name. If \'none\' is specified, no grouping column will be added.',
     },
     {
       displayName: 'Group Name',
       name: 'groupName',
       type: 'string',
-      default: '',
-      description: 'When concatenating with rowskey, this flag provides the name for the new grouping column. [default: file]',
+      default: 'file',
+      description: 'When concatenating with rowskey, this flag provides the name for the new grouping column.',
     },
     {
       displayName: 'No Headers',
@@ -91,7 +108,7 @@ export const CatDescription: INodeProperties[] = [
       name: 'pad',
       type: 'boolean',
       default: false,
-      description: 'When concatenating columns, this flag will cause all records to appear. It will pad each row if other CSV data isn\'t long enough. ROWS OPTION:',
+      description: 'When concatenating columns, this flag will cause all records to appear. It will pad each row if other CSV data isn\'t long enough.',
     },
     ],
   },

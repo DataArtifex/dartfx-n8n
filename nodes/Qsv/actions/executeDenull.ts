@@ -17,22 +17,14 @@ export async function executeDenull(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['denull'];
-  if (options.select !== undefined && options.select !== '') {
-    args.push('--select', String(options.select));
-  }
-  if (options.vocab !== undefined && options.vocab !== '') {
-    args.push('--vocab', String(options.vocab));
-  }
   if (options.addVocab !== undefined && options.addVocab !== '') {
     args.push('--add-vocab', String(options.addVocab));
-  }
-  if (options.maxDistinct !== undefined && options.maxDistinct !== '') {
-    args.push('--max-distinct', String(options.maxDistinct));
   }
   if (options.allColumns === true) {
     args.push('--all-columns');
@@ -40,17 +32,24 @@ export async function executeDenull(
   if (options.apply === true) {
     args.push('--apply');
   }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
   if (options.json === true) {
     args.push('--json');
+  }
+  if (options.maxDistinct !== undefined && options.maxDistinct !== '') {
+    args.push('--max-distinct', String(options.maxDistinct));
   }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
   }
-
-
+  if (options.vocab !== undefined && options.vocab !== '') {
+    args.push('--vocab', String(options.vocab));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -61,11 +60,9 @@ export async function executeDenull(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

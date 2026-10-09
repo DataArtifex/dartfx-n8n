@@ -15,24 +15,13 @@ export const SniffDescription: INodeProperties[] = [
     },
   },
 
-  {
-    displayName: 'Output File Path',
-    name: 'outputPath',
-    type: 'string',
-    default: '',
-    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
-    displayOptions: {
-      show: {
-        operation: ['sniff'],
-      },
-    },
-  },
+
   {
     displayName: 'Additional Flags',
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv sniff (Docs: https://github.com/dathere/qsv/blob/master/docs/help/sniff.md)',
+    description: 'Additional raw command line arguments to pass to qsv sniff [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/sniff.md)',
     displayOptions: {
       show: {
         operation: ['sniff'],
@@ -101,13 +90,6 @@ export const SniffDescription: INodeProperties[] = [
       description: 'Return results in pretty JSON format.',
     },
     {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show progress bars. Only valid for URL input.',
-    },
-    {
       displayName: 'Quick',
       name: 'quick',
       type: 'boolean',
@@ -124,9 +106,9 @@ export const SniffDescription: INodeProperties[] = [
     {
       displayName: 'Sample',
       name: 'sample',
-      type: 'string',
-      default: '',
-      description: 'First n rows to sample to sniff out the metadata. When sample size is between 0 and 1 exclusive, it is treated as a percentage of the CSV to sample (e.g. 0.20 is 20 percent). When it is zero, the entire file will be sampled. When the input is a URL, the sample size dictates how many lines to sample without having to download the entire file. Ignored when --no-infer is enabled. When sniffing a local file that has a CSV index, the sample budget is instead drawn as a DISTRIBUTED sample (the first & last 5 rows, 5 rows each around the 25th, 50th & 75th percentiles, and the rest random across the whole file) rather than just the first n rows. This improves type/date inference for values that only appear late in the file. Run `qsv index` to create an index. [default: 1000]',
+      type: 'number',
+      default: 1000,
+      description: 'First n rows to sample to sniff out the metadata. When sample size is between 0 and 1 exclusive, it is treated as a percentage of the CSV to sample (e.g. 0.20 is 20 percent). When it is zero, the entire file will be sampled. When the input is a URL, the sample size dictates how many lines to sample without having to download the entire file. Ignored when --no-infer is enabled. When sniffing a local file that has a CSV index, the sample budget is instead drawn as a DISTRIBUTED sample (the first & last 5 rows, 5 rows each around the 25th, 50th & 75th percentiles, and the rest random across the whole file) rather than just the first n rows. This improves type/date inference for values that only appear late in the file. Run `qsv index` to create an index.',
     },
     {
       displayName: 'Save Urlsample',
@@ -145,16 +127,9 @@ export const SniffDescription: INodeProperties[] = [
     {
       displayName: 'Timeout',
       name: 'timeout',
-      type: 'string',
-      default: '',
-      description: 'Timeout when sniffing URLs in seconds. If 0, no timeout is used. [default: 30]',
-    },
-    {
-      displayName: 'User Agent',
-      name: 'userAgent',
-      type: 'string',
-      default: '',
-      description: 'Specify custom user agent to use when sniffing a CSV on a URL. It supports the following variables - $QSV_VERSION, $QSV_TARGET, $QSV_BIN_NAME, $QSV_KIND and $QSV_COMMAND. Try to follow the syntax here - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent',
+      type: 'number',
+      default: 30,
+      description: 'Timeout when sniffing URLs in seconds. If 0, no timeout is used.',
     },
     ],
   },

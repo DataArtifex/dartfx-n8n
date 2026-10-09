@@ -17,9 +17,10 @@ export async function executeEdit(
       { itemIndex },
     );
   }
-  const column = (this.getNodeParameter('column', itemIndex) as string) || '';
+
+  const column = (this.getNodeParameter('column', itemIndex, '') as string) || '';
   const row = (this.getNodeParameter('row', itemIndex, 1) as number) || 0;
-  const value = (this.getNodeParameter('value', itemIndex) as string) || '';
+  const value = (this.getNodeParameter('value', itemIndex, '') as string) || '';
   if (!column || !String(column).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -45,7 +46,6 @@ export async function executeEdit(
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -56,15 +56,13 @@ export async function executeEdit(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
-  args.push(String(column));
-  args.push(String(row));
-  args.push(String(value));
+  args.push(String(column).trim());
+  args.push(String(row).trim());
+  args.push(String(value).trim());
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

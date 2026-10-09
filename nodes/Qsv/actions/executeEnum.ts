@@ -17,25 +17,35 @@ export async function executeEnum(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['enum'];
-  if (options.newColumn !== undefined && options.newColumn !== '') {
-    args.push('--new-column', String(options.newColumn));
-  }
-  if (options.start !== undefined && options.start !== '') {
-    args.push('--start', String(options.start));
-  }
-  if (options.increment !== undefined && options.increment !== '') {
-    args.push('--increment', String(options.increment));
-  }
   if (options.constant !== undefined && options.constant !== '') {
     args.push('--constant', String(options.constant));
   }
   if (options.copy !== undefined && options.copy !== '') {
     args.push('--copy', String(options.copy));
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.hash !== undefined && options.hash !== '') {
+    args.push('--hash', String(options.hash));
+  }
+  if (options.increment !== undefined && options.increment !== '') {
+    args.push('--increment', String(options.increment));
+  }
+  if (options.newColumn !== undefined && options.newColumn !== '') {
+    args.push('--new-column', String(options.newColumn));
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.start !== undefined && options.start !== '') {
+    args.push('--start', String(options.start));
   }
   if (options.uuid4 === true) {
     args.push('--uuid4');
@@ -43,17 +53,6 @@ export async function executeEnum(
   if (options.uuid7 === true) {
     args.push('--uuid7');
   }
-  if (options.hash !== undefined && options.hash !== '') {
-    args.push('--hash', String(options.hash));
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -64,11 +63,9 @@ export async function executeEnum(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

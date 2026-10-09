@@ -17,10 +17,10 @@ export const SampleDescription: INodeProperties[] = [
   {
     displayName: 'Sample Size',
     name: 'sampleSize',
-    type: 'string',
+    type: 'number',
     required: true,
-    default: '100',
-    description: 'Number of records (integer >= 1) or fraction of records (0 < decimal < 1) to sample',
+    default: 100,
+    description: 'When using INDEXED, RESERVOIR or WEIGHTED sampling, the sample size. Can either be a whole number or a value between value between 0 and 1. If a fraction, specifies the sample size as a percentage of the population. (e.g. 0.15 - 15 percent of the CSV) When using BERNOULLI sampling, the probability of selecting each record (between 0 and 1). When using SYSTEMATIC sampling, the integer part is the interval between records to sample & the fractional part is the percentage of the population to sample. When there is no fractional part, it will select every nth record for the entire population. When using STRATIFIED sampling, the stratum sample size. When using CLUSTER sampling, the number of clusters. When using TIMESERIES sampling, the interval number (treated as hours by default, e.g., 1 = 1 hour). Use --ts-interval for custom intervals like "1d" (daily), "1w" (weekly), "1m" (monthly), "1y" (yearly), etc.',
     displayOptions: {
       show: {
         operation: ['sample'],
@@ -44,7 +44,7 @@ export const SampleDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv sample (Docs: https://github.com/dathere/qsv/blob/master/docs/help/sample.md)',
+    description: 'Additional raw command line arguments to pass to qsv sample [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/sample.md)',
     displayOptions: {
       show: {
         operation: ['sample'],
@@ -94,8 +94,8 @@ export const SampleDescription: INodeProperties[] = [
     {
       displayName: 'Max Size',
       name: 'maxSize',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Maximum size of the file to download in MB before sampling. Will download the entire file if not specified. If the CSV is partially downloaded, the sample will be taken only from the downloaded portion.',
     },
     {
@@ -116,14 +116,14 @@ export const SampleDescription: INodeProperties[] = [
       displayName: 'Rng',
       name: 'rng',
       type: 'string',
-      default: '',
-      description: 'The Random Number Generator (RNG) algorithm to use. Three RNGs are supported: * standard: Use the standard RNG. 1.5 GB/s throughput. * faster: Use faster RNG using the Xoshiro256Plus algorithm. 8 GB/s throughput. * cryptosecure: Use cryptographically secure HC128 algorithm. Recommended by eSTREAM (https://www.ecrypt.eu.org/stream/). 2.1 GB/s throughput though slow initialization. [default: standard] SAMPLING METHODS:',
+      default: 'standard',
+      description: 'The Random Number Generator (RNG) algorithm to use. Three RNGs are supported: * standard: Use the standard RNG. 1.5 GB/s throughput. * faster: Use faster RNG using the Xoshiro256Plus algorithm. 8 GB/s throughput. * cryptosecure: Use cryptographically secure HC128 algorithm. Recommended by eSTREAM (https://www.ecrypt.eu.org/stream/). 2.1 GB/s throughput though slow initialization.',
     },
     {
       displayName: 'Seed',
       name: 'seed',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Random Number Generator (RNG) seed.',
     },
     {
@@ -157,9 +157,9 @@ export const SampleDescription: INodeProperties[] = [
     {
       displayName: 'Timeout',
       name: 'timeout',
-      type: 'string',
-      default: '',
-      description: 'Inactivity timeout for downloading URLs in seconds. Aborts only if no data is received from the server for this long. If 0, no timeout. [default: 30]',
+      type: 'number',
+      default: 30,
+      description: 'Inactivity timeout for downloading URLs in seconds. Aborts only if no data is received from the server for this long. If 0, no timeout.',
     },
     {
       displayName: 'Timeseries',
@@ -173,21 +173,21 @@ export const SampleDescription: INodeProperties[] = [
       name: 'tsAdaptive',
       type: 'string',
       default: '',
-      description: 'Adaptive sampling mode for time-series data. "weekends" (prefer weekends), "business-days" (prefer weekdays), "both" (combine business-hours and weekends).',
+      description: 'Adaptive sampling mode for time-series data. Options: "business-hours" (prefer 9am-5pm Mon-Fri), "weekends" (prefer weekends), "business-days" (prefer weekdays), "both" (combine business-hours and weekends).',
     },
     {
       displayName: 'Ts Aggregate',
       name: 'tsAggregate',
       type: 'string',
       default: '',
-      description: 'Aggregation function to apply within each time interval. When specified, aggregates all records in each interval instead of selecting a single record.',
+      description: 'Aggregation function to apply within each time interval. Options: "first", "last", "mean", "sum", "count", "min", "max", "median". When specified, aggregates all records in each interval instead of selecting a single record.',
     },
     {
       displayName: 'Ts Input Tz',
       name: 'tsInputTz',
       type: 'string',
-      default: '',
-      description: 'Timezone for parsing input timestamps. Can be an IANA timezone name or "local" for the local timezone. [default: UTC]',
+      default: 'UTC',
+      description: 'Timezone for parsing input timestamps. Can be an IANA timezone name or "local" for the local timezone.',
     },
     {
       displayName: 'Ts Interval',
@@ -207,15 +207,8 @@ export const SampleDescription: INodeProperties[] = [
       displayName: 'Ts Start',
       name: 'tsStart',
       type: 'string',
-      default: '',
-      description: 'Starting point for time-series sampling. "random" (random starting point). [default: first]',
-    },
-    {
-      displayName: 'User Agent',
-      name: 'userAgent',
-      type: 'string',
-      default: '',
-      description: 'Specify custom user agent to use when the input is a URL. It supports the following variables - $QSV_VERSION, $QSV_TARGET, $QSV_BIN_NAME, $QSV_KIND and $QSV_COMMAND. Try to follow the syntax here - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent',
+      default: 'first',
+      description: 'Starting point for time-series sampling. Options: "first" (earliest timestamp, default), "last" (most recent timestamp), "random" (random starting point).',
     },
     {
       displayName: 'Varopt',

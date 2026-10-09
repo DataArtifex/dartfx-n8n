@@ -17,7 +17,8 @@ export async function executeImplode(
       { itemIndex },
     );
   }
-  const separator = (this.getNodeParameter('separator', itemIndex) as string) || '';
+
+  const separator = (this.getNodeParameter('separator', itemIndex, '') as string) || '';
   if (!separator || !String(separator).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -30,30 +31,27 @@ export async function executeImplode(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['implode'];
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
   if (options.keys !== undefined && options.keys !== '') {
     args.push('--keys', String(options.keys));
-  }
-  if (options.value !== undefined && options.value !== '') {
-    args.push('--value', String(options.value));
-  }
-  if (options.rename !== undefined && options.rename !== '') {
-    args.push('--rename', String(options.rename));
-  }
-  if (options.sorted === true) {
-    args.push('--sorted');
-  }
-  if (options.skipEmpty === true) {
-    args.push('--skip-empty');
   }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.rename !== undefined && options.rename !== '') {
+    args.push('--rename', String(options.rename));
   }
-
-  args.push(String(separator));
-
+  if (options.skipEmpty === true) {
+    args.push('--skip-empty');
+  }
+  if (options.sorted === true) {
+    args.push('--sorted');
+  }
+  if (options.value !== undefined && options.value !== '') {
+    args.push('--value', String(options.value));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -64,11 +62,10 @@ export async function executeImplode(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(separator).trim());
   args.push(inputPath);
 
   const qsvBin =

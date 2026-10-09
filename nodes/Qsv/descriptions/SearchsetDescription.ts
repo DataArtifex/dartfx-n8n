@@ -20,7 +20,7 @@ export const SearchsetDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Path to file containing regex patterns (one per line)',
+    description: 'The file containing regular expressions to match, with a regular expression on each line. See https://docs.rs/regex/latest/regex/index.html#syntax or https://regex101.com with the Rust flavor for regex syntax.',
     displayOptions: {
       show: {
         operation: ['searchset'],
@@ -44,7 +44,7 @@ export const SearchsetDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv searchset (Docs: https://github.com/dathere/qsv/blob/master/docs/help/searchset.md)',
+    description: 'Additional raw command line arguments to pass to qsv searchset [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/searchset.md)',
     displayOptions: {
       show: {
         operation: ['searchset'],
@@ -80,9 +80,9 @@ export const SearchsetDescription: INodeProperties[] = [
     {
       displayName: 'Dfa Size Limit',
       name: 'dfaSizeLimit',
-      type: 'string',
-      default: '',
-      description: 'Set the approximate size of the cache (MB) used by the regular expression engine\'s Discrete Finite Automata. Modify this only if you\'re getting regular expression compilation errors. [default: 10]',
+      type: 'number',
+      default: 10,
+      description: 'Set the approximate size of the cache (MB) used by the regular expression engine\'s Discrete Finite Automata. Modify this only if you\'re getting regular expression compilation errors.',
     },
     {
       displayName: 'Exact',
@@ -120,13 +120,6 @@ export const SearchsetDescription: INodeProperties[] = [
       description: 'Select only rows that did not match',
     },
     {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel when the given CSV data has an index. Note that a file handle is opened for each job. When not set, defaults to the number of CPUs detected.',
-    },
-    {
       displayName: 'Json',
       name: 'json',
       type: 'boolean',
@@ -155,25 +148,11 @@ export const SearchsetDescription: INodeProperties[] = [
       description: 'Use exit code 0 instead of 1 for no match found.',
     },
     {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show progress bars. Not valid for stdin.',
-    },
-    {
       displayName: 'Quick',
       name: 'quick',
       type: 'boolean',
       default: false,
       description: 'Return on first match with an exitcode of 0, returning the row number of the first match to stderr. Return exit code 1 if no match is found. No output is produced. Ignored if --json is enabled.',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not write the match count (--count) or the first match row number reported by --quick to stderr. Does not suppress the --json summary.',
     },
     {
       displayName: 'Select',
@@ -185,9 +164,9 @@ export const SearchsetDescription: INodeProperties[] = [
     {
       displayName: 'Size Limit',
       name: 'sizeLimit',
-      type: 'string',
-      default: '',
-      description: 'Set the approximate size limit (MB) of the compiled regular expression. If the compiled expression exceeds this number, then a compilation error is returned. Modify this only if you\'re getting regular expression compilation errors. [default: 50]',
+      type: 'number',
+      default: 50,
+      description: 'Set the approximate size limit (MB) of the compiled regular expression. If the compiled expression exceeds this number, then a compilation error is returned. Modify this only if you\'re getting regular expression compilation errors.',
     },
     {
       displayName: 'Unicode',

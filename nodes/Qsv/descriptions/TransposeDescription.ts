@@ -32,7 +32,7 @@ export const TransposeDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv transpose (Docs: https://github.com/dathere/qsv/blob/master/docs/help/transpose.md)',
+    description: 'Additional raw command line arguments to pass to qsv transpose [⚠️ High memory operation.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/transpose.md)',
     displayOptions: {
       show: {
         operation: ['transpose'],
@@ -63,7 +63,7 @@ export const TransposeDescription: INodeProperties[] = [
       name: 'long',
       type: 'string',
       default: '',
-      description: 'Convert wide-format CSV to "long" format. Output format is three columns: field, attribute, value. Empty values are skipped. Mutually exclusive with --multipass. The <selection> argument is REQUIRED when using --long, it specifies which column(s) to use as the "field" identifier. It uses the same selection syntax as \'qsv select\': * Column names: --long varname or --long "column name" * Column indices (1-based): --long 5 or --long 2,3 * Ranges: --long 1-4 or --long 3- * Regex patterns: --long /^prefix/ * Comma-separated: --long var1,var2 or --long 1,3,5 Multiple field columns are concatenated with | separator.',
+      description: 'Convert wide-format CSV to "long" format. Output format is three columns: field, attribute, value. Empty values are skipped. Mutually exclusive with --multipass.',
     },
     {
       displayName: 'Memcheck',

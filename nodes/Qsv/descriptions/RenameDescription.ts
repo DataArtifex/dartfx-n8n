@@ -20,7 +20,7 @@ export const RenameDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Comma-separated list of new header names',
+    description: 'The new headers to use for the CSV. Separate multiple headers with a comma. If "_all_generic" is given, the headers will be renamed to generic column names, where the column name uses the format "_col_N" where N is the 1-based column index. Alternatively, specify pairs of old,new column names to rename only specific columns.',
     displayOptions: {
       show: {
         operation: ['rename'],
@@ -76,6 +76,13 @@ export const RenameDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'When set, the header will be inserted on top.',
+    },
+    {
+      displayName: 'Pairwise',
+      name: 'pairwise',
+      type: 'boolean',
+      default: false,
+      description: 'Invoke pairwise renaming.',
     },
     ],
   },

@@ -32,7 +32,7 @@ export const DedupDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv dedup (Docs: https://github.com/dathere/qsv/blob/master/docs/help/dedup.md)',
+    description: 'Additional raw command line arguments to pass to qsv dedup [⚠️ High memory operation.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/dedup.md)',
     displayOptions: {
       show: {
         operation: ['dedup'],
@@ -80,13 +80,6 @@ export const DedupDescription: INodeProperties[] = [
       description: 'Compare strings disregarding case.',
     },
     {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel when sorting an unsorted CSV, before deduping. When not set, the number of jobs is set to the number of CPUs detected. Does not work with --sorted option as its not multithreaded.',
-    },
-    {
       displayName: 'Memcheck',
       name: 'memcheck',
       type: 'boolean',
@@ -106,13 +99,6 @@ export const DedupDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Compare according to string numerical value',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not print duplicate count to stderr.',
     },
     {
       displayName: 'Select',

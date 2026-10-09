@@ -17,25 +17,21 @@ export async function executeJsonl(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['jsonl'];
-  if (options.ignoreErrors === true) {
-    args.push('--ignore-errors');
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
   if (options.batch !== undefined && options.batch !== '') {
     args.push('--batch', String(options.batch));
   }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
-
-
+  if (options.ignoreErrors === true) {
+    args.push('--ignore-errors');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -46,11 +42,9 @@ export async function executeJsonl(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

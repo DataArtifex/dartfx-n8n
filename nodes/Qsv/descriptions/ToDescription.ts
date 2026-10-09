@@ -17,10 +17,18 @@ export const ToDescription: INodeProperties[] = [
   {
     displayName: 'Target Format',
     name: 'format',
-    type: 'string',
+    type: 'options',
     required: true,
-    default: 'parquet',
-    description: 'Target output format (parquet, postgres, sqlite, xlsx, ods, datapackage)',
+    default: 'datapackage',
+    options: [
+        { name: 'datapackage', value: 'datapackage' },
+        { name: 'ods', value: 'ods' },
+        { name: 'parquet', value: 'parquet' },
+        { name: 'postgres', value: 'postgres' },
+        { name: 'sqlite', value: 'sqlite' },
+        { name: 'xlsx', value: 'xlsx' },
+    ],
+    description: 'Subcommand to execute. Valid values: datapackage, ods, parquet, postgres, sqlite, xlsx',
     displayOptions: {
       show: {
         operation: ['to'],
@@ -33,7 +41,7 @@ export const ToDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Destination file path, database URI, or connection string',
+    description: 'The output target, which varies by subcommand: * parquet: output directory (created if needed) * postgres: connection string or env=VAR_NAME (with --dump: dump file path or - for stdout) * sqlite: database file path (with --dump: dump file path or - for stdout) * xlsx: output .xlsx file path * ods: output .ods file path * datapackage: output .json file path',
     displayOptions: {
       show: {
         operation: ['to'],
@@ -75,8 +83,8 @@ export const ToDescription: INodeProperties[] = [
     {
       displayName: 'Compress Level',
       name: 'compressLevel',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Compression level (parquet only). For gzip: 1-9 (default: 6). For zstd: -7 to 22 (default: 3). Ignored for other codecs.',
     },
     {
@@ -117,16 +125,9 @@ export const ToDescription: INodeProperties[] = [
     {
       displayName: 'Infer Len',
       name: 'inferLen',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'The number of rows to use for schema inference (parquet only). Note that even if a pschema.json file exists for an input file, explicitly specifying infer-len will cause qsv to ignore the pschema.json and infer the schema from the CSV data instead, including when set to 0. Set to 0 to infer from all rows (not recommended for large files).',
-    },
-    {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.',
     },
     {
       displayName: 'Pipe',
@@ -141,13 +142,6 @@ export const ToDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Print statistics as datapackage, by default will print field summary.',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not print out field summary.',
     },
     {
       displayName: 'Schema',

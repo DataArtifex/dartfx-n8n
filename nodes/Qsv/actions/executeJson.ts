@@ -17,6 +17,7 @@ export async function executeJson(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
@@ -28,8 +29,6 @@ export async function executeJson(
   if (options.select !== undefined && options.select !== '') {
     args.push('--select', String(options.select));
   }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -40,11 +39,9 @@ export async function executeJson(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

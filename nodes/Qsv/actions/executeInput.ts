@@ -17,13 +17,23 @@ export async function executeInput(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['input'];
-  if (options.quote !== undefined && options.quote !== '') {
-    args.push('--quote', String(options.quote));
+  if (options.autoSkip === true) {
+    args.push('--auto-skip');
+  }
+  if (options.comment !== undefined && options.comment !== '') {
+    args.push('--comment', String(options.comment));
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.encodingErrors !== undefined && options.encodingErrors !== '') {
+    args.push('--encoding-errors', String(options.encodingErrors));
   }
   if (options.escape !== undefined && options.escape !== '') {
     args.push('--escape', String(options.escape));
@@ -31,35 +41,24 @@ export async function executeInput(
   if (options.noQuoting === true) {
     args.push('--no-quoting');
   }
+  if (options.quote !== undefined && options.quote !== '') {
+    args.push('--quote', String(options.quote));
+  }
   if (options.quoteStyle !== undefined && options.quoteStyle !== '') {
     args.push('--quote-style', String(options.quoteStyle));
-  }
-  if (options.skipLines !== undefined && options.skipLines !== '') {
-    args.push('--skip-lines', String(options.skipLines));
-  }
-  if (options.autoSkip === true) {
-    args.push('--auto-skip');
   }
   if (options.skipLastlines !== undefined && options.skipLastlines !== '') {
     args.push('--skip-lastlines', String(options.skipLastlines));
   }
-  if (options.trimHeaders === true) {
-    args.push('--trim-headers');
+  if (options.skipLines !== undefined && options.skipLines !== '') {
+    args.push('--skip-lines', String(options.skipLines));
   }
   if (options.trimFields === true) {
     args.push('--trim-fields');
   }
-  if (options.comment !== undefined && options.comment !== '') {
-    args.push('--comment', String(options.comment));
+  if (options.trimHeaders === true) {
+    args.push('--trim-headers');
   }
-  if (options.encodingErrors !== undefined && options.encodingErrors !== '') {
-    args.push('--encoding-errors', String(options.encodingErrors));
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -70,11 +69,9 @@ export async function executeInput(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

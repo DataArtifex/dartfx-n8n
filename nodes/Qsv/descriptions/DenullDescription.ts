@@ -89,9 +89,9 @@ export const DenullDescription: INodeProperties[] = [
     {
       displayName: 'Max Distinct',
       name: 'maxDistinct',
-      type: 'string',
-      default: '',
-      description: 'Abandon a column once it holds this many distinct non-numeric values. Guards memory on free-text columns and bounds the report. [default: 16]',
+      type: 'number',
+      default: 16,
+      description: 'Abandon a column once it holds this many distinct non-numeric values. Guards memory on free-text columns and bounds the report.',
     },
     {
       displayName: 'No Headers',

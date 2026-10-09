@@ -20,7 +20,7 @@ export const SelectDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Comma-separated column names, 1-based indices, or ranges (e.g. 1,4, colA,colB, !colC, /^regex/)',
+    description: 'The columns to select. You can select columns by index, by name, by range, by regex and any combination of these. If the first character is \'!\', the selection will be inverted. If the selection contains embedded spaces or characters that conflict with selector syntax, it must be quoted. See examples above.',
     displayOptions: {
       show: {
         operation: ['select'],
@@ -87,8 +87,8 @@ export const SelectDescription: INodeProperties[] = [
     {
       displayName: 'Seed',
       name: 'seed',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Seed for the random number generator.',
     },
     {

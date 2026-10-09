@@ -17,19 +17,29 @@ export async function executeFmt(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['fmt'];
-  if (options.outDelimiter !== undefined && options.outDelimiter !== '') {
-    args.push('--out-delimiter', String(options.outDelimiter));
+  if (options.ascii === true) {
+    args.push('--ascii');
   }
   if (options.crlf === true) {
     args.push('--crlf');
   }
-  if (options.ascii === true) {
-    args.push('--ascii');
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.escape !== undefined && options.escape !== '') {
+    args.push('--escape', String(options.escape));
+  }
+  if (options.noFinalNewline === true) {
+    args.push('--no-final-newline');
+  }
+  if (options.outDelimiter !== undefined && options.outDelimiter !== '') {
+    args.push('--out-delimiter', String(options.outDelimiter));
   }
   if (options.quote !== undefined && options.quote !== '') {
     args.push('--quote', String(options.quote));
@@ -40,17 +50,6 @@ export async function executeFmt(
   if (options.quoteNever === true) {
     args.push('--quote-never');
   }
-  if (options.escape !== undefined && options.escape !== '') {
-    args.push('--escape', String(options.escape));
-  }
-  if (options.noFinalNewline === true) {
-    args.push('--no-final-newline');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -61,11 +60,9 @@ export async function executeFmt(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

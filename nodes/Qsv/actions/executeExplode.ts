@@ -17,8 +17,9 @@ export async function executeExplode(
       { itemIndex },
     );
   }
-  const column = (this.getNodeParameter('column', itemIndex) as string) || '';
-  const separator = (this.getNodeParameter('separator', itemIndex) as string) || '';
+
+  const column = (this.getNodeParameter('column', itemIndex, '') as string) || '';
+  const separator = (this.getNodeParameter('separator', itemIndex, '') as string) || '';
   if (!column || !String(column).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -38,19 +39,15 @@ export async function executeExplode(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['explode'];
-  if (options.rename !== undefined && options.rename !== '') {
-    args.push('--rename', String(options.rename));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.rename !== undefined && options.rename !== '') {
+    args.push('--rename', String(options.rename));
   }
-
-  args.push(String(column));
-  args.push(String(separator));
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -61,11 +58,11 @@ export async function executeExplode(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(column).trim());
+  args.push(String(separator).trim());
   args.push(inputPath);
 
   const qsvBin =

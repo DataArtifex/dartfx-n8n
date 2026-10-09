@@ -15,18 +15,7 @@ export const FlattenDescription: INodeProperties[] = [
     },
   },
 
-  {
-    displayName: 'Output File Path',
-    name: 'outputPath',
-    type: 'string',
-    default: '',
-    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
-    displayOptions: {
-      show: {
-        operation: ['flatten'],
-      },
-    },
-  },
+
   {
     displayName: 'Additional Flags',
     name: 'additionalArgs',
@@ -54,8 +43,8 @@ export const FlattenDescription: INodeProperties[] = [
     {
       displayName: 'Condense',
       name: 'condense',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Limits the length of each field to the value specified. If the field is UTF-8 encoded, then <arg> refers to the number of code points. Otherwise, it refers to the number of bytes.',
     },
     {
@@ -83,8 +72,8 @@ export const FlattenDescription: INodeProperties[] = [
       displayName: 'Separator',
       name: 'separator',
       type: 'string',
-      default: '',
-      description: 'A string of characters to write after each record. When non-empty, a new line is automatically appended to the separator. [default: #]',
+      default: '#',
+      description: 'A string of characters to write after each record. When non-empty, a new line is automatically appended to the separator.',
     },
     ],
   },

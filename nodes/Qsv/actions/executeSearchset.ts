@@ -17,7 +17,8 @@ export async function executeSearchset(
       { itemIndex },
     );
   }
-  const regexsetFile = (this.getNodeParameter('regexsetFile', itemIndex) as string) || '';
+
+  const regexsetFile = (this.getNodeParameter('regexsetFile', itemIndex, '') as string) || '';
   if (!regexsetFile || !String(regexsetFile).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -30,23 +31,17 @@ export async function executeSearchset(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['searchset'];
-  if (options.ignoreCase === true) {
-    args.push('--ignore-case');
+  if (options.count === true) {
+    args.push('--count');
   }
-  if (options.literal === true) {
-    args.push('--literal');
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.dfaSizeLimit !== undefined && options.dfaSizeLimit !== '') {
+    args.push('--dfa-size-limit', String(options.dfaSizeLimit));
   }
   if (options.exact === true) {
     args.push('--exact');
-  }
-  if (options.select !== undefined && options.select !== '') {
-    args.push('--select', String(options.select));
-  }
-  if (options.invertMatch === true) {
-    args.push('--invert-match');
-  }
-  if (options.unicode === true) {
-    args.push('--unicode');
   }
   if (options.flag !== undefined && options.flag !== '') {
     args.push('--flag', String(options.flag));
@@ -54,45 +49,39 @@ export async function executeSearchset(
   if (options.flagMatchesOnly === true) {
     args.push('--flag-matches-only');
   }
-  if (options.unmatchedOutput !== undefined && options.unmatchedOutput !== '') {
-    args.push('--unmatched-output', String(options.unmatchedOutput));
+  if (options.ignoreCase === true) {
+    args.push('--ignore-case');
   }
-  if (options.quick === true) {
-    args.push('--quick');
-  }
-  if (options.count === true) {
-    args.push('--count');
+  if (options.invertMatch === true) {
+    args.push('--invert-match');
   }
   if (options.json === true) {
     args.push('--json');
   }
-  if (options.sizeLimit !== undefined && options.sizeLimit !== '') {
-    args.push('--size-limit', String(options.sizeLimit));
-  }
-  if (options.dfaSizeLimit !== undefined && options.dfaSizeLimit !== '') {
-    args.push('--dfa-size-limit', String(options.dfaSizeLimit));
-  }
-  if (options.notOne === true) {
-    args.push('--not-one');
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
+  if (options.literal === true) {
+    args.push('--literal');
   }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.notOne === true) {
+    args.push('--not-one');
   }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
+  if (options.quick === true) {
+    args.push('--quick');
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
   }
-
-  args.push(String(regexsetFile));
-
+  if (options.sizeLimit !== undefined && options.sizeLimit !== '') {
+    args.push('--size-limit', String(options.sizeLimit));
+  }
+  if (options.unicode === true) {
+    args.push('--unicode');
+  }
+  if (options.unmatchedOutput !== undefined && options.unmatchedOutput !== '') {
+    args.push('--unmatched-output', String(options.unmatchedOutput));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -103,11 +92,10 @@ export async function executeSearchset(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(regexsetFile).trim());
   args.push(inputPath);
 
   const qsvBin =

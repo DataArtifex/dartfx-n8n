@@ -17,7 +17,8 @@ export async function executeRename(
       { itemIndex },
     );
   }
-  const headers = (this.getNodeParameter('headers', itemIndex) as string) || '';
+
+  const headers = (this.getNodeParameter('headers', itemIndex, '') as string) || '';
   if (!headers || !String(headers).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -30,15 +31,15 @@ export async function executeRename(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['rename'];
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
-
-  args.push(String(headers));
-
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.pairwise === true) {
+    args.push('--pairwise');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -49,11 +50,10 @@ export async function executeRename(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(headers).trim());
   args.push(inputPath);
 
   const qsvBin =

@@ -17,13 +17,23 @@ export async function executePro(
       { itemIndex },
     );
   }
+
+  const subcommand = (this.getNodeParameter('subcommand', itemIndex, '') as string) || '';
+  if (!subcommand || !String(subcommand).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "Subcommand" is required for pro.',
+      { itemIndex },
+    );
+  }
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['pro'];
-
-
+  if (subcommand && String(subcommand).trim()) {
+    args.push(String(subcommand).trim());
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -34,11 +44,6 @@ export async function executePro(
     });
     args.push(...parsedArgs);
   }
-
-  if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
-  }
-
   args.push(inputPath);
 
   const qsvBin =

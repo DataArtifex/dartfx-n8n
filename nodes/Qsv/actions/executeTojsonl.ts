@@ -17,20 +17,12 @@ export async function executeTojsonl(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['tojsonl'];
-  if (options.trim === true) {
-    args.push('--trim');
-  }
-  if (options.noBoolean === true) {
-    args.push('--no-boolean');
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
   if (options.batch !== undefined && options.batch !== '') {
     args.push('--batch', String(options.batch));
   }
@@ -40,11 +32,12 @@ export async function executeTojsonl(
   if (options.memcheck === true) {
     args.push('--memcheck');
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
+  if (options.noBoolean === true) {
+    args.push('--no-boolean');
   }
-
-
+  if (options.trim === true) {
+    args.push('--trim');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -55,11 +48,9 @@ export async function executeTojsonl(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

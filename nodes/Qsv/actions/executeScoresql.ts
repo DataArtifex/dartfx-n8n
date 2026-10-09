@@ -17,7 +17,8 @@ export async function executeScoresql(
       { itemIndex },
     );
   }
-  const sql = (this.getNodeParameter('sql', itemIndex) as string) || '';
+
+  const sql = (this.getNodeParameter('sql', itemIndex, '') as string) || '';
   if (!sql || !String(sql).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -30,31 +31,27 @@ export async function executeScoresql(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['scoresql'];
-  if (options.json === true) {
-    args.push('--json');
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.duckdb === true) {
     args.push('--duckdb');
   }
-  if (options.tryParsedates === true) {
-    args.push('--try-parsedates');
+  if (options.ignoreErrors === true) {
+    args.push('--ignore-errors');
   }
   if (options.inferLen !== undefined && options.inferLen !== '') {
     args.push('--infer-len', String(options.inferLen));
   }
-  if (options.ignoreErrors === true) {
-    args.push('--ignore-errors');
+  if (options.json === true) {
+    args.push('--json');
   }
   if (options.truncateRaggedLines === true) {
     args.push('--truncate-ragged-lines');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.tryParsedates === true) {
+    args.push('--try-parsedates');
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
-  }
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -65,10 +62,11 @@ export async function executeScoresql(
     });
     args.push(...parsedArgs);
   }
-
-  
-
-  args.push(inputPath, sql.trim());
+  if (outputPath.trim()) {
+    args.push('--output', outputPath.trim());
+  }
+  args.push(inputPath);
+  args.push(String(sql).trim());
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

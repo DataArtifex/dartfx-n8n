@@ -14,7 +14,52 @@ export const ApplyDescription: INodeProperties[] = [
       },
     },
   },
-
+  {
+    displayName: 'Subcommand',
+    name: 'subcommand',
+    type: 'options',
+    required: true,
+    default: 'calcconv',
+    options: [
+        { name: 'calcconv', value: 'calcconv' },
+        { name: 'dynfmt', value: 'dynfmt' },
+        { name: 'emptyreplace', value: 'emptyreplace' },
+        { name: 'operations', value: 'operations' },
+        { name: 'summarize', value: 'summarize' },
+    ],
+    description: 'Subcommand to execute. Valid values: calcconv, dynfmt, emptyreplace, operations, summarize',
+    displayOptions: {
+      show: {
+        operation: ['apply'],
+      },
+    },
+  },
+  {
+    displayName: 'Operations',
+    name: 'operations',
+    type: 'string',
+    required: false,
+    default: '',
+    description: 'The operation/s to apply.',
+    displayOptions: {
+      show: {
+        operation: ['apply'],
+      },
+    },
+  },
+  {
+    displayName: 'Column',
+    name: 'column',
+    type: 'string',
+    required: false,
+    default: '',
+    description: 'The column/s whose values are summarized by the LLM. Used to build the default prompt. With a custom prompt (via the --prompt/--prompt-file options), any column can be referenced.',
+    displayOptions: {
+      show: {
+        operation: ['apply'],
+      },
+    },
+  },
   {
     displayName: 'Output File Path',
     name: 'outputPath',
@@ -32,7 +77,7 @@ export const ApplyDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv apply (Docs: https://github.com/dathere/qsv/blob/master/docs/help/apply.md)',
+    description: 'Additional raw command line arguments to pass to qsv apply [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/apply.md)',
     displayOptions: {
       show: {
         operation: ['apply'],
@@ -59,13 +104,6 @@ export const ApplyDescription: INodeProperties[] = [
       description: 'Additional model properties as a JSON object, e.g. \'{"reasoning_effort": "high", "temperature": 0.2}\'',
     },
     {
-      displayName: 'Api Key',
-      name: 'apiKey',
-      type: 'string',
-      default: '',
-      description: 'API key for Bearer token authentication. Precedence: this flag > QSV_LLM_APIKEY env var. Set to "NONE" to suppress sending a key. Required for non-localhost URLs.',
-    },
-    {
       displayName: 'Base Url',
       name: 'baseUrl',
       type: 'string',
@@ -75,16 +113,16 @@ export const ApplyDescription: INodeProperties[] = [
     {
       displayName: 'Batch',
       name: 'batch',
-      type: 'string',
-      default: '',
-      description: 'The number of rows per batch to load into memory, before running in parallel. Automatically determined for CSV files with more than 50000 rows. Set to 0 to load all rows in one batch. Set to 1 to force batch optimization even for files with less than 50000 rows. [default: 50000]',
+      type: 'number',
+      default: 50000,
+      description: 'The number of rows per batch to load into memory, before running in parallel. Automatically determined for CSV files with more than 50000 rows. Set to 0 to load all rows in one batch. Set to 1 to force batch optimization even for files with less than 50000 rows.',
     },
     {
       displayName: 'Cache Dir',
       name: 'cacheDir',
       type: 'string',
       default: '~/.qsv-cache/apply-summarize',
-      description: 'Directory for the disk cache. [default: ~/.qsv-cache/apply-summarize] The cache TTL defaults to 28 days; set the QSV_DISKCACHE_TTL_SECS env var to change it. A value of 0 disables time-based expiration (entries are cached indefinitely). Use --no-cache to disable caching.',
+      description: 'Directory for the disk cache. The cache TTL defaults to 28 days; set the QSV_DISKCACHE_TTL_SECS env var to change it. A value of 0 disables time-based expiration (entries are cached indefinitely). Use --no-cache to disable caching.',
     },
     {
       displayName: 'Comparand',
@@ -105,7 +143,7 @@ export const ApplyDescription: INodeProperties[] = [
       name: 'formatstr',
       type: 'string',
       default: '',
-      description: 'This option is used by several subcommands: OPERATIONS: currencytonum If set to "strict", will require a valid ISO currency symbol, with the currency symbol at the beginning of the string. Otherwise, only parse the numeric part of the string and ignore the currency symbol altogether. (default: permissive) numtocurrency If set to "euro", will format the currency to use "." instead of "," as separators (e.g. 1.000,00 instead of 1,000.00 ) thousands The thousands separator policy to use. The available policies are: comma, dot, space, underscore, hexfour (place a space every four hex digits) and indiancomma (place a comma every two digits, except the last three digits). (default: comma) round The number of decimal places to round to (default: 3) DYNFMT: the template to use to construct a new column.',
+      description: 'This option is used by several subcommands:',
     },
     {
       displayName: 'Fresh',
@@ -115,18 +153,11 @@ export const ApplyDescription: INodeProperties[] = [
       description: 'Force fresh LLM calls, refreshing any cached values.',
     },
     {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.',
-    },
-    {
       displayName: 'Max Tokens',
       name: 'maxTokens',
-      type: 'string',
-      default: '',
-      description: 'Maximum number of tokens in the LLM output. Set to 0 to not send a max_tokens limit (automatically used for localhost endpoints). [default: 10000]',
+      type: 'number',
+      default: 10000,
+      description: 'Maximum number of tokens in the LLM output. Set to 0 to not send a max_tokens limit (automatically used for localhost endpoints).',
     },
     {
       displayName: 'Model',
@@ -160,15 +191,8 @@ export const ApplyDescription: INodeProperties[] = [
       displayName: 'On Error',
       name: 'onError',
       type: 'string',
-      default: '',
-      description: 'What to do when an LLM request fails: "fail" aborts; "skip" writes an "<ERROR: ...>" cell and continues. [default: fail]',
-    },
-    {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show progress bars. Not valid for stdin.',
+      default: 'fail',
+      description: 'What to do when an LLM request fails: "fail" aborts; "skip" writes an "<ERROR: ...>" cell and continues.',
     },
     {
       displayName: 'Prompt',
@@ -187,9 +211,9 @@ export const ApplyDescription: INodeProperties[] = [
     {
       displayName: 'Rate Limit',
       name: 'rateLimit',
-      type: 'string',
-      default: '',
-      description: 'Seconds to sleep between LLM requests to avoid provider rate limits. Accepts fractional seconds (e.g. 0.5). [default: 0]',
+      type: 'number',
+      default: 0,
+      description: 'Seconds to sleep between LLM requests to avoid provider rate limits. Accepts fractional seconds (e.g. 0.5).',
     },
     {
       displayName: 'Rename',
@@ -215,16 +239,9 @@ export const ApplyDescription: INodeProperties[] = [
     {
       displayName: 'Timeout',
       name: 'timeout',
-      type: 'string',
-      default: '',
-      description: 'Timeout for each LLM request in seconds (0 = no timeout). [default: 300]',
-    },
-    {
-      displayName: 'User Agent',
-      name: 'userAgent',
-      type: 'string',
-      default: '',
-      description: 'Custom user agent for LLM requests. Supports variables like $QSV_VERSION.',
+      type: 'number',
+      default: 300,
+      description: 'Timeout for each LLM request in seconds (0 = no timeout).',
     },
     ],
   },

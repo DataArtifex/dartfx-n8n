@@ -15,18 +15,7 @@ export const IndexDescription: INodeProperties[] = [
     },
   },
 
-  {
-    displayName: 'Output File Path',
-    name: 'outputPath',
-    type: 'string',
-    default: '',
-    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
-    displayOptions: {
-      show: {
-        operation: ['index'],
-      },
-    },
-  },
+
   {
     displayName: 'Additional Flags',
     name: 'additionalArgs',

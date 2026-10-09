@@ -77,13 +77,13 @@ export const EnumDescription: INodeProperties[] = [
       name: 'hash',
       type: 'string',
       default: '',
-      description: 'Create a new column filled with the hash of the given column/s. Use "1-" to hash all columns. Changes the default column name to "hash" unless overridden by --new-column. Will remove an existing "hash" column if it exists. The <columns> argument specify the columns to use in the hash. Columns can be referenced by name or index, starting at 1. Specify multiple columns by separating them with a comma. Specify a range of columns with `-`. (See \'qsv select --help\' for the full syntax.)',
+      description: 'Create a new column filled with the hash of the given column/s. Use "1-" to hash all columns. Changes the default column name to "hash" unless overridden by --new-column. Will remove an existing "hash" column if it exists.',
     },
     {
       displayName: 'Increment',
       name: 'increment',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'The value to increment the enumeration by. Only applies in Increment mode. (default: 1)',
     },
     {
@@ -103,8 +103,8 @@ export const EnumDescription: INodeProperties[] = [
     {
       displayName: 'Start',
       name: 'start',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'The value to start the enumeration from. Only applies in Increment mode. (default: 0)',
     },
     {

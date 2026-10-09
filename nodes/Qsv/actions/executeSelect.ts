@@ -17,7 +17,8 @@ export async function executeSelect(
       { itemIndex },
     );
   }
-  const selection = (this.getNodeParameter('selection', itemIndex) as string) || '';
+
+  const selection = (this.getNodeParameter('selection', itemIndex, '') as string) || '';
   if (!selection || !String(selection).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -30,6 +31,12 @@ export async function executeSelect(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['select'];
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
   if (options.random === true) {
     args.push('--random');
   }
@@ -39,15 +46,6 @@ export async function executeSelect(
   if (options.sort === true) {
     args.push('--sort');
   }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-
-  args.push(String(selection));
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -58,11 +56,10 @@ export async function executeSelect(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(selection).trim());
   args.push(inputPath);
 
   const qsvBin =

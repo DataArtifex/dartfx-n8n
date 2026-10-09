@@ -17,31 +17,30 @@ export async function executeSafenames(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['safenames'];
-  if (options.mode !== undefined && options.mode !== '') {
-    args.push('--mode', String(options.mode));
-  }
-  if (options.reserved !== undefined && options.reserved !== '') {
-    args.push('--reserved', String(options.reserved));
-  }
-  if (options.prefix !== undefined && options.prefix !== '') {
-    args.push('--prefix', String(options.prefix));
-  }
   if (options.collapse === true) {
     args.push('--collapse');
-  }
-  if (options.unicode === true) {
-    args.push('--unicode');
   }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
-
-
+  if (options.mode !== undefined && options.mode !== '') {
+    args.push('--mode', String(options.mode));
+  }
+  if (options.prefix !== undefined && options.prefix !== '') {
+    args.push('--prefix', String(options.prefix));
+  }
+  if (options.reserved !== undefined && options.reserved !== '') {
+    args.push('--reserved', String(options.reserved));
+  }
+  if (options.unicode === true) {
+    args.push('--unicode');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -52,11 +51,9 @@ export async function executeSafenames(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

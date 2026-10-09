@@ -17,23 +17,10 @@ export async function executeJoinp(
       { itemIndex },
     );
   }
-  const columns1 = (this.getNodeParameter('columns1', itemIndex) as string) || '';
-  const columns2 = (this.getNodeParameter('columns2', itemIndex) as string) || '';
-  const input2 = (this.getNodeParameter('input2', itemIndex) as string) || '';
-  if (!columns1 || !String(columns1).trim()) {
-    throw new NodeOperationError(
-      this.getNode(),
-      'Parameter "First File Join Columns" is required for joinp.',
-      { itemIndex },
-    );
-  }
-  if (!columns2 || !String(columns2).trim()) {
-    throw new NodeOperationError(
-      this.getNode(),
-      'Parameter "Second File Join Columns" is required for joinp.',
-      { itemIndex },
-    );
-  }
+
+  const columns1 = (this.getNodeParameter('columns1', itemIndex, '') as string) || '';
+  const columns2 = (this.getNodeParameter('columns2', itemIndex, '') as string) || '';
+  const input2 = (this.getNodeParameter('input2', itemIndex, '') as string) || '';
   if (!input2 || !String(input2).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -46,6 +33,57 @@ export async function executeJoinp(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['joinp'];
+  if (options.allowExactMatches === true) {
+    args.push('--allow-exact-matches');
+  }
+  if (options.asof === true) {
+    args.push('--asof');
+  }
+  if (options.cacheSchema !== undefined && options.cacheSchema !== '') {
+    args.push('--cache-schema', String(options.cacheSchema));
+  }
+  if (options.coalesce === true) {
+    args.push('--coalesce');
+  }
+  if (options.cross === true) {
+    args.push('--cross');
+  }
+  if (options.dateFormat !== undefined && options.dateFormat !== '') {
+    args.push('--date-format', String(options.dateFormat));
+  }
+  if (options.datetimeFormat !== undefined && options.datetimeFormat !== '') {
+    args.push('--datetime-format', String(options.datetimeFormat));
+  }
+  if (options.decimalComma === true) {
+    args.push('--decimal-comma');
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.filterLeft !== undefined && options.filterLeft !== '') {
+    args.push('--filter-left', String(options.filterLeft));
+  }
+  if (options.filterRight !== undefined && options.filterRight !== '') {
+    args.push('--filter-right', String(options.filterRight));
+  }
+  if (options.floatPrecision !== undefined && options.floatPrecision !== '') {
+    args.push('--float-precision', String(options.floatPrecision));
+  }
+  if (options.full === true) {
+    args.push('--full');
+  }
+  if (options.ignoreCase === true) {
+    args.push('--ignore-case');
+  }
+  if (options.ignoreErrors === true) {
+    args.push('--ignore-errors');
+  }
+  if (options.ignoreLeadingZeros === true) {
+    args.push('--ignore-leading-zeros');
+  }
+  if (options.inferLen !== undefined && options.inferLen !== '') {
+    args.push('--infer-len', String(options.inferLen));
+  }
   if (options.left === true) {
     args.push('--left');
   }
@@ -54,6 +92,33 @@ export async function executeJoinp(
   }
   if (options.leftSemi === true) {
     args.push('--left-semi');
+  }
+  if (options.left_by !== undefined && options.left_by !== '') {
+    args.push('--left_by', String(options.left_by));
+  }
+  if (options.lowMemory === true) {
+    args.push('--low-memory');
+  }
+  if (options.maintainOrder !== undefined && options.maintainOrder !== '') {
+    args.push('--maintain-order', String(options.maintainOrder));
+  }
+  if (options.noOptimizations === true) {
+    args.push('--no-optimizations');
+  }
+  if (options.noSort === true) {
+    args.push('--no-sort');
+  }
+  if (options.nonEqui !== undefined && options.nonEqui !== '') {
+    args.push('--non-equi', String(options.nonEqui));
+  }
+  if (options.normUnicode !== undefined && options.normUnicode !== '') {
+    args.push('--norm-unicode', String(options.normUnicode));
+  }
+  if (options.nullValue !== undefined && options.nullValue !== '') {
+    args.push('--null-value', String(options.nullValue));
+  }
+  if (options.nulls === true) {
+    args.push('--nulls');
   }
   if (options.right === true) {
     args.push('--right');
@@ -64,114 +129,30 @@ export async function executeJoinp(
   if (options.rightSemi === true) {
     args.push('--right-semi');
   }
-  if (options.full === true) {
-    args.push('--full');
-  }
-  if (options.cross === true) {
-    args.push('--cross');
-  }
-  if (options.nonEqui !== undefined && options.nonEqui !== '') {
-    args.push('--non-equi', String(options.nonEqui));
-  }
-  if (options.coalesce === true) {
-    args.push('--coalesce');
-  }
-  if (options.filterLeft !== undefined && options.filterLeft !== '') {
-    args.push('--filter-left', String(options.filterLeft));
-  }
-  if (options.filterRight !== undefined && options.filterRight !== '') {
-    args.push('--filter-right', String(options.filterRight));
-  }
-  if (options.validate !== undefined && options.validate !== '') {
-    args.push('--validate', String(options.validate));
-  }
-  if (options.maintainOrder !== undefined && options.maintainOrder !== '') {
-    args.push('--maintain-order', String(options.maintainOrder));
-  }
-  if (options.nulls === true) {
-    args.push('--nulls');
-  }
-  if (options.streaming === true) {
-    args.push('--streaming');
-  }
-  if (options.tryParsedates === true) {
-    args.push('--try-parsedates');
-  }
-  if (options.inferLen !== undefined && options.inferLen !== '') {
-    args.push('--infer-len', String(options.inferLen));
-  }
-  if (options.cacheSchema !== undefined && options.cacheSchema !== '') {
-    args.push('--cache-schema', String(options.cacheSchema));
-  }
-  if (options.lowMemory === true) {
-    args.push('--low-memory');
-  }
-  if (options.noOptimizations === true) {
-    args.push('--no-optimizations');
-  }
-  if (options.ignoreErrors === true) {
-    args.push('--ignore-errors');
-  }
-  if (options.decimalComma === true) {
-    args.push('--decimal-comma');
-  }
-  if (options.asof === true) {
-    args.push('--asof');
-  }
-  if (options.noSort === true) {
-    args.push('--no-sort');
-  }
-  if (options.left_by !== undefined && options.left_by !== '') {
-    args.push('--left_by', String(options.left_by));
-  }
   if (options.right_by !== undefined && options.right_by !== '') {
     args.push('--right_by', String(options.right_by));
-  }
-  if (options.strategy !== undefined && options.strategy !== '') {
-    args.push('--strategy', String(options.strategy));
-  }
-  if (options.tolerance !== undefined && options.tolerance !== '') {
-    args.push('--tolerance', String(options.tolerance));
-  }
-  if (options.allowExactMatches === true) {
-    args.push('--allow-exact-matches');
   }
   if (options.sqlFilter !== undefined && options.sqlFilter !== '') {
     args.push('--sql-filter', String(options.sqlFilter));
   }
-  if (options.datetimeFormat !== undefined && options.datetimeFormat !== '') {
-    args.push('--datetime-format', String(options.datetimeFormat));
+  if (options.strategy !== undefined && options.strategy !== '') {
+    args.push('--strategy', String(options.strategy));
   }
-  if (options.dateFormat !== undefined && options.dateFormat !== '') {
-    args.push('--date-format', String(options.dateFormat));
+  if (options.streaming === true) {
+    args.push('--streaming');
   }
   if (options.timeFormat !== undefined && options.timeFormat !== '') {
     args.push('--time-format', String(options.timeFormat));
   }
-  if (options.floatPrecision !== undefined && options.floatPrecision !== '') {
-    args.push('--float-precision', String(options.floatPrecision));
+  if (options.tolerance !== undefined && options.tolerance !== '') {
+    args.push('--tolerance', String(options.tolerance));
   }
-  if (options.nullValue !== undefined && options.nullValue !== '') {
-    args.push('--null-value', String(options.nullValue));
+  if (options.tryParsedates === true) {
+    args.push('--try-parsedates');
   }
-  if (options.ignoreCase === true) {
-    args.push('--ignore-case');
+  if (options.validate !== undefined && options.validate !== '') {
+    args.push('--validate', String(options.validate));
   }
-  if (options.ignoreLeadingZeros === true) {
-    args.push('--ignore-leading-zeros');
-  }
-  if (options.normUnicode !== undefined && options.normUnicode !== '') {
-    args.push('--norm-unicode', String(options.normUnicode));
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-  if (options.quiet === true) {
-    args.push('--quiet');
-  }
-
-  args.push(columns1.trim(), inputPath, columns2.trim(), input2.trim());
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -182,10 +163,17 @@ export async function executeJoinp(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
+  if (columns1 !== undefined && String(columns1).trim()) {
+    args.push(String(columns1).trim());
+  }
+  args.push(inputPath);
+  if (columns2 !== undefined && String(columns2).trim()) {
+    args.push(String(columns2).trim());
+  }
+  args.push(String(input2).trim());
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

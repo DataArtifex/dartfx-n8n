@@ -17,37 +17,36 @@ export async function executeSlice(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['slice'];
-  if (options.start !== undefined && options.start !== '') {
-    args.push('--start', String(options.start));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.end !== undefined && options.end !== '') {
     args.push('--end', String(options.end));
   }
-  if (options.len !== undefined && options.len !== '') {
-    args.push('--len', String(options.len));
-  }
   if (options.index !== undefined && options.index !== '') {
     args.push('--index', String(options.index));
-  }
-  if (options.json === true) {
-    args.push('--json');
   }
   if (options.invert === true) {
     args.push('--invert');
   }
+  if (options.json === true) {
+    args.push('--json');
+  }
+  if (options.len !== undefined && options.len !== '') {
+    args.push('--len', String(options.len));
+  }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.start !== undefined && options.start !== '') {
+    args.push('--start', String(options.start));
   }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -58,11 +57,9 @@ export async function executeSlice(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

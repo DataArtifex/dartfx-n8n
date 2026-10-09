@@ -20,7 +20,7 @@ export const EditDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Column name or 1-based index of cell to edit',
+    description: 'The cell\'s column name or index. Indices start from the first column as 0. Providing a value of underscore (_) selects the last column.',
     displayOptions: {
       show: {
         operation: ['edit'],
@@ -33,7 +33,7 @@ export const EditDescription: INodeProperties[] = [
     type: 'number',
     required: true,
     default: 1,
-    description: '1-based row index (record number) of cell to edit',
+    description: 'The cell\'s row index. Indices start from the first non-header row as 0.',
     displayOptions: {
       show: {
         operation: ['edit'],
@@ -46,7 +46,7 @@ export const EditDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'New value to write into the cell',
+    description: 'The new value to replace the old cell content with.',
     displayOptions: {
       show: {
         operation: ['edit'],

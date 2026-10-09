@@ -17,22 +17,46 @@ export async function executeLuau(
       { itemIndex },
     );
   }
+
+  const subcommand = (this.getNodeParameter('subcommand', itemIndex, '') as string) || '';
+  const newColumns = (this.getNodeParameter('newColumns', itemIndex, '') as string) || '';
+  const mainScript = (this.getNodeParameter('mainScript', itemIndex, '') as string) || '';
+  if (!subcommand || !String(subcommand).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "Subcommand" is required for luau.',
+      { itemIndex },
+    );
+  }
+  if (!mainScript || !String(mainScript).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "Main Script" is required for luau.',
+      { itemIndex },
+    );
+  }
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['luau'];
-  if (options.noGlobals === true) {
-    args.push('--no-globals');
+  if (subcommand && String(subcommand).trim()) {
+    args.push(String(subcommand).trim());
+  }
+  if (options.begin !== undefined && options.begin !== '') {
+    args.push('--begin', String(options.begin));
+  }
+  if (options.cacheDir !== undefined && options.cacheDir !== '') {
+    args.push('--cache-dir', String(options.cacheDir));
+  }
+  if (options.ckanApi !== undefined && options.ckanApi !== '') {
+    args.push('--ckan-api', String(options.ckanApi));
   }
   if (options.colindex === true) {
     args.push('--colindex');
   }
-  if (options.remap === true) {
-    args.push('--remap');
-  }
-  if (options.begin !== undefined && options.begin !== '') {
-    args.push('--begin', String(options.begin));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.end !== undefined && options.end !== '') {
     args.push('--end', String(options.end));
@@ -40,29 +64,18 @@ export async function executeLuau(
   if (options.maxErrors !== undefined && options.maxErrors !== '') {
     args.push('--max-errors', String(options.maxErrors));
   }
-  if (options.timeout !== undefined && options.timeout !== '') {
-    args.push('--timeout', String(options.timeout));
-  }
-  if (options.ckanApi !== undefined && options.ckanApi !== '') {
-    args.push('--ckan-api', String(options.ckanApi));
-  }
-  if (options.ckanToken !== undefined && options.ckanToken !== '') {
-    args.push('--ckan-token', String(options.ckanToken));
-  }
-  if (options.cacheDir !== undefined && options.cacheDir !== '') {
-    args.push('--cache-dir', String(options.cacheDir));
+  if (options.noGlobals === true) {
+    args.push('--no-globals');
   }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.remap === true) {
+    args.push('--remap');
   }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
+  if (options.timeout !== undefined && options.timeout !== '') {
+    args.push('--timeout', String(options.timeout));
   }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -73,11 +86,13 @@ export async function executeLuau(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  if (newColumns !== undefined && String(newColumns).trim()) {
+    args.push(String(newColumns).trim());
+  }
+  args.push(String(mainScript).trim());
   args.push(inputPath);
 
   const qsvBin =

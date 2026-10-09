@@ -17,8 +17,9 @@ export async function executePartition(
       { itemIndex },
     );
   }
-  const column = (this.getNodeParameter('column', itemIndex) as string) || '';
-  const outdir = (this.getNodeParameter('outdir', itemIndex) as string) || '';
+
+  const column = (this.getNodeParameter('column', itemIndex, '') as string) || '';
+  const outdir = (this.getNodeParameter('outdir', itemIndex, '') as string) || '';
   if (!column || !String(column).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -38,14 +39,14 @@ export async function executePartition(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['partition'];
-  if (options.filename !== undefined && options.filename !== '') {
-    args.push('--filename', String(options.filename));
-  }
-  if (options.prefixLength !== undefined && options.prefixLength !== '') {
-    args.push('--prefix-length', String(options.prefixLength));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.drop === true) {
     args.push('--drop');
+  }
+  if (options.filename !== undefined && options.filename !== '') {
+    args.push('--filename', String(options.filename));
   }
   if (options.limit !== undefined && options.limit !== '') {
     args.push('--limit', String(options.limit));
@@ -53,12 +54,9 @@ export async function executePartition(
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.prefixLength !== undefined && options.prefixLength !== '') {
+    args.push('--prefix-length', String(options.prefixLength));
   }
-
-  args.push(column.trim(), outdir.trim());
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -69,7 +67,8 @@ export async function executePartition(
     });
     args.push(...parsedArgs);
   }
-
+  args.push(String(column).trim());
+  args.push(String(outdir).trim());
   args.push(inputPath);
 
   const qsvBin =

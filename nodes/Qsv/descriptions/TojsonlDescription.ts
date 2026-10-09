@@ -32,7 +32,7 @@ export const TojsonlDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv tojsonl (Docs: https://github.com/dathere/qsv/blob/master/docs/help/tojsonl.md)',
+    description: 'Additional raw command line arguments to pass to qsv tojsonl [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/tojsonl.md)',
     displayOptions: {
       show: {
         operation: ['tojsonl'],
@@ -54,9 +54,9 @@ export const TojsonlDescription: INodeProperties[] = [
     {
       displayName: 'Batch',
       name: 'batch',
-      type: 'string',
-      default: '',
-      description: 'The number of rows per batch to load into memory, before running in parallel. Automatically determined for CSV files with more than 50000 rows. Set to 0 to load all rows in one batch. Set to 1 to force batch optimization even for files with less than 50000 rows. [default: 50000]',
+      type: 'number',
+      default: 50000,
+      description: 'The number of rows per batch to load into memory, before running in parallel. Automatically determined for CSV files with more than 50000 rows. Set to 0 to load all rows in one batch. Set to 1 to force batch optimization even for files with less than 50000 rows.',
     },
     {
       displayName: 'Delimiter',
@@ -64,13 +64,6 @@ export const TojsonlDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'The field delimiter for reading CSV data. Must be a single character. (default: ,)',
-    },
-    {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.',
     },
     {
       displayName: 'Memcheck',
@@ -85,13 +78,6 @@ export const TojsonlDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Do not infer boolean fields.',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not display enum/const list inferencing messages.',
     },
     {
       displayName: 'Trim',

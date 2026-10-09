@@ -17,17 +17,12 @@ export async function executeTable(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['table'];
-  if (options.width !== undefined && options.width !== '') {
-    args.push('--width', String(options.width));
-  }
-  if (options.pad !== undefined && options.pad !== '') {
-    args.push('--pad', String(options.pad));
-  }
   if (options.align !== undefined && options.align !== '') {
     args.push('--align', String(options.align));
   }
@@ -40,8 +35,12 @@ export async function executeTable(
   if (options.memcheck === true) {
     args.push('--memcheck');
   }
-
-
+  if (options.pad !== undefined && options.pad !== '') {
+    args.push('--pad', String(options.pad));
+  }
+  if (options.width !== undefined && options.width !== '') {
+    args.push('--width', String(options.width));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -52,11 +51,9 @@ export async function executeTable(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

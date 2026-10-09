@@ -1,50 +1,62 @@
 import { execSync } from "child_process";
 import * as fs from "fs";
+import * as os from "os";
 import * as path from "path";
 
-interface CliOption {
+export interface QsvArg {
+  name: string;
+  type: "string" | "number" | "file" | "regex";
+  required: boolean;
+  description: string;
+  enum?: string[];
+  default?: any;
+}
+
+export interface QsvOption {
   flag: string;
   shortFlag?: string;
-  hasArg: boolean;
-  argName?: string;
+  type: "flag" | "string" | "number";
   description: string;
-  defaultValue?: string;
-}
-
-interface PositionalParam {
-  name: string;
-  displayName: string;
-  type: "string" | "number";
-  required: boolean;
   default?: any;
+}
+
+export interface QsvHints {
+  memory?: "constant" | "proportional" | "full" | string;
+  indexed?: boolean;
+}
+
+export interface QsvExample {
   description: string;
+  command: string;
 }
 
-type AssemblyType =
-  | "inputLast"
-  | "inputFirst"
-  | "sqlLast"
-  | "positionalOutput"
-  | "dualInput"
-  | "diff"
-  | "toCustom"
-  | "validateCustom"
-  | "splitCustom"
-  | "partitionCustom";
-
-interface CommandConfig {
-  positionals?: PositionalParam[];
-  assemblyType: AssemblyType;
-  hasOutputOption?: boolean;
-}
-
-interface ParsedCommand {
+export interface QsvToolDefinition {
   name: string;
+  version: string;
   description: string;
-  usage: string;
-  options: CliOption[];
-  config: CommandConfig;
+  category: string;
+  command: {
+    subcommand: string;
+    args?: QsvArg[];
+    options?: QsvOption[];
+  };
+  hints?: QsvHints;
+  examples?: QsvExample[];
+}
+
+export interface ParsedCommand {
+  name: string;
+  subcommand: string;
+  description: string;
+  category: string;
+  version: string;
+  args: QsvArg[];
+  options: QsvOption[];
+  hasOutputOption: boolean;
+  hints?: QsvHints;
+  examples?: QsvExample[];
   feature?: string;
+  helpDocUrl: string;
 }
 
 const QSV_BIN =
@@ -78,436 +90,6 @@ const FEATURE_MAP: Record<string, string> = {
   describegpt: "feature-gated",
 };
 
-const COMMAND_CONFIGS: Record<string, CommandConfig> = {
-  select: {
-    positionals: [
-      {
-        name: "selection",
-        displayName: "Selection",
-        type: "string",
-        required: true,
-        description:
-          "Comma-separated column names, 1-based indices, or ranges (e.g. 1,4, colA,colB, !colC, /^regex/)",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  search: {
-    positionals: [
-      {
-        name: "regex",
-        displayName: "Regex",
-        type: "string",
-        required: true,
-        description: "Regular expression pattern to search for",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  searchset: {
-    positionals: [
-      {
-        name: "regexsetFile",
-        displayName: "Regex Set File",
-        type: "string",
-        required: true,
-        description: "Path to file containing regex patterns (one per line)",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  sample: {
-    positionals: [
-      {
-        name: "sampleSize",
-        displayName: "Sample Size",
-        type: "string",
-        required: true,
-        default: "100",
-        description:
-          "Number of records (integer >= 1) or fraction of records (0 < decimal < 1) to sample",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  pseudo: {
-    positionals: [
-      {
-        name: "column",
-        displayName: "Column",
-        type: "string",
-        required: true,
-        description: "Column name or 1-based index to pseudonymise",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  rename: {
-    positionals: [
-      {
-        name: "headers",
-        displayName: "Headers",
-        type: "string",
-        required: true,
-        description: "Comma-separated list of new header names",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  fill: {
-    positionals: [
-      {
-        name: "selection",
-        displayName: "Selection",
-        type: "string",
-        required: true,
-        description: "Column selection to fill empty values in",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  replace: {
-    positionals: [
-      {
-        name: "pattern",
-        displayName: "Pattern",
-        type: "string",
-        required: true,
-        description: "Regular expression pattern to search for",
-      },
-      {
-        name: "replacement",
-        displayName: "Replacement",
-        type: "string",
-        required: true,
-        description:
-          "Replacement string (supports regex capture groups like $1)",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  explode: {
-    positionals: [
-      {
-        name: "column",
-        displayName: "Column",
-        type: "string",
-        required: true,
-        description: "Column name or index to explode",
-      },
-      {
-        name: "separator",
-        displayName: "Separator",
-        type: "string",
-        required: true,
-        description: "Delimiter string to explode rows on",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  implode: {
-    positionals: [
-      {
-        name: "separator",
-        displayName: "Separator",
-        type: "string",
-        required: true,
-        description: "Delimiter string to join imploded values with",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  foreach: {
-    positionals: [
-      {
-        name: "column",
-        displayName: "Column",
-        type: "string",
-        required: true,
-        description: "Column whose values will be passed to the command",
-      },
-      {
-        name: "command",
-        displayName: "Command",
-        type: "string",
-        required: true,
-        description: "Shell command to execute for each row",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  datefmt: {
-    positionals: [
-      {
-        name: "column",
-        displayName: "Column",
-        type: "string",
-        required: true,
-        description:
-          "Column name or index containing date/datetime strings to format",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  pivotp: {
-    positionals: [
-      {
-        name: "onCols",
-        displayName: "On Columns",
-        type: "string",
-        required: true,
-        description: "Columns to aggregate on for pivoting",
-      },
-    ],
-    assemblyType: "inputLast",
-  },
-  edit: {
-    positionals: [
-      {
-        name: "column",
-        displayName: "Column",
-        type: "string",
-        required: true,
-        description: "Column name or 1-based index of cell to edit",
-      },
-      {
-        name: "row",
-        displayName: "Row Index",
-        type: "number",
-        required: true,
-        default: 1,
-        description: "1-based row index (record number) of cell to edit",
-      },
-      {
-        name: "value",
-        displayName: "New Value",
-        type: "string",
-        required: true,
-        description: "New value to write into the cell",
-      },
-    ],
-    assemblyType: "inputFirst",
-  },
-  geoconvert: {
-    positionals: [
-      {
-        name: "inputFormat",
-        displayName: "Input Format",
-        type: "string",
-        required: true,
-        description:
-          "Format of input spatial file (e.g. geojson, shp, csv)",
-      },
-      {
-        name: "outputFormat",
-        displayName: "Output Format",
-        type: "string",
-        required: true,
-        description:
-          "Format of output spatial file (e.g. geojson, shp, csv)",
-      },
-    ],
-    assemblyType: "inputFirst",
-  },
-  sqlp: {
-    positionals: [
-      {
-        name: "sql",
-        displayName: "SQL Query",
-        type: "string",
-        required: true,
-        description:
-          "Polars SQL query to execute against the input CSV (e.g. SELECT * FROM _t_1 WHERE ...)",
-      },
-    ],
-    assemblyType: "sqlLast",
-  },
-  scoresql: {
-    positionals: [
-      {
-        name: "sql",
-        displayName: "SQL Query",
-        type: "string",
-        required: true,
-        description: "SQL query to score for execution performance",
-      },
-    ],
-    assemblyType: "sqlLast",
-    hasOutputOption: false,
-  },
-  extsort: {
-    assemblyType: "positionalOutput",
-    hasOutputOption: false,
-  },
-  extdedup: {
-    assemblyType: "positionalOutput",
-    hasOutputOption: false,
-  },
-  split: {
-    positionals: [
-      {
-        name: "outdir",
-        displayName: "Output Directory",
-        type: "string",
-        required: true,
-        description:
-          "Directory where split chunk CSV files will be written",
-      },
-    ],
-    assemblyType: "splitCustom",
-    hasOutputOption: false,
-  },
-  partition: {
-    positionals: [
-      {
-        name: "column",
-        displayName: "Column",
-        type: "string",
-        required: true,
-        description: "Column to partition CSV data on",
-      },
-      {
-        name: "outdir",
-        displayName: "Output Directory",
-        type: "string",
-        required: true,
-        description:
-          "Directory where partitioned CSV files will be written",
-      },
-    ],
-    assemblyType: "partitionCustom",
-    hasOutputOption: false,
-  },
-  join: {
-    positionals: [
-      {
-        name: "columns1",
-        displayName: "First File Join Columns",
-        type: "string",
-        required: true,
-        description: "Join columns for first input file (e.g. id or 1)",
-      },
-      {
-        name: "columns2",
-        displayName: "Second File Join Columns",
-        type: "string",
-        required: true,
-        description: "Join columns for second input file (e.g. id or 1)",
-      },
-      {
-        name: "input2",
-        displayName: "Second Input File Path",
-        type: "string",
-        required: true,
-        description: "Path to second input CSV file on disk",
-      },
-    ],
-    assemblyType: "dualInput",
-  },
-  joinp: {
-    positionals: [
-      {
-        name: "columns1",
-        displayName: "First File Join Columns",
-        type: "string",
-        required: true,
-        description: "Join columns for first input file (e.g. id or 1)",
-      },
-      {
-        name: "columns2",
-        displayName: "Second File Join Columns",
-        type: "string",
-        required: true,
-        description: "Join columns for second input file (e.g. id or 1)",
-      },
-      {
-        name: "input2",
-        displayName: "Second Input File Path",
-        type: "string",
-        required: true,
-        description: "Path to second input CSV file on disk",
-      },
-    ],
-    assemblyType: "dualInput",
-  },
-  exclude: {
-    positionals: [
-      {
-        name: "columns1",
-        displayName: "First File Exclude Columns",
-        type: "string",
-        required: true,
-        description: "Columns in first input file to match on",
-      },
-      {
-        name: "columns2",
-        displayName: "Second File Exclude Columns",
-        type: "string",
-        required: true,
-        description: "Columns in second input file to match on",
-      },
-      {
-        name: "input2",
-        displayName: "Second Input File Path",
-        type: "string",
-        required: true,
-        description: "Path to second input CSV file on disk",
-      },
-    ],
-    assemblyType: "dualInput",
-  },
-  diff: {
-    positionals: [
-      {
-        name: "inputRight",
-        displayName: "Right CSV File Path",
-        type: "string",
-        required: true,
-        description: "Path to second (right) CSV file to compare against",
-      },
-    ],
-    assemblyType: "diff",
-  },
-  to: {
-    positionals: [
-      {
-        name: "format",
-        displayName: "Target Format",
-        type: "string",
-        required: true,
-        default: "parquet",
-        description:
-          "Target output format (parquet, postgres, sqlite, xlsx, ods, datapackage)",
-      },
-      {
-        name: "destination",
-        displayName: "Destination",
-        type: "string",
-        required: true,
-        description:
-          "Destination file path, database URI, or connection string",
-      },
-    ],
-    assemblyType: "toCustom",
-    hasOutputOption: false,
-  },
-  validate: {
-    positionals: [
-      {
-        name: "jsonSchema",
-        displayName: "JSON Schema Path / URL",
-        type: "string",
-        required: false,
-        default: "",
-        description:
-          "Optional path or URL to JSON Schema. If omitted, performs standard RFC 4180 validation.",
-      },
-    ],
-    assemblyType: "validateCustom",
-    hasOutputOption: false,
-  },
-};
-
 /**
  * Extracts target QSV binary version dynamically by running `qsv --version`.
  */
@@ -531,20 +113,144 @@ function getQsvVersion(): string {
 }
 
 /**
- * Discovers available QSV commands dynamically by running `qsv --list`.
+ * Converts flag or argument name to safe TypeScript camelCase identifier.
  */
-function getAvailableCommands(): string[] {
+function toSafePropName(flagOrArg: string): string {
+  const clean = flagOrArg.replace(/^--?/, "");
+  let camel = clean.replace(/-([a-z0-9])/g, (_, g) => g.toUpperCase());
+  if (/^[0-9]/.test(camel)) {
+    camel = `_${camel}`;
+  }
+  return camel;
+}
+
+function toCapitalized(cmd: string): string {
+  return cmd.charAt(0).toUpperCase() + cmd.slice(1);
+}
+
+function toDisplayName(raw: string): string {
+  const specialNames: Record<string, string> = {
+    selection: "Selection",
+    regex: "Regex",
+    regexsetFile: "Regex Set File",
+    sampleSize: "Sample Size",
+    sql: "SQL Query",
+    column: "Column",
+    row: "Row Index",
+    value: "New Value",
+    headers: "Headers",
+    pattern: "Pattern",
+    replacement: "Replacement",
+    separator: "Separator",
+    columns1: "First File Join Columns",
+    columns2: "Second File Join Columns",
+    input2: "Second Input File Path",
+    inputRight: "Right CSV File Path",
+    destination: "Destination",
+    jsonSchema: "JSON Schema Path / URL",
+    outdir: "Output Directory",
+    format: "Target Format",
+    inputFormat: "Input Format",
+    outputFormat: "Output Format",
+    urlColumn: "URL Column",
+    columnList: "Column List",
+    mainScript: "Main Script",
+    newColumns: "New Columns",
+    indexFile: "Index File Path",
+    onCols: "On Columns",
+  };
+
+  if (specialNames[raw]) {
+    return specialNames[raw];
+  }
+
+  return raw
+    .replace(/([A-Z])/g, " $1")
+    .replace(/[-_]/g, " ")
+    .trim()
+    .split(/\s+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+/**
+ * Loads tool definitions by exporting from QSV v24 `--export-tool-definitions`
+ * with fallback to `qsv <cmd> --help --format json` or legacy help text.
+ */
+function loadAllToolDefinitions(exportDir: string): Map<string, QsvToolDefinition> {
+  const definitions = new Map<string, QsvToolDefinition>();
+
+  try {
+    fs.mkdirSync(exportDir, { recursive: true });
+    console.log(`Exporting tool definitions via '${QSV_BIN} --export-tool-definitions ${exportDir}'...`);
+    execSync(`${QSV_BIN} --export-tool-definitions ${exportDir}`, {
+      encoding: "utf8",
+      stdio: "pipe",
+    });
+
+    const toolDefsDir = path.join(exportDir, "tool-definitions");
+    if (fs.existsSync(toolDefsDir)) {
+      const files = fs.readdirSync(toolDefsDir).filter((f) => f.endsWith(".json"));
+      for (const f of files) {
+        try {
+          const raw = fs.readFileSync(path.join(toolDefsDir, f), "utf8");
+          const data: QsvToolDefinition = JSON.parse(raw);
+          const cmd = data.command?.subcommand || data.name.replace(/^qsv-/, "");
+          definitions.set(cmd, data);
+        } catch (e: any) {
+          console.warn(`Warning: Failed parsing ${f}: ${e.message}`);
+        }
+      }
+      console.log(`✓ Loaded ${definitions.size} tool definitions from QSV export.`);
+      return definitions;
+    }
+  } catch (err: any) {
+    console.warn(
+      `Warning: QSV '--export-tool-definitions' failed (${err.message}). Attempting per-command JSON fallback.`,
+    );
+  }
+
+  return definitions;
+}
+
+/**
+ * Fallback to fetch single command definition via `qsv <cmd> --help --format json`
+ */
+function getSingleCommandJson(cmd: string): QsvToolDefinition | null {
+  try {
+    const raw = execSync(`${QSV_BIN} ${cmd} --help --format json`, {
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "ignore"],
+    });
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Discovers available QSV commands.
+ */
+function getAvailableCommands(toolDefs: Map<string, QsvToolDefinition>): string[] {
+  const commands: string[] = [];
+
+  if (toolDefs.size > 0) {
+    for (const cmd of toolDefs.keys()) {
+      if (!EXCLUDED_COMMANDS.has(cmd) && !commands.includes(cmd)) {
+        commands.push(cmd);
+      }
+    }
+    return commands.sort();
+  }
+
   try {
     const listOutput = execSync(`${QSV_BIN} --list`, { encoding: "utf8" });
     const lines = listOutput.split("\n");
-    const commands: string[] = [];
 
     for (const line of lines) {
-      // Matches lines starting with 4 spaces followed by the command name
       const match = line.match(/^\s{4}([a-z0-9_-]+)\s+(.+)$/);
       if (match) {
         const cmd = match[1].trim();
-        // Filter excluded commands
         if (!EXCLUDED_COMMANDS.has(cmd) && !commands.includes(cmd)) {
           commands.push(cmd);
         }
@@ -552,18 +258,12 @@ function getAvailableCommands(): string[] {
     }
 
     if (commands.length > 0) {
-      console.log(
-        `Discovered ${commands.length} QSV commands via '${QSV_BIN} --list' (excluded ${EXCLUDED_COMMANDS.size} terminal/utility commands)`,
-      );
-      return commands;
+      return commands.sort();
     }
   } catch (error: any) {
-    console.warn(
-      `Warning: Could not get commands via '${QSV_BIN} --list': ${error.message}`,
-    );
+    console.warn(`Warning: Could not get commands via '${QSV_BIN} --list': ${error.message}`);
   }
 
-  // Fallback if 'qsv --list' fails
   return [
     "stats",
     "frequency",
@@ -581,175 +281,136 @@ function getAvailableCommands(): string[] {
   ];
 }
 
-function getCommandHelp(cmd: string): string {
-  try {
-    return execSync(`${QSV_BIN} ${cmd} --help`, { encoding: "utf8" });
-  } catch (error: any) {
-    console.warn(
-      `Warning: Could not get help for '${QSV_BIN} ${cmd}': ${error.message}`,
+/**
+ * Parses command metadata from JSON Tool Definition (or fallback text).
+ */
+function parseCommand(
+  cmdName: string,
+  toolDef?: QsvToolDefinition | null,
+  qsvVersion: string = "24.0.0",
+): ParsedCommand {
+  if (toolDef) {
+    const subcommand = toolDef.command?.subcommand || cmdName;
+    const args: QsvArg[] = toolDef.command?.args || [];
+    const rawOptions: QsvOption[] = toolDef.command?.options || [];
+
+    const hasOutputOption = rawOptions.some(
+      (opt) => opt.flag === "--output" || opt.flag === "-o",
     );
-    return "";
-  }
-}
 
-function toSafePropName(flag: string): string {
-  let camel = flag.replace(/-([a-z0-9])/g, (_, g) => g.toUpperCase());
-  if (/^[0-9]/.test(camel)) {
-    camel = `_${camel}`;
-  }
-  return camel;
-}
+    // Filter out help, version, and output options from collection
+    const options = rawOptions.filter(
+      (opt) => !["--help", "-h", "--version", "--output", "-o"].includes(opt.flag),
+    );
 
-function toCapitalized(cmd: string): string {
-  return cmd.charAt(0).toUpperCase() + cmd.slice(1);
-}
-
-function parseHelpText(cmdName: string, helpText: string): ParsedCommand {
-  const lines = helpText.split("\n");
-  const options: CliOption[] = [];
-  let usage = "";
-
-  // Extract usage
-  const usageIdx = lines.findIndex((l) => l.toLowerCase().startsWith("usage:"));
-  if (usageIdx !== -1) {
-    usage = lines[usageIdx].replace(/^usage:\s*/i, "").trim();
-    if (lines[usageIdx + 1] && lines[usageIdx + 1].startsWith("  ")) {
-      usage += " " + lines[usageIdx + 1].trim();
-    }
+    return {
+      name: cmdName,
+      subcommand,
+      description: toolDef.description || `Execute qsv ${cmdName}`,
+      category: toolDef.category || "utility",
+      version: toolDef.version || qsvVersion,
+      args,
+      options,
+      hasOutputOption,
+      hints: toolDef.hints,
+      examples: toolDef.examples,
+      feature: FEATURE_MAP[cmdName],
+      helpDocUrl: `https://github.com/dathere/qsv/blob/master/docs/help/${cmdName}.md`,
+    };
   }
 
-  // Extract clean full description
-  const descLines: string[] = [];
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (
-      trimmed.toLowerCase().startsWith("usage:") ||
-      trimmed.toLowerCase().startsWith("common options:") ||
-      trimmed.toLowerCase().endsWith("options:") ||
-      trimmed.toLowerCase() === "options:" ||
-      trimmed.toLowerCase().startsWith("examples:") ||
-      trimmed.toLowerCase().startsWith("example:") ||
-      trimmed.startsWith("===") ||
-      trimmed.startsWith("---") ||
-      /^[A-Z\s]{4,}$/.test(trimmed)
-    ) {
-      break;
-    }
-    if (
-      trimmed.length > 0 &&
-      !trimmed.toLowerCase().startsWith("qsv ") &&
-      !trimmed.toLowerCase().startsWith("installed commands")
-    ) {
-      descLines.push(trimmed);
-    }
-  }
-  const description = descLines.join(" ") || `Execute qsv ${cmdName}`;
-
-  // Extract options with full multi-line continuation support
-  let inOptions = false;
-  let currentOpt: CliOption | null = null;
-  const linePattern =
-    /^\s*(?:-([a-zA-Z0-9]),\s+)?--([a-zA-Z0-9_-]+)(?:(?:=|\s+)(<[^>]+>|\[[^\]]+\]|[A-Z][A-Z0-9_-]*))?(?:\s{2,}(.*)|$)/;
-
-  for (const line of lines) {
-    if (line.trim().toLowerCase().includes("options:")) {
-      inOptions = true;
-      continue;
-    }
-
-    if (inOptions) {
-      const optMatch = line.match(linePattern);
-      if (optMatch) {
-        if (currentOpt) {
-          options.push(currentOpt);
-          currentOpt = null;
-        }
-
-        const shortFlag = optMatch[1];
-        const flag = optMatch[2];
-        const argType = optMatch[3];
-        const desc = optMatch[4] ? optMatch[4].trim() : "";
-
-        // Filter out options handled top-level (output) or irrelevant (help, version)
-        if (["help", "version", "output"].includes(flag)) {
-          continue;
-        }
-
-        // Try to detect default value if mentioned in desc: "[default: 10]"
-        let defaultValue: string | undefined;
-        const defaultMatch = desc.match(/\[default:\s*([^\]]+)\]/i);
-        if (defaultMatch) {
-          defaultValue = defaultMatch[1].trim();
-        }
-
-        currentOpt = {
-          flag,
-          shortFlag,
-          hasArg: !!argType,
-          argName: argType ? argType.replace(/[<>\[\]]/g, "") : undefined,
-          description: desc,
-          defaultValue,
-        };
-      } else if (
-        currentOpt &&
-        line.startsWith("    ") &&
-        line.trim().length > 0 &&
-        !line.trim().startsWith("-")
-      ) {
-        currentOpt.description += " " + line.trim();
-      }
-    }
-  }
-
-  if (currentOpt) {
-    options.push(currentOpt);
-  }
-
-  const config = COMMAND_CONFIGS[cmdName] || {
-    assemblyType: "inputLast",
-  };
-
-  const feature = FEATURE_MAP[cmdName];
-
+  // Fallback for older / legacy text help
   return {
     name: cmdName,
-    description,
-    usage,
-    options,
-    config,
-    feature,
+    subcommand: cmdName,
+    description: `Execute qsv ${cmdName}`,
+    category: "utility",
+    version: qsvVersion,
+    args: [{ name: "input", type: "file", required: false, description: "Input CSV file" }],
+    options: [],
+    hasOutputOption: true,
+    feature: FEATURE_MAP[cmdName],
+    helpDocUrl: `https://github.com/dathere/qsv/blob/master/docs/help/${cmdName}.md`,
   };
 }
 
+/**
+ * Normalizes argument names to match existing n8n property conventions.
+ */
+function normalizeArgPropName(argName: string, cmdName: string): string {
+  if (argName === "input" || argName === "input1" || argName === "input-left") {
+    return "inputPath";
+  }
+  if (argName === "input-right") {
+    return "inputRight";
+  }
+  if (cmdName === "to" && argName === "subcommand") {
+    return "format";
+  }
+  if (argName === "sample-size") {
+    return "sampleSize";
+  }
+  if (argName === "json-schema") {
+    return "jsonSchema";
+  }
+  if (argName === "regexset-file") {
+    return "regexsetFile";
+  }
+  if (argName === "url-column") {
+    return "urlColumn";
+  }
+  if (argName === "column-list") {
+    return "columnList";
+  }
+  if (argName === "input-format") {
+    return "inputFormat";
+  }
+  if (argName === "output-format") {
+    return "outputFormat";
+  }
+  if (argName === "main-script") {
+    return "mainScript";
+  }
+  if (argName === "new-columns") {
+    return "newColumns";
+  }
+  if (argName === "index-file") {
+    return "indexFile";
+  }
+  if (argName === "on-cols") {
+    return "onCols";
+  }
+  return toSafePropName(argName);
+}
+
+/**
+ * Generates the TypeScript Description file for a command.
+ */
 function generateDescriptionFile(cmd: ParsedCommand): string {
   const capitalized = toCapitalized(cmd.name);
   const properties: string[] = [];
 
+  // Sort CLI options alphabetically by display name for clear UX
   const sortedOptions = [...cmd.options].sort((a, b) => {
-    const nameA = a.flag
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
-    const nameB = b.flag
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
-    return nameA.localeCompare(nameB);
+    const flagA = a.flag.replace(/^--?/, "");
+    const flagB = b.flag.replace(/^--?/, "");
+    return flagA.localeCompare(flagB);
   });
 
   for (const opt of sortedOptions) {
     const propName = toSafePropName(opt.flag);
     const displayName = opt.flag
+      .replace(/^--?/, "")
       .split("-")
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
+
     const cleanDesc = (opt.description || "")
       .replace(/\\/g, "\\\\")
       .replace(/'/g, "\\'")
       .replace(/\n/g, " ");
 
-    if (!opt.hasArg) {
-      // Boolean flag
+    if (opt.type === "flag") {
       properties.push(`    {
       displayName: '${displayName}',
       name: '${propName}',
@@ -757,49 +418,99 @@ function generateDescriptionFile(cmd: ParsedCommand): string {
       default: false,
       description: '${cleanDesc}',
     },`);
-    } else {
-      // String or Number option
-      let defaultVal = opt.defaultValue ? `'${opt.defaultValue}'` : "''";
-      let propType = "string";
-
-      if (opt.defaultValue && !isNaN(Number(opt.defaultValue))) {
-        propType = "number";
-        defaultVal = opt.defaultValue;
-      }
-
+    } else if (opt.type === "number") {
+      const defaultNum = typeof opt.default === "number" ? opt.default : 0;
       properties.push(`    {
       displayName: '${displayName}',
       name: '${propName}',
-      type: '${propType}',
-      default: ${defaultVal},
+      type: 'number',
+      default: ${defaultNum},
+      description: '${cleanDesc}',
+    },`);
+    } else {
+      const defaultStr = opt.default !== undefined ? `'${String(opt.default).replace(/'/g, "\\'")}'` : "''";
+      properties.push(`    {
+      displayName: '${displayName}',
+      name: '${propName}',
+      type: 'string',
+      default: ${defaultStr},
       description: '${cleanDesc}',
     },`);
     }
   }
 
-  // Positional parameters
+  // Generate Positional parameters
   const positionalProps: string[] = [];
-  if (cmd.config.positionals) {
-    for (const pos of cmd.config.positionals) {
-      const defaultVal =
-        pos.default !== undefined
-          ? pos.type === "number"
-            ? pos.default
-            : `'${pos.default}'`
-          : pos.type === "number"
-            ? 0
-            : "''";
-      const cleanPosDesc = pos.description
-        .replace(/\\/g, "\\\\")
-        .replace(/'/g, "\\'");
+  for (const arg of cmd.args) {
+    const propName = normalizeArgPropName(arg.name, cmd.name);
+
+    // Skip inputPath here as it is emitted at the top of the description
+    if (propName === "inputPath") {
+      continue;
+    }
+    // Skip positional output as it is handled by outputPath
+    if (arg.name === "output") {
+      continue;
+    }
+
+    const displayName = toDisplayName(propName);
+    const cleanArgDesc = (arg.description || "")
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'")
+      .replace(/\n/g, " ");
+
+    if (arg.enum && arg.enum.length > 0) {
+      const enumOptions = arg.enum
+        .map((val) => `        { name: '${val}', value: '${val}' },`)
+        .join("\n");
+      const defaultVal = arg.default ? `'${arg.default}'` : `'${arg.enum[0]}'`;
 
       positionalProps.push(`  {
-    displayName: '${pos.displayName}',
-    name: '${pos.name}',
-    type: '${pos.type}',
-    required: ${pos.required},
+    displayName: '${displayName}',
+    name: '${propName}',
+    type: 'options',
+    required: ${arg.required},
     default: ${defaultVal},
-    description: '${cleanPosDesc}',
+    options: [
+${enumOptions}
+    ],
+    description: '${cleanArgDesc}',
+    displayOptions: {
+      show: {
+        operation: ['${cmd.name}'],
+      },
+    },
+  },`);
+    } else if (arg.type === "number") {
+      const defaultVal = typeof arg.default === "number" ? arg.default : (cmd.name === "sample" ? 100 : (cmd.name === "edit" ? 1 : 0));
+      positionalProps.push(`  {
+    displayName: '${displayName}',
+    name: '${propName}',
+    type: 'number',
+    required: ${arg.required},
+    default: ${defaultVal},
+    description: '${cleanArgDesc}',
+    displayOptions: {
+      show: {
+        operation: ['${cmd.name}'],
+      },
+    },
+  },`);
+    } else {
+      let defaultVal = "''";
+      if (cmd.name === "sample" && propName === "sampleSize") {
+        defaultVal = "'100'";
+      } else if (arg.default !== undefined) {
+        defaultVal = `'${String(arg.default).replace(/'/g, "\\'")}'`;
+      }
+
+      positionalProps.push(`  {
+    displayName: '${displayName}',
+    name: '${propName}',
+    type: 'string',
+    required: ${arg.required},
+    default: ${defaultVal},
+    description: '${cleanArgDesc}',
     displayOptions: {
       show: {
         operation: ['${cmd.name}'],
@@ -809,12 +520,11 @@ function generateDescriptionFile(cmd: ParsedCommand): string {
     }
   }
 
-  // Output path property
+  // Determine if command supports outputPath
+  const hasOutputOpt = cmd.hasOutputOption || cmd.args.some((a) => a.name === "output");
+
   const outputProps: string[] = [];
-  if (
-    cmd.config.hasOutputOption !== false ||
-    cmd.config.assemblyType === "positionalOutput"
-  ) {
+  if (hasOutputOpt) {
     outputProps.push(`  {
     displayName: 'Output File Path',
     name: 'outputPath',
@@ -828,6 +538,16 @@ function generateDescriptionFile(cmd: ParsedCommand): string {
     },
   },`);
   }
+
+  // Add hint/example info to additionalArgs description
+  const hintParts: string[] = [];
+  if (cmd.hints?.memory === "full") {
+    hintParts.push("⚠️ High memory operation.");
+  }
+  if (cmd.hints?.indexed) {
+    hintParts.push("⚡ Runs faster when CSV index (.qsv.idx) is present.");
+  }
+  const hintText = hintParts.length > 0 ? ` [${hintParts.join(" ")}]` : "";
 
   return `import type { INodeProperties } from 'n8n-workflow';
 
@@ -852,7 +572,7 @@ ${outputProps.join("\n")}
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv ${cmd.name} (Docs: https://github.com/dathere/qsv/blob/master/docs/help/${cmd.name}.md)',
+    description: 'Additional raw command line arguments to pass to qsv ${cmd.name}${hintText} (Docs: ${cmd.helpDocUrl})',
     displayOptions: {
       show: {
         operation: ['${cmd.name}'],
@@ -878,6 +598,9 @@ ${properties.join("\n")}
 `;
 }
 
+/**
+ * Generates the TypeScript action execution file for a command.
+ */
 function generateActionFile(cmd: ParsedCommand): string {
   const capitalized = toCapitalized(cmd.name);
   const opName = cmd.name;
@@ -885,54 +608,76 @@ function generateActionFile(cmd: ParsedCommand): string {
   const flagProcessors: string[] = [];
   for (const opt of cmd.options) {
     const propName = toSafePropName(opt.flag);
+    const flagName = opt.flag.replace(/^--?/, "");
 
-    if (!opt.hasArg) {
+    if (opt.type === "flag") {
       flagProcessors.push(`  if (options.${propName} === true) {
-    args.push('--${opt.flag}');
+    args.push('--${flagName}');
   }`);
     } else {
       flagProcessors.push(`  if (options.${propName} !== undefined && options.${propName} !== '') {
-    args.push('--${opt.flag}', String(options.${propName}));
+    args.push('--${flagName}', String(options.${propName}));
   }`);
     }
   }
 
-  // Build positional retrievals and arg assembling based on assemblyType
+  // Build positional retrievals and required checks
   const posRetrievals: string[] = [];
   const requiredChecks: string[] = [];
 
-  if (cmd.config.positionals) {
-    for (const pos of cmd.config.positionals) {
-      const getter = `this.getNodeParameter('${pos.name}', itemIndex${pos.default !== undefined ? `, ${typeof pos.default === "number" ? pos.default : `'${pos.default}'`}` : ""})`;
+  for (const arg of cmd.args) {
+    const propName = normalizeArgPropName(arg.name, cmd.name);
+    if (propName === "inputPath" || arg.name === "output") {
+      continue;
+    }
+
+    const displayName = toDisplayName(propName);
+    if (arg.type === "number") {
+      const defaultNum = typeof arg.default === "number" ? arg.default : (cmd.name === "sample" ? 100 : (cmd.name === "edit" ? 1 : 0));
       posRetrievals.push(
-        `  const ${pos.name} = (${getter} as ${pos.type === "number" ? "number" : "string"}) || ${pos.type === "number" ? "0" : "''"};`,
+        `  const ${propName} = (this.getNodeParameter('${propName}', itemIndex, ${defaultNum}) as number) || 0;`,
       );
-      if (pos.required) {
-        if (pos.type === "number") {
-          // Numbers can be 0 or positive
-        } else {
-          requiredChecks.push(`  if (!${pos.name} || !String(${pos.name}).trim()) {
+    } else {
+      const defaultStr = arg.default !== undefined ? `'${arg.default}'` : "''";
+      posRetrievals.push(
+        `  const ${propName} = (this.getNodeParameter('${propName}', itemIndex, ${defaultStr}) as string) || '';`,
+      );
+      if (arg.required) {
+        requiredChecks.push(`  if (!${propName} || !String(${propName}).trim()) {
     throw new NodeOperationError(
       this.getNode(),
-      'Parameter "${pos.displayName}" is required for ${opName}.',
+      'Parameter "${displayName}" is required for ${opName}.',
       { itemIndex },
     );
   }`);
-        }
       }
     }
   }
 
-  let argvAssemblyCode = "";
-  const assemblyType = cmd.config.assemblyType;
+  const hasOutputOpt = cmd.hasOutputOption;
+  const hasPositionalOutput = cmd.args.some((a) => a.name === "output");
 
-  if (assemblyType === "inputLast") {
-    const posPushes = (cmd.config.positionals || [])
-      .map((p) => `  args.push(String(${p.name}));`)
-      .join("\n");
-    argvAssemblyCode = `
-${posPushes ? posPushes + "\n" : ""}
-  if (additionalArgs.trim()) {
+  // Build CLI arguments sequence
+  const cliAssemblyLines: string[] = [];
+
+  // Check if first arg is a subcommand
+  const firstArg = cmd.args[0];
+  const isFirstArgSubcommand = firstArg && (firstArg.name === "subcommand" || (cmd.name === "to" && firstArg.name === "subcommand"));
+
+  if (isFirstArgSubcommand) {
+    const subProp = normalizeArgPropName(firstArg.name, cmd.name);
+    cliAssemblyLines.push(`  if (${subProp} && String(${subProp}).trim()) {`);
+    cliAssemblyLines.push(`    args.push(String(${subProp}).trim());`);
+    cliAssemblyLines.push(`  }`);
+  }
+
+  // Add options
+  if (flagProcessors.length > 0) {
+    cliAssemblyLines.push(flagProcessors.join("\n"));
+  }
+
+  // Add additionalArgs parser
+  cliAssemblyLines.push(`  if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
       if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
@@ -941,172 +686,40 @@ ${posPushes ? posPushes + "\n" : ""}
       return arg;
     });
     args.push(...parsedArgs);
-  }
+  }`);
 
-  if (outputPath.trim()) {
+  // Handle output option flag if supported
+  if (hasOutputOpt) {
+    cliAssemblyLines.push(`  if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
+  }`);
   }
 
-  args.push(inputPath);`;
-  } else if (assemblyType === "inputFirst") {
-    const posPushes = (cmd.config.positionals || [])
-      .map((p) => `  args.push(String(${p.name}));`)
-      .join("\n");
-    argvAssemblyCode = `
-  if (additionalArgs.trim()) {
-    const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
-    const parsedArgs = rawMatches.map((arg) => {
-      if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
-        return arg.slice(1, -1);
-      }
-      return arg;
-    });
-    args.push(...parsedArgs);
-  }
+  // Assemble remaining positional arguments in exact sequence
+  for (let i = 0; i < cmd.args.length; i++) {
+    const arg = cmd.args[i];
+    if (i === 0 && isFirstArgSubcommand) {
+      continue;
+    }
 
-  if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
-  }
-
-  args.push(inputPath);
-${posPushes}`;
-  } else if (assemblyType === "sqlLast") {
-    const hasOut = cmd.config.hasOutputOption !== false;
-    argvAssemblyCode = `
-  if (additionalArgs.trim()) {
-    const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
-    const parsedArgs = rawMatches.map((arg) => {
-      if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
-        return arg.slice(1, -1);
-      }
-      return arg;
-    });
-    args.push(...parsedArgs);
-  }
-
-  ${hasOut ? "if (outputPath.trim()) { args.push('--output', outputPath.trim()); }" : ""}
-
-  args.push(inputPath, sql.trim());`;
-  } else if (assemblyType === "positionalOutput") {
-    argvAssemblyCode = `
-  if (additionalArgs.trim()) {
-    const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
-    const parsedArgs = rawMatches.map((arg) => {
-      if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
-        return arg.slice(1, -1);
-      }
-      return arg;
-    });
-    args.push(...parsedArgs);
-  }
-
-  args.push(inputPath);
-
-  if (outputPath.trim()) {
+    if (arg.name === "input" || arg.name === "input1" || arg.name === "input-left") {
+      cliAssemblyLines.push(`  args.push(inputPath);`);
+    } else if (arg.name === "output") {
+      if (hasPositionalOutput) {
+        cliAssemblyLines.push(`  if (outputPath.trim()) {
     args.push(outputPath.trim());
-  }`;
-  } else if (assemblyType === "dualInput") {
-    argvAssemblyCode = `
-  args.push(columns1.trim(), inputPath, columns2.trim(), input2.trim());
-
-  if (additionalArgs.trim()) {
-    const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
-    const parsedArgs = rawMatches.map((arg) => {
-      if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
-        return arg.slice(1, -1);
+  }`);
       }
-      return arg;
-    });
-    args.push(...parsedArgs);
-  }
-
-  if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
-  }`;
-  } else if (assemblyType === "diff") {
-    argvAssemblyCode = `
-  if (additionalArgs.trim()) {
-    const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
-    const parsedArgs = rawMatches.map((arg) => {
-      if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
-        return arg.slice(1, -1);
+    } else {
+      const propName = normalizeArgPropName(arg.name, cmd.name);
+      if (arg.required) {
+        cliAssemblyLines.push(`  args.push(String(${propName}).trim());`);
+      } else {
+        cliAssemblyLines.push(`  if (${propName} !== undefined && String(${propName}).trim()) {
+    args.push(String(${propName}).trim());
+  }`);
       }
-      return arg;
-    });
-    args.push(...parsedArgs);
-  }
-
-  if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
-  }
-
-  args.push(inputPath, inputRight.trim());`;
-  } else if (assemblyType === "toCustom") {
-    argvAssemblyCode = `
-  args.push(format.trim());
-${flagProcessors.length ? flagProcessors.join("\n") + "\n" : ""}
-  if (additionalArgs.trim()) {
-    const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
-    const parsedArgs = rawMatches.map((arg) => {
-      if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
-        return arg.slice(1, -1);
-      }
-      return arg;
-    });
-    args.push(...parsedArgs);
-  }
-
-  args.push(destination.trim(), inputPath);`;
-  } else if (assemblyType === "validateCustom") {
-    argvAssemblyCode = `
-  if (additionalArgs.trim()) {
-    const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
-    const parsedArgs = rawMatches.map((arg) => {
-      if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
-        return arg.slice(1, -1);
-      }
-      return arg;
-    });
-    args.push(...parsedArgs);
-  }
-
-  args.push(inputPath);
-
-  if (jsonSchema && jsonSchema.trim()) {
-    args.push(jsonSchema.trim());
-  }`;
-  } else if (assemblyType === "splitCustom") {
-    argvAssemblyCode = `
-  args.push(outdir.trim());
-
-  if (additionalArgs.trim()) {
-    const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
-    const parsedArgs = rawMatches.map((arg) => {
-      if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
-        return arg.slice(1, -1);
-      }
-      return arg;
-    });
-    args.push(...parsedArgs);
-  }
-
-  args.push(inputPath);`;
-  } else if (assemblyType === "partitionCustom") {
-    argvAssemblyCode = `
-  args.push(column.trim(), outdir.trim());
-
-  if (additionalArgs.trim()) {
-    const rawMatches = additionalArgs.match(/[^\\s"']+|"[^"]*"|'[^']*'/g) || [];
-    const parsedArgs = rawMatches.map((arg) => {
-      if ((arg.startsWith('"') && arg.endsWith('"')) || (arg.startsWith("'") && arg.endsWith("'"))) {
-        return arg.slice(1, -1);
-      }
-      return arg;
-    });
-    args.push(...parsedArgs);
-  }
-
-  args.push(inputPath);`;
+    }
   }
 
   const featureHint = cmd.feature
@@ -1132,12 +745,13 @@ export async function execute${capitalized}(
       { itemIndex },
     );
   }
+
 ${posRetrievals.length ? posRetrievals.join("\n") + "\n" : ""}${requiredChecks.length ? requiredChecks.join("\n") + "\n" : ""}  const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['${opName}'];
-${assemblyType !== "toCustom" && flagProcessors.length ? flagProcessors.join("\n") + "\n" : ""}${argvAssemblyCode}
+${cliAssemblyLines.join("\n")}
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||
@@ -1189,7 +803,7 @@ ${assemblyType !== "toCustom" && flagProcessors.length ? flagProcessors.join("\n
         \`The QSV CLI binary ('\${qsvBin}') was not found\`,
         {
           itemIndex,
-          description: \`Please ensure 'qsv' is installed and available in the system PATH where n8n is running, or specify its absolute path via the DARTFX_QSV_BIN_PATH environment variable. (Docs: https://github.com/dathere/qsv/blob/master/docs/help/${opName}.md)\`,
+          description: \`Please ensure 'qsv' is installed and available in the system PATH where n8n is running, or specify its absolute path via the DARTFX_QSV_BIN_PATH environment variable. (Docs: ${cmd.helpDocUrl})\`,
         },
       );
     }
@@ -1219,7 +833,7 @@ ${assemblyType !== "toCustom" && flagProcessors.length ? flagProcessors.join("\n
         \`Operation '${opName}' is not available in the installed QSV binary\`,
         {
           itemIndex,
-          description: \`The installed QSV binary at '\${qsvBin}' does not include the '${opName}' feature.${featureHint} This feature requires a QSV build with the corresponding Cargo feature enabled (or 'all_features'). See https://github.com/dathere/qsv/blob/master/docs/help/${opName}.md and https://github.com/dathere/qsv#feature-flags\`,
+          description: \`The installed QSV binary at '\${qsvBin}' does not include the '${opName}' feature.${featureHint} This feature requires a QSV build with the corresponding Cargo feature enabled (or 'all_features'). See ${cmd.helpDocUrl} and https://github.com/dathere/qsv#feature-flags\`,
         },
       );
     }
@@ -1261,10 +875,10 @@ ${assemblyType !== "toCustom" && flagProcessors.length ? flagProcessors.join("\n
 `;
 }
 
-function generateMainNodeFile(
-  commands: ParsedCommand[],
-  qsvVersion: string,
-): string {
+/**
+ * Generates the main Qsv.node.ts file registering all operations.
+ */
+function generateMainNodeFile(commands: ParsedCommand[], qsvVersion: string): string {
   const importsDescriptions = commands
     .map(
       (c) =>
@@ -1288,11 +902,11 @@ function generateMainNodeFile(
         .replace(/\\/g, "\\\\")
         .replace(/'/g, "\\'")
         .replace(/\n/g, " ");
-      const docUrl = `https://github.com/dathere/qsv/blob/master/docs/help/${c.name}.md`;
+
       return `          {
             name: '${label}',
             value: '${c.name}',
-            description: '${cleanDesc} (Docs: ${docUrl})',
+            description: '${cleanDesc} (Category: ${c.category} | Docs: ${c.helpDocUrl})',
             action: '${capitalized}',
           },`;
     })
@@ -1391,36 +1005,39 @@ ${switchCases}
 }
 
 async function main() {
-  console.log("Discovering QSV commands and generating node definitions...");
+  console.log("Discovering QSV commands and generating node definitions using JSON Tool Definitions...");
   const descriptionsDir = path.join(__dirname, "../nodes/Qsv/descriptions");
   const actionsDir = path.join(__dirname, "../nodes/Qsv/actions");
   const mainNodePath = path.join(__dirname, "../nodes/Qsv/Qsv.node.ts");
+  const tempExportDir = path.join(os.tmpdir(), `qsv_export_${Date.now()}`);
 
   fs.mkdirSync(descriptionsDir, { recursive: true });
   fs.mkdirSync(actionsDir, { recursive: true });
 
   // Clean existing generated files
   for (const f of fs.readdirSync(descriptionsDir)) {
-    if (f.endsWith('.ts')) fs.unlinkSync(path.join(descriptionsDir, f));
+    if (f.endsWith(".ts")) fs.unlinkSync(path.join(descriptionsDir, f));
   }
   for (const f of fs.readdirSync(actionsDir)) {
-    if (f.endsWith('.ts')) fs.unlinkSync(path.join(actionsDir, f));
+    if (f.endsWith(".ts")) fs.unlinkSync(path.join(actionsDir, f));
   }
 
   const qsvVersion = getQsvVersion();
   console.log(`Detected target QSV version: ${qsvVersion}`);
 
-  const commands = getAvailableCommands();
+  // Ingest tool definitions via QSV v24 export
+  const toolDefs = loadAllToolDefinitions(tempExportDir);
+
+  const commands = getAvailableCommands(toolDefs);
   const generatedCommands: ParsedCommand[] = [];
 
   for (const cmd of commands) {
-    const help = getCommandHelp(cmd);
-    if (!help) {
-      console.warn(`⚠️ Skipped 'qsv ${cmd}' (no help output)`);
-      continue;
+    let toolDef = toolDefs.get(cmd);
+    if (!toolDef) {
+      toolDef = getSingleCommandJson(cmd);
     }
 
-    const parsed = parseHelpText(cmd, help);
+    const parsed = parseCommand(cmd, toolDef, qsvVersion);
     const descContent = generateDescriptionFile(parsed);
     const actionContent = generateActionFile(parsed);
 
@@ -1435,7 +1052,7 @@ async function main() {
     );
 
     generatedCommands.push(parsed);
-    console.log(`✓ Generated definitions for 'qsv ${cmd}'`);
+    console.log(`✓ Generated definitions for 'qsv ${cmd}' [Category: ${parsed.category}]`);
   }
 
   // Generate main Qsv.node.ts
@@ -1445,8 +1062,15 @@ async function main() {
     `✓ Updated main Qsv.node.ts with ${generatedCommands.length} operations (target QSV: ${qsvVersion})`,
   );
 
+  // Cleanup temp export dir
+  try {
+    if (fs.existsSync(tempExportDir)) {
+      fs.rmSync(tempExportDir, { recursive: true, force: true });
+    }
+  } catch {}
+
   console.log(
-    `\nSuccessfully generated ${generatedCommands.length} command nodes!`,
+    `\nSuccessfully generated ${generatedCommands.length} command nodes with QSV JSON Tool Definitions!`,
   );
 }
 

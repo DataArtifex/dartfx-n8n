@@ -20,7 +20,7 @@ export const PseudoDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Column name or 1-based index to pseudonymise',
+    description: 'The column to pseudonymise. You can use the `--select` option to select the column by name or index. See `select` command for more details.',
     displayOptions: {
       show: {
         operation: ['pseudo'],
@@ -74,15 +74,15 @@ export const PseudoDescription: INodeProperties[] = [
       displayName: 'Formatstr',
       name: 'formatstr',
       type: 'string',
-      default: '',
-      description: 'The format string for the incremental identifier. The format string must contain a single "{}" which will be replaced with the incremental identifier. [default: {}]',
+      default: '{}',
+      description: 'The format string for the incremental identifier. The format string must contain a single "{}" which will be replaced with the incremental identifier.',
     },
     {
       displayName: 'Increment',
       name: 'increment',
-      type: 'string',
-      default: '',
-      description: 'The increment for the incremental identifier. Must be greater than 0. [default: 1]',
+      type: 'number',
+      default: 1,
+      description: 'The increment for the incremental identifier. Must be greater than 0.',
     },
     {
       displayName: 'No Headers',
@@ -94,9 +94,9 @@ export const PseudoDescription: INodeProperties[] = [
     {
       displayName: 'Start',
       name: 'start',
-      type: 'string',
-      default: '',
-      description: 'The starting number for the incremental identifier. [default: 0]',
+      type: 'number',
+      default: 0,
+      description: 'The starting number for the incremental identifier.',
     },
     ],
   },

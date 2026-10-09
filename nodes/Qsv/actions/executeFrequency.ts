@@ -17,109 +17,17 @@ export async function executeFrequency(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['frequency'];
-  if (options.select !== undefined && options.select !== '') {
-    args.push('--select', String(options.select));
-  }
-  if (options.limit !== undefined && options.limit !== '') {
-    args.push('--limit', String(options.limit));
-  }
-  if (options.sketchMethod !== undefined && options.sketchMethod !== '') {
-    args.push('--sketch-method', String(options.sketchMethod));
-  }
-  if (options.sketchMapSize !== undefined && options.sketchMapSize !== '') {
-    args.push('--sketch-map-size', String(options.sketchMapSize));
-  }
-  if (options.unqLimit !== undefined && options.unqLimit !== '') {
-    args.push('--unq-limit', String(options.unqLimit));
-  }
-  if (options.lmtThreshold !== undefined && options.lmtThreshold !== '') {
-    args.push('--lmt-threshold', String(options.lmtThreshold));
-  }
-  if (options.rankStrategy !== undefined && options.rankStrategy !== '') {
-    args.push('--rank-strategy', String(options.rankStrategy));
-  }
-  if (options.pctDecPlaces !== undefined && options.pctDecPlaces !== '') {
-    args.push('--pct-dec-places', String(options.pctDecPlaces));
-  }
-  if (options.otherSorted === true) {
-    args.push('--other-sorted');
-  }
-  if (options.otherText !== undefined && options.otherText !== '') {
-    args.push('--other-text', String(options.otherText));
-  }
-  if (options.noOther === true) {
-    args.push('--no-other');
-  }
-  if (options.nullSorted === true) {
-    args.push('--null-sorted');
-  }
-  if (options.asc === true) {
-    args.push('--asc');
-  }
-  if (options.noTrim === true) {
-    args.push('--no-trim');
-  }
-  if (options.nullText !== undefined && options.nullText !== '') {
-    args.push('--null-text', String(options.nullText));
-  }
-  if (options.noNulls === true) {
-    args.push('--no-nulls');
-  }
-  if (options.pctNulls === true) {
-    args.push('--pct-nulls');
-  }
-  if (options.ignoreCase === true) {
-    args.push('--ignore-case');
-  }
-  if (options.noFloat !== undefined && options.noFloat !== '') {
-    args.push('--no-float', String(options.noFloat));
-  }
-  if (options.statsFilter !== undefined && options.statsFilter !== '') {
-    args.push('--stats-filter', String(options.statsFilter));
-  }
   if (options.allUniqueText !== undefined && options.allUniqueText !== '') {
     args.push('--all-unique-text', String(options.allUniqueText));
   }
-  if (options.visWhitespace === true) {
-    args.push('--vis-whitespace');
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.frequencyJsonl === true) {
-    args.push('--frequency-jsonl');
-  }
-  if (options.highCardThreshold !== undefined && options.highCardThreshold !== '') {
-    args.push('--high-card-threshold', String(options.highCardThreshold));
-  }
-  if (options.highCardPct !== undefined && options.highCardPct !== '') {
-    args.push('--high-card-pct', String(options.highCardPct));
-  }
-  if (options.force === true) {
-    args.push('--force');
-  }
-  if (options.json === true) {
-    args.push('--json');
-  }
-  if (options.prettyJson === true) {
-    args.push('--pretty-json');
-  }
-  if (options.toon === true) {
-    args.push('--toon');
-  }
-  if (options.noStats === true) {
-    args.push('--no-stats');
-  }
-  if (options.weight !== undefined && options.weight !== '') {
-    args.push('--weight', String(options.weight));
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
+  if (options.asc === true) {
+    args.push('--asc');
   }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
@@ -127,11 +35,99 @@ export async function executeFrequency(
   if (options.flexible === true) {
     args.push('--flexible');
   }
+  if (options.force === true) {
+    args.push('--force');
+  }
+  if (options.frequencyJsonl === true) {
+    args.push('--frequency-jsonl');
+  }
+  if (options.highCardPct !== undefined && options.highCardPct !== '') {
+    args.push('--high-card-pct', String(options.highCardPct));
+  }
+  if (options.highCardThreshold !== undefined && options.highCardThreshold !== '') {
+    args.push('--high-card-threshold', String(options.highCardThreshold));
+  }
+  if (options.ignoreCase === true) {
+    args.push('--ignore-case');
+  }
+  if (options.json === true) {
+    args.push('--json');
+  }
+  if (options.limit !== undefined && options.limit !== '') {
+    args.push('--limit', String(options.limit));
+  }
+  if (options.lmtThreshold !== undefined && options.lmtThreshold !== '') {
+    args.push('--lmt-threshold', String(options.lmtThreshold));
+  }
   if (options.memcheck === true) {
     args.push('--memcheck');
   }
-
-
+  if (options.noFloat !== undefined && options.noFloat !== '') {
+    args.push('--no-float', String(options.noFloat));
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.noNulls === true) {
+    args.push('--no-nulls');
+  }
+  if (options.noOther === true) {
+    args.push('--no-other');
+  }
+  if (options.noStats === true) {
+    args.push('--no-stats');
+  }
+  if (options.noTrim === true) {
+    args.push('--no-trim');
+  }
+  if (options.nullSorted === true) {
+    args.push('--null-sorted');
+  }
+  if (options.nullText !== undefined && options.nullText !== '') {
+    args.push('--null-text', String(options.nullText));
+  }
+  if (options.otherSorted === true) {
+    args.push('--other-sorted');
+  }
+  if (options.otherText !== undefined && options.otherText !== '') {
+    args.push('--other-text', String(options.otherText));
+  }
+  if (options.pctDecPlaces !== undefined && options.pctDecPlaces !== '') {
+    args.push('--pct-dec-places', String(options.pctDecPlaces));
+  }
+  if (options.pctNulls === true) {
+    args.push('--pct-nulls');
+  }
+  if (options.prettyJson === true) {
+    args.push('--pretty-json');
+  }
+  if (options.rankStrategy !== undefined && options.rankStrategy !== '') {
+    args.push('--rank-strategy', String(options.rankStrategy));
+  }
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
+  }
+  if (options.sketchMapSize !== undefined && options.sketchMapSize !== '') {
+    args.push('--sketch-map-size', String(options.sketchMapSize));
+  }
+  if (options.sketchMethod !== undefined && options.sketchMethod !== '') {
+    args.push('--sketch-method', String(options.sketchMethod));
+  }
+  if (options.statsFilter !== undefined && options.statsFilter !== '') {
+    args.push('--stats-filter', String(options.statsFilter));
+  }
+  if (options.toon === true) {
+    args.push('--toon');
+  }
+  if (options.unqLimit !== undefined && options.unqLimit !== '') {
+    args.push('--unq-limit', String(options.unqLimit));
+  }
+  if (options.visWhitespace === true) {
+    args.push('--vis-whitespace');
+  }
+  if (options.weight !== undefined && options.weight !== '') {
+    args.push('--weight', String(options.weight));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -142,11 +138,9 @@ export async function executeFrequency(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

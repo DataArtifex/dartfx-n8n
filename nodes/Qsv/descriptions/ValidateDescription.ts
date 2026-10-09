@@ -15,12 +15,28 @@ export const ValidateDescription: INodeProperties[] = [
     },
   },
   {
+    displayName: 'Subcommand',
+    name: 'subcommand',
+    type: 'options',
+    required: false,
+    default: 'schema',
+    options: [
+        { name: 'schema', value: 'schema' },
+    ],
+    description: 'Subcommand to execute. Valid values: schema',
+    displayOptions: {
+      show: {
+        operation: ['validate'],
+      },
+    },
+  },
+  {
     displayName: 'JSON Schema Path / URL',
     name: 'jsonSchema',
     type: 'string',
     required: false,
     default: '',
-    description: 'Optional path or URL to JSON Schema. If omitted, performs standard RFC 4180 validation.',
+    description: 'JSON Schema file to validate against. If not provided, `validate` will run in RFC 4180 validation mode. The file can be a local file or a URL (http and https schemes supported).',
     displayOptions: {
       show: {
         operation: ['validate'],
@@ -33,7 +49,7 @@ export const ValidateDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv validate (Docs: https://github.com/dathere/qsv/blob/master/docs/help/validate.md)',
+    description: 'Additional raw command line arguments to pass to qsv validate [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/validate.md)',
     displayOptions: {
       show: {
         operation: ['validate'],
@@ -55,37 +71,30 @@ export const ValidateDescription: INodeProperties[] = [
     {
       displayName: 'Backtrack Limit',
       name: 'backtrackLimit',
-      type: 'string',
-      default: '',
-      description: 'Set the approximate number of backtracking steps allowed. This is only used when --fancy-regex is set. [default: 1000000] OPTIONS FOR BOTH REGEX ENGINES:',
+      type: 'number',
+      default: 1000000,
+      description: 'Set the approximate number of backtracking steps allowed. This is only used when --fancy-regex is set.',
     },
     {
       displayName: 'Batch',
       name: 'batch',
-      type: 'string',
-      default: '',
-      description: 'The number of rows per batch to load into memory, before running in parallel. Automatically determined for CSV files with more than 50000 rows. Set to 0 to load all rows in one batch. Set to 1 to force batch optimization even for files with less than 50000 rows. [default: 50000]',
+      type: 'number',
+      default: 50000,
+      description: 'The number of rows per batch to load into memory, before running in parallel. Automatically determined for CSV files with more than 50000 rows. Set to 0 to load all rows in one batch. Set to 1 to force batch optimization even for files with less than 50000 rows.',
     },
     {
       displayName: 'Cache Dir',
       name: 'cacheDir',
       type: 'string',
-      default: '',
-      description: 'The directory to use for caching downloaded dynamicEnum resources. If the directory does not exist, qsv will attempt to create it. If the QSV_CACHE_DIR envvar is set, it will be used instead. Not available on qsvlite. [default: ~/.qsv-cache]',
+      default: '~/.qsv-cache',
+      description: 'The directory to use for caching downloaded dynamicEnum resources. If the directory does not exist, qsv will attempt to create it. If the QSV_CACHE_DIR envvar is set, it will be used instead. Not available on qsvlite.',
     },
     {
       displayName: 'Ckan Api',
       name: 'ckanApi',
       type: 'string',
-      default: '',
-      description: 'The URL of the CKAN API to use for downloading dynamicEnum resources with the "ckan://" scheme. If the QSV_CKAN_API envvar is set, it will be used instead. Not available on qsvlite. [default: https://data.dathere.com/api/3/action]',
-    },
-    {
-      displayName: 'Ckan Token',
-      name: 'ckanToken',
-      type: 'string',
-      default: '',
-      description: 'The CKAN API token to use. Only required if downloading private resources. If the QSV_CKAN_TOKEN envvar is set, it will be used instead. Not available on qsvlite.',
+      default: 'https://data.dathere.com/api/3/action',
+      description: 'The URL of the CKAN API to use for downloading dynamicEnum resources with the "ckan://" scheme. If the QSV_CKAN_API envvar is set, it will be used instead. Not available on qsvlite.',
     },
     {
       displayName: 'Delimiter',
@@ -97,9 +106,9 @@ export const ValidateDescription: INodeProperties[] = [
     {
       displayName: 'Dfa Size Limit',
       name: 'dfaSizeLimit',
-      type: 'string',
-      default: '',
-      description: 'Set the approximate capacity, in megabytes, of the cache of transitions used by the engine\'s lazy Discrete Finite Automata. [default: 10]',
+      type: 'number',
+      default: 10,
+      description: 'Set the approximate capacity, in megabytes, of the cache of transitions used by the engine\'s lazy Discrete Finite Automata.',
     },
     {
       displayName: 'Email Display Text',
@@ -118,9 +127,9 @@ export const ValidateDescription: INodeProperties[] = [
     {
       displayName: 'Email Min Subdomains',
       name: 'emailMinSubdomains',
-      type: 'string',
-      default: '',
-      description: 'Minimum number of subdomains required in the email. e.g. "jdoe@example.com" is INVALID if this option is set to 3, but "jdoe@sub.example.com" is VALID. [default: 2]',
+      type: 'number',
+      default: 2,
+      description: 'Minimum number of subdomains required in the email. e.g. "jdoe@example.com" is INVALID if this option is set to 3, but "jdoe@sub.example.com" is VALID.',
     },
     {
       displayName: 'Email Required Tld',
@@ -148,14 +157,7 @@ export const ValidateDescription: INodeProperties[] = [
       name: 'invalid',
       type: 'string',
       default: 'invalid',
-      description: 'Invalid record output file suffix. [default: invalid]',
-    },
-    {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.',
+      description: 'Invalid record output file suffix.',
     },
     {
       displayName: 'Json',
@@ -186,25 +188,11 @@ export const ValidateDescription: INodeProperties[] = [
       description: 'Same as --json, but pretty printed.',
     },
     {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show progress bars. Not valid for stdin.',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not display validation summary message.',
-    },
-    {
       displayName: 'Size Limit',
       name: 'sizeLimit',
-      type: 'string',
-      default: '',
-      description: 'Set the approximate size limit, in megabytes, of a compiled regex. [default: 50]',
+      type: 'number',
+      default: 50,
+      description: 'Set the approximate size limit, in megabytes, of a compiled regex.',
     },
     {
       displayName: 'Split Ragged',
@@ -216,9 +204,9 @@ export const ValidateDescription: INodeProperties[] = [
     {
       displayName: 'Timeout',
       name: 'timeout',
-      type: 'string',
-      default: '',
-      description: 'Timeout for downloading json-schemas on URLs and for \'dynamicEnum\' lookups on URLs. If 0, no timeout is used. [default: 30]',
+      type: 'number',
+      default: 30,
+      description: 'Timeout for downloading json-schemas on URLs and for \'dynamicEnum\' lookups on URLs. If 0, no timeout is used.',
     },
     {
       displayName: 'Trim',
@@ -232,7 +220,7 @@ export const ValidateDescription: INodeProperties[] = [
       name: 'valid',
       type: 'string',
       default: 'valid',
-      description: 'Valid record output file suffix. [default: valid]',
+      description: 'Valid record output file suffix.',
     },
     {
       displayName: 'Valid Output',

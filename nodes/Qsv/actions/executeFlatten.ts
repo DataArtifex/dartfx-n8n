@@ -17,6 +17,7 @@ export async function executeFlatten(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
@@ -25,20 +26,18 @@ export async function executeFlatten(
   if (options.condense !== undefined && options.condense !== '') {
     args.push('--condense', String(options.condense));
   }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
   if (options.fieldSeparator !== undefined && options.fieldSeparator !== '') {
     args.push('--field-separator', String(options.fieldSeparator));
-  }
-  if (options.separator !== undefined && options.separator !== '') {
-    args.push('--separator', String(options.separator));
   }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.separator !== undefined && options.separator !== '') {
+    args.push('--separator', String(options.separator));
   }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -49,11 +48,6 @@ export async function executeFlatten(
     });
     args.push(...parsedArgs);
   }
-
-  if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
-  }
-
   args.push(inputPath);
 
   const qsvBin =

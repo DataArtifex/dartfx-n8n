@@ -20,7 +20,7 @@ export const JoinDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Join columns for first input file (e.g. id or 1)',
+    description: 'Column selection for the first input. See \'qsv select --help\' for the selection syntax.',
     displayOptions: {
       show: {
         operation: ['join'],
@@ -33,7 +33,7 @@ export const JoinDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Join columns for second input file (e.g. id or 1)',
+    description: 'Column selection for the second input. See \'qsv select --help\' for the selection syntax.',
     displayOptions: {
       show: {
         operation: ['join'],
@@ -46,7 +46,7 @@ export const JoinDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Path to second input CSV file on disk',
+    description: 'is the second CSV data set to join.',
     displayOptions: {
       show: {
         operation: ['join'],
@@ -70,7 +70,7 @@ export const JoinDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv join (Docs: https://github.com/dathere/qsv/blob/master/docs/help/join.md)',
+    description: 'Additional raw command line arguments to pass to qsv join [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/join.md)',
     displayOptions: {
       show: {
         operation: ['join'],
@@ -129,7 +129,7 @@ export const JoinDescription: INodeProperties[] = [
       name: 'keysOutput',
       type: 'string',
       default: '',
-      description: 'Write successfully joined keys to <file>. This means that the keys are written to the output file when a match is found, with the exception of anti joins, where keys are written when NO match is found. Cross joins do not write keys. Note that transformations are applied to TEMPORARY join key columns. The original columns are not modified and the TEMPORARY columns are removed after the join.',
+      description: 'Write successfully joined keys to <file>. This means that the keys are written to the output file when a match is found, with the exception of anti joins, where keys are written when NO match is found. Cross joins do not write keys.',
     },
     {
       displayName: 'Left',

@@ -17,16 +17,14 @@ export async function executeExtdedup(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['extdedup'];
-  if (options.select !== undefined && options.select !== '') {
-    args.push('--select', String(options.select));
-  }
-  if (options.noOutput === true) {
-    args.push('--no-output');
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.dupesOutput !== undefined && options.dupesOutput !== '') {
     args.push('--dupes-output', String(options.dupesOutput));
@@ -37,19 +35,18 @@ export async function executeExtdedup(
   if (options.memoryLimit !== undefined && options.memoryLimit !== '') {
     args.push('--memory-limit', String(options.memoryLimit));
   }
-  if (options.tempDir !== undefined && options.tempDir !== '') {
-    args.push('--temp-dir', String(options.tempDir));
-  }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.noOutput === true) {
+    args.push('--no-output');
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
   }
-
+  if (options.tempDir !== undefined && options.tempDir !== '') {
+    args.push('--temp-dir', String(options.tempDir));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -60,9 +57,7 @@ export async function executeExtdedup(
     });
     args.push(...parsedArgs);
   }
-
   args.push(inputPath);
-
   if (outputPath.trim()) {
     args.push(outputPath.trim());
   }

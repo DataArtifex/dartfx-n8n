@@ -15,18 +15,7 @@ export const SortcheckDescription: INodeProperties[] = [
     },
   },
 
-  {
-    displayName: 'Output File Path',
-    name: 'outputPath',
-    type: 'string',
-    default: '',
-    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
-    displayOptions: {
-      show: {
-        operation: ['sortcheck'],
-      },
-    },
-  },
+
   {
     displayName: 'Additional Flags',
     name: 'additionalArgs',
@@ -106,13 +95,6 @@ export const SortcheckDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Same as --json but in pretty JSON format.',
-    },
-    {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show progress bars. Not valid for stdin.',
     },
     {
       displayName: 'Select',

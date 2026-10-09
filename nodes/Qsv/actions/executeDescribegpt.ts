@@ -17,166 +17,38 @@ export async function executeDescribegpt(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['describegpt'];
-  if (options.dictionary === true) {
-    args.push('--dictionary');
-  }
-  if (options.description === true) {
-    args.push('--description');
-  }
-  if (options.tags === true) {
-    args.push('--tags');
-  }
-  if (options.all === true) {
-    args.push('--all');
-  }
-  if (options.numExamples !== undefined && options.numExamples !== '') {
-    args.push('--num-examples', String(options.numExamples));
-  }
-  if (options.truncateStr !== undefined && options.truncateStr !== '') {
-    args.push('--truncate-str', String(options.truncateStr));
-  }
-  if (options.inferContentType === true) {
-    args.push('--infer-content-type');
-  }
-  if (options.inferNullValues === true) {
-    args.push('--infer-null-values');
-  }
-  if (options.twoPass === true) {
-    args.push('--two-pass');
-  }
   if (options.addlCols === true) {
     args.push('--addl-cols');
   }
   if (options.addlColsList !== undefined && options.addlColsList !== '') {
     args.push('--addl-cols-list', String(options.addlColsList));
   }
-  if (options.numTags !== undefined && options.numTags !== '') {
-    args.push('--num-tags', String(options.numTags));
-  }
-  if (options.tagVocab !== undefined && options.tagVocab !== '') {
-    args.push('--tag-vocab', String(options.tagVocab));
-  }
-  if (options.cacheDir !== undefined && options.cacheDir !== '') {
-    args.push('--cache-dir', String(options.cacheDir));
-  }
-  if (options.ckanApi !== undefined && options.ckanApi !== '') {
-    args.push('--ckan-api', String(options.ckanApi));
-  }
-  if (options.ckanToken !== undefined && options.ckanToken !== '') {
-    args.push('--ckan-token', String(options.ckanToken));
-  }
-  if (options.statsOptions !== undefined && options.statsOptions !== '') {
-    args.push('--stats-options', String(options.statsOptions));
-  }
-  if (options.freqOptions !== undefined && options.freqOptions !== '') {
-    args.push('--freq-options', String(options.freqOptions));
-  }
-  if (options.enumThreshold !== undefined && options.enumThreshold !== '') {
-    args.push('--enum-threshold', String(options.enumThreshold));
-  }
-  if (options.prompt !== undefined && options.prompt !== '') {
-    args.push('--prompt', String(options.prompt));
-  }
-  if (options.sqlResults !== undefined && options.sqlResults !== '') {
-    args.push('--sql-results', String(options.sqlResults));
-  }
-  if (options.promptFile !== undefined && options.promptFile !== '') {
-    args.push('--prompt-file', String(options.promptFile));
-  }
-  if (options.contextFile !== undefined && options.contextFile !== '') {
-    args.push('--context-file', String(options.contextFile));
-  }
-  if (options.markdownTemplate !== undefined && options.markdownTemplate !== '') {
-    args.push('--markdown-template', String(options.markdownTemplate));
-  }
-  if (options.sampleSize !== undefined && options.sampleSize !== '') {
-    args.push('--sample-size', String(options.sampleSize));
-  }
-  if (options.fewshotExamples === true) {
-    args.push('--fewshot-examples');
-  }
-  if (options.session !== undefined && options.session !== '') {
-    args.push('--session', String(options.session));
-  }
-  if (options.sessionLen !== undefined && options.sessionLen !== '') {
-    args.push('--session-len', String(options.sessionLen));
-  }
-  if (options.noScoreSql === true) {
-    args.push('--no-score-sql');
-  }
-  if (options.scoreThreshold !== undefined && options.scoreThreshold !== '') {
-    args.push('--score-threshold', String(options.scoreThreshold));
-  }
-  if (options.scoreMaxRetries !== undefined && options.scoreMaxRetries !== '') {
-    args.push('--score-max-retries', String(options.scoreMaxRetries));
-  }
-  if (options.baseUrl !== undefined && options.baseUrl !== '') {
-    args.push('--base-url', String(options.baseUrl));
-  }
-  if (options.model !== undefined && options.model !== '') {
-    args.push('--model', String(options.model));
-  }
-  if (options.language !== undefined && options.language !== '') {
-    args.push('--language', String(options.language));
-  }
-  if (options.tourAudience !== undefined && options.tourAudience !== '') {
-    args.push('--tour-audience', String(options.tourAudience));
-  }
-  if (options.addlProps !== undefined && options.addlProps !== '') {
-    args.push('--addl-props', String(options.addlProps));
-  }
-  if (options.apiKey !== undefined && options.apiKey !== '') {
-    args.push('--api-key', String(options.apiKey));
-  }
-  if (options.maxTokens !== undefined && options.maxTokens !== '') {
-    args.push('--max-tokens', String(options.maxTokens));
-  }
-  if (options.timeout !== undefined && options.timeout !== '') {
-    args.push('--timeout', String(options.timeout));
-  }
-  if (options.userAgent !== undefined && options.userAgent !== '') {
-    args.push('--user-agent', String(options.userAgent));
-  }
-  if (options.exportPrompt !== undefined && options.exportPrompt !== '') {
-    args.push('--export-prompt', String(options.exportPrompt));
-  }
-  if (options.noCache === true) {
-    args.push('--no-cache');
-  }
-  if (options.diskCacheDir !== undefined && options.diskCacheDir !== '') {
-    args.push('--disk-cache-dir', String(options.diskCacheDir));
-  }
-  if (options.redisCache === true) {
-    args.push('--redis-cache');
-  }
-  if (options.fresh === true) {
-    args.push('--fresh');
-  }
-  if (options.forget === true) {
-    args.push('--forget');
-  }
-  if (options.flushCache === true) {
-    args.push('--flush-cache');
-  }
-  if (options.prepareContext === true) {
-    args.push('--prepare-context');
-  }
-  if (options.processResponse === true) {
-    args.push('--process-response');
-  }
-  if (options.format !== undefined && options.format !== '') {
-    args.push('--format', String(options.format));
+  if (options.all === true) {
+    args.push('--all');
   }
   if (options.allowExtraCols === true) {
     args.push('--allow-extra-cols');
   }
-  if (options.strictDates === true) {
-    args.push('--strict-dates');
+  if (options.contextFile !== undefined && options.contextFile !== '') {
+    args.push('--context-file', String(options.contextFile));
+  }
+  if (options.description === true) {
+    args.push('--description');
+  }
+  if (options.dictionary === true) {
+    args.push('--dictionary');
+  }
+  if (options.diskCacheDir !== undefined && options.diskCacheDir !== '') {
+    args.push('--disk-cache-dir', String(options.diskCacheDir));
+  }
+  if (options.dsLicense !== undefined && options.dsLicense !== '') {
+    args.push('--ds-license', String(options.dsLicense));
   }
   if (options.dsSource !== undefined && options.dsSource !== '') {
     args.push('--ds-source', String(options.dsSource));
@@ -184,17 +56,78 @@ export async function executeDescribegpt(
   if (options.dsUpdated !== undefined && options.dsUpdated !== '') {
     args.push('--ds-updated', String(options.dsUpdated));
   }
-  if (options.dsLicense !== undefined && options.dsLicense !== '') {
-    args.push('--ds-license', String(options.dsLicense));
+  if (options.enumThreshold !== undefined && options.enumThreshold !== '') {
+    args.push('--enum-threshold', String(options.enumThreshold));
+  }
+  if (options.flushCache === true) {
+    args.push('--flush-cache');
+  }
+  if (options.forget === true) {
+    args.push('--forget');
+  }
+  if (options.format !== undefined && options.format !== '') {
+    args.push('--format', String(options.format));
+  }
+  if (options.freqOptions !== undefined && options.freqOptions !== '') {
+    args.push('--freq-options', String(options.freqOptions));
+  }
+  if (options.fresh === true) {
+    args.push('--fresh');
+  }
+  if (options.inferContentType === true) {
+    args.push('--infer-content-type');
+  }
+  if (options.inferNullValues === true) {
+    args.push('--infer-null-values');
+  }
+  if (options.language !== undefined && options.language !== '') {
+    args.push('--language', String(options.language));
+  }
+  if (options.markdownTemplate !== undefined && options.markdownTemplate !== '') {
+    args.push('--markdown-template', String(options.markdownTemplate));
+  }
+  if (options.noCache === true) {
+    args.push('--no-cache');
+  }
+  if (options.noScoreSql === true) {
+    args.push('--no-score-sql');
+  }
+  if (options.numExamples !== undefined && options.numExamples !== '') {
+    args.push('--num-examples', String(options.numExamples));
+  }
+  if (options.numTags !== undefined && options.numTags !== '') {
+    args.push('--num-tags', String(options.numTags));
   }
   if (options.okfType !== undefined && options.okfType !== '') {
     args.push('--okf-type', String(options.okfType));
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
+  if (options.scoreMaxRetries !== undefined && options.scoreMaxRetries !== '') {
+    args.push('--score-max-retries', String(options.scoreMaxRetries));
   }
-
-
+  if (options.scoreThreshold !== undefined && options.scoreThreshold !== '') {
+    args.push('--score-threshold', String(options.scoreThreshold));
+  }
+  if (options.statsOptions !== undefined && options.statsOptions !== '') {
+    args.push('--stats-options', String(options.statsOptions));
+  }
+  if (options.strictDates === true) {
+    args.push('--strict-dates');
+  }
+  if (options.tagVocab !== undefined && options.tagVocab !== '') {
+    args.push('--tag-vocab', String(options.tagVocab));
+  }
+  if (options.tags === true) {
+    args.push('--tags');
+  }
+  if (options.tourAudience !== undefined && options.tourAudience !== '') {
+    args.push('--tour-audience', String(options.tourAudience));
+  }
+  if (options.truncateStr !== undefined && options.truncateStr !== '') {
+    args.push('--truncate-str', String(options.truncateStr));
+  }
+  if (options.twoPass === true) {
+    args.push('--two-pass');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -205,11 +138,9 @@ export async function executeDescribegpt(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

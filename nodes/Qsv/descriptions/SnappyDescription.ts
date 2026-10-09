@@ -14,7 +14,25 @@ export const SnappyDescription: INodeProperties[] = [
       },
     },
   },
-
+  {
+    displayName: 'Subcommand',
+    name: 'subcommand',
+    type: 'options',
+    required: true,
+    default: 'check',
+    options: [
+        { name: 'check', value: 'check' },
+        { name: 'compress', value: 'compress' },
+        { name: 'decompress', value: 'decompress' },
+        { name: 'validate', value: 'validate' },
+    ],
+    description: 'Subcommand to execute. Valid values: check, compress, decompress, validate',
+    displayOptions: {
+      show: {
+        operation: ['snappy'],
+      },
+    },
+  },
   {
     displayName: 'Output File Path',
     name: 'outputPath',
@@ -52,39 +70,11 @@ export const SnappyDescription: INodeProperties[] = [
     },
     options: [
     {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel when compressing. When not set, its set to the number of CPUs - 1',
-    },
-    {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show download progress bars. Only valid for URL input.',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Suppress status messages to stderr.',
-    },
-    {
       displayName: 'Timeout',
       name: 'timeout',
-      type: 'string',
-      default: '',
-      description: 'Timeout for downloading URLs in seconds. [default: 60]',
-    },
-    {
-      displayName: 'User Agent',
-      name: 'userAgent',
-      type: 'string',
-      default: '',
-      description: 'Specify custom user agent to use when the input is a URL. It supports the following variables - $QSV_VERSION, $QSV_TARGET, $QSV_BIN_NAME, $QSV_KIND and $QSV_COMMAND. Try to follow the syntax here - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent',
+      type: 'number',
+      default: 60,
+      description: 'Timeout for downloading URLs in seconds.',
     },
     ],
   },

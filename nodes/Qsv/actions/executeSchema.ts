@@ -17,16 +17,44 @@ export async function executeSchema(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['schema'];
+  if (options.datesWhitelist !== undefined && options.datesWhitelist !== '') {
+    args.push('--dates-whitelist', String(options.datesWhitelist));
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
   if (options.enumThreshold !== undefined && options.enumThreshold !== '') {
     args.push('--enum-threshold', String(options.enumThreshold));
   }
+  if (options.force === true) {
+    args.push('--force');
+  }
   if (options.ignoreCase === true) {
     args.push('--ignore-case');
+  }
+  if (options.memcheck === true) {
+    args.push('--memcheck');
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.patternColumns !== undefined && options.patternColumns !== '') {
+    args.push('--pattern-columns', String(options.patternColumns));
+  }
+  if (options.polars === true) {
+    args.push('--polars');
+  }
+  if (options.preferDmy === true) {
+    args.push('--prefer-dmy');
+  }
+  if (options.stdout === true) {
+    args.push('--stdout');
   }
   if (options.strictDates === true) {
     args.push('--strict-dates');
@@ -34,38 +62,6 @@ export async function executeSchema(
   if (options.strictFormats === true) {
     args.push('--strict-formats');
   }
-  if (options.patternColumns !== undefined && options.patternColumns !== '') {
-    args.push('--pattern-columns', String(options.patternColumns));
-  }
-  if (options.datesWhitelist !== undefined && options.datesWhitelist !== '') {
-    args.push('--dates-whitelist', String(options.datesWhitelist));
-  }
-  if (options.preferDmy === true) {
-    args.push('--prefer-dmy');
-  }
-  if (options.force === true) {
-    args.push('--force');
-  }
-  if (options.stdout === true) {
-    args.push('--stdout');
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.polars === true) {
-    args.push('--polars');
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-  if (options.memcheck === true) {
-    args.push('--memcheck');
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -76,11 +72,9 @@ export async function executeSchema(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

@@ -17,54 +17,57 @@ export async function executeSample(
       { itemIndex },
     );
   }
-  const sampleSize = (this.getNodeParameter('sampleSize', itemIndex, '100') as string) || '';
-  if (!sampleSize || !String(sampleSize).trim()) {
-    throw new NodeOperationError(
-      this.getNode(),
-      'Parameter "Sample Size" is required for sample.',
-      { itemIndex },
-    );
-  }
+
+  const sampleSize = (this.getNodeParameter('sampleSize', itemIndex, 100) as number) || 0;
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['sample'];
-  if (options.seed !== undefined && options.seed !== '') {
-    args.push('--seed', String(options.seed));
-  }
-  if (options.rng !== undefined && options.rng !== '') {
-    args.push('--rng', String(options.rng));
-  }
   if (options.bernoulli === true) {
     args.push('--bernoulli');
-  }
-  if (options.systematic !== undefined && options.systematic !== '') {
-    args.push('--systematic', String(options.systematic));
-  }
-  if (options.stratified !== undefined && options.stratified !== '') {
-    args.push('--stratified', String(options.stratified));
-  }
-  if (options.weighted !== undefined && options.weighted !== '') {
-    args.push('--weighted', String(options.weighted));
-  }
-  if (options.varopt !== undefined && options.varopt !== '') {
-    args.push('--varopt', String(options.varopt));
-  }
-  if (options.mergeableReservoir === true) {
-    args.push('--mergeable-reservoir');
   }
   if (options.cluster !== undefined && options.cluster !== '') {
     args.push('--cluster', String(options.cluster));
   }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.force === true) {
+    args.push('--force');
+  }
+  if (options.maxSize !== undefined && options.maxSize !== '') {
+    args.push('--max-size', String(options.maxSize));
+  }
+  if (options.mergeableReservoir === true) {
+    args.push('--mergeable-reservoir');
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.rng !== undefined && options.rng !== '') {
+    args.push('--rng', String(options.rng));
+  }
+  if (options.seed !== undefined && options.seed !== '') {
+    args.push('--seed', String(options.seed));
+  }
+  if (options.sketchIn !== undefined && options.sketchIn !== '') {
+    args.push('--sketch-in', String(options.sketchIn));
+  }
+  if (options.sketchOut !== undefined && options.sketchOut !== '') {
+    args.push('--sketch-out', String(options.sketchOut));
+  }
+  if (options.stratified !== undefined && options.stratified !== '') {
+    args.push('--stratified', String(options.stratified));
+  }
+  if (options.systematic !== undefined && options.systematic !== '') {
+    args.push('--systematic', String(options.systematic));
+  }
+  if (options.timeout !== undefined && options.timeout !== '') {
+    args.push('--timeout', String(options.timeout));
+  }
   if (options.timeseries !== undefined && options.timeseries !== '') {
     args.push('--timeseries', String(options.timeseries));
-  }
-  if (options.tsInterval !== undefined && options.tsInterval !== '') {
-    args.push('--ts-interval', String(options.tsInterval));
-  }
-  if (options.tsStart !== undefined && options.tsStart !== '') {
-    args.push('--ts-start', String(options.tsStart));
   }
   if (options.tsAdaptive !== undefined && options.tsAdaptive !== '') {
     args.push('--ts-adaptive', String(options.tsAdaptive));
@@ -75,36 +78,21 @@ export async function executeSample(
   if (options.tsInputTz !== undefined && options.tsInputTz !== '') {
     args.push('--ts-input-tz', String(options.tsInputTz));
   }
+  if (options.tsInterval !== undefined && options.tsInterval !== '') {
+    args.push('--ts-interval', String(options.tsInterval));
+  }
   if (options.tsPreferDmy === true) {
     args.push('--ts-prefer-dmy');
   }
-  if (options.sketchOut !== undefined && options.sketchOut !== '') {
-    args.push('--sketch-out', String(options.sketchOut));
+  if (options.tsStart !== undefined && options.tsStart !== '') {
+    args.push('--ts-start', String(options.tsStart));
   }
-  if (options.sketchIn !== undefined && options.sketchIn !== '') {
-    args.push('--sketch-in', String(options.sketchIn));
+  if (options.varopt !== undefined && options.varopt !== '') {
+    args.push('--varopt', String(options.varopt));
   }
-  if (options.userAgent !== undefined && options.userAgent !== '') {
-    args.push('--user-agent', String(options.userAgent));
+  if (options.weighted !== undefined && options.weighted !== '') {
+    args.push('--weighted', String(options.weighted));
   }
-  if (options.timeout !== undefined && options.timeout !== '') {
-    args.push('--timeout', String(options.timeout));
-  }
-  if (options.maxSize !== undefined && options.maxSize !== '') {
-    args.push('--max-size', String(options.maxSize));
-  }
-  if (options.force === true) {
-    args.push('--force');
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-
-  args.push(String(sampleSize));
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -115,11 +103,10 @@ export async function executeSample(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(sampleSize).trim());
   args.push(inputPath);
 
   const qsvBin =

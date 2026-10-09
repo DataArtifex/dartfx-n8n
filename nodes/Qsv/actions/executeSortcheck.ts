@@ -17,43 +17,39 @@ export async function executeSortcheck(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['sortcheck'];
-  if (options.select !== undefined && options.select !== '') {
-    args.push('--select', String(options.select));
-  }
-  if (options.numeric === true) {
-    args.push('--numeric');
-  }
-  if (options.natural === true) {
-    args.push('--natural');
-  }
-  if (options.ignoreCase === true) {
-    args.push('--ignore-case');
-  }
   if (options.all === true) {
     args.push('--all');
-  }
-  if (options.json === true) {
-    args.push('--json');
-  }
-  if (options.prettyJson === true) {
-    args.push('--pretty-json');
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
   }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
+  if (options.ignoreCase === true) {
+    args.push('--ignore-case');
   }
-
-
+  if (options.json === true) {
+    args.push('--json');
+  }
+  if (options.natural === true) {
+    args.push('--natural');
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.numeric === true) {
+    args.push('--numeric');
+  }
+  if (options.prettyJson === true) {
+    args.push('--pretty-json');
+  }
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -64,11 +60,6 @@ export async function executeSortcheck(
     });
     args.push(...parsedArgs);
   }
-
-  if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
-  }
-
   args.push(inputPath);
 
   const qsvBin =

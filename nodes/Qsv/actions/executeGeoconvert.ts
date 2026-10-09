@@ -17,8 +17,9 @@ export async function executeGeoconvert(
       { itemIndex },
     );
   }
-  const inputFormat = (this.getNodeParameter('inputFormat', itemIndex) as string) || '';
-  const outputFormat = (this.getNodeParameter('outputFormat', itemIndex) as string) || '';
+
+  const inputFormat = (this.getNodeParameter('inputFormat', itemIndex, '') as string) || '';
+  const outputFormat = (this.getNodeParameter('outputFormat', itemIndex, '') as string) || '';
   if (!inputFormat || !String(inputFormat).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -50,7 +51,6 @@ export async function executeGeoconvert(
   if (options.maxLength !== undefined && options.maxLength !== '') {
     args.push('--max-length', String(options.maxLength));
   }
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -61,14 +61,12 @@ export async function executeGeoconvert(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
-  args.push(String(inputFormat));
-  args.push(String(outputFormat));
+  args.push(String(inputFormat).trim());
+  args.push(String(outputFormat).trim());
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

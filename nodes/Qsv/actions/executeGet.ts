@@ -17,19 +17,26 @@ export async function executeGet(
       { itemIndex },
     );
   }
+
+  const subcommand = (this.getNodeParameter('subcommand', itemIndex, '') as string) || '';
+  const source = (this.getNodeParameter('source', itemIndex, '') as string) || '';
+  const name = (this.getNodeParameter('name', itemIndex, '') as string) || '';
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['get'];
-  if (options.name !== undefined && options.name !== '') {
-    args.push('--name', String(options.name));
+  if (subcommand && String(subcommand).trim()) {
+    args.push(String(subcommand).trim());
   }
-  if (options.ttl !== undefined && options.ttl !== '') {
-    args.push('--ttl', String(options.ttl));
+  if (options.cacheDir !== undefined && options.cacheDir !== '') {
+    args.push('--cache-dir', String(options.cacheDir));
   }
-  if (options.refresh !== undefined && options.refresh !== '') {
-    args.push('--refresh', String(options.refresh));
+  if (options.ckanApi !== undefined && options.ckanApi !== '') {
+    args.push('--ckan-api', String(options.ckanApi));
+  }
+  if (options.cloudOpt !== undefined && options.cloudOpt !== '') {
+    args.push('--cloud-opt', String(options.cloudOpt));
   }
   if (options.compress !== undefined && options.compress !== '') {
     args.push('--compress', String(options.compress));
@@ -37,44 +44,36 @@ export async function executeGet(
   if (options.force === true) {
     args.push('--force');
   }
-  if (options.sample !== undefined && options.sample !== '') {
-    args.push('--sample', String(options.sample));
+  if (options.json === true) {
+    args.push('--json');
+  }
+  if (options.name !== undefined && options.name !== '') {
+    args.push('--name', String(options.name));
   }
   if (options.offset !== undefined && options.offset !== '') {
     args.push('--offset', String(options.offset));
   }
+  if (options.olderThan !== undefined && options.olderThan !== '') {
+    args.push('--older-than', String(options.olderThan));
+  }
   if (options.random === true) {
     args.push('--random');
   }
-  if (options.cloudOpt !== undefined && options.cloudOpt !== '') {
-    args.push('--cloud-opt', String(options.cloudOpt));
+  if (options.refresh !== undefined && options.refresh !== '') {
+    args.push('--refresh', String(options.refresh));
   }
-  if (options.ckanApi !== undefined && options.ckanApi !== '') {
-    args.push('--ckan-api', String(options.ckanApi));
-  }
-  if (options.ckanToken !== undefined && options.ckanToken !== '') {
-    args.push('--ckan-token', String(options.ckanToken));
+  if (options.sample !== undefined && options.sample !== '') {
+    args.push('--sample', String(options.sample));
   }
   if (options.timeout !== undefined && options.timeout !== '') {
     args.push('--timeout', String(options.timeout));
   }
-  if (options.olderThan !== undefined && options.olderThan !== '') {
-    args.push('--older-than', String(options.olderThan));
-  }
-  if (options.json === true) {
-    args.push('--json');
+  if (options.ttl !== undefined && options.ttl !== '') {
+    args.push('--ttl', String(options.ttl));
   }
   if (options.verify === true) {
     args.push('--verify');
   }
-  if (options.cacheDir !== undefined && options.cacheDir !== '') {
-    args.push('--cache-dir', String(options.cacheDir));
-  }
-  if (options.quiet === true) {
-    args.push('--quiet');
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -85,12 +84,15 @@ export async function executeGet(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
-  args.push(inputPath);
+  if (source !== undefined && String(source).trim()) {
+    args.push(String(source).trim());
+  }
+  if (name !== undefined && String(name).trim()) {
+    args.push(String(name).trim());
+  }
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

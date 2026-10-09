@@ -17,7 +17,8 @@ export async function executeFill(
       { itemIndex },
     );
   }
-  const selection = (this.getNodeParameter('selection', itemIndex) as string) || '';
+
+  const selection = (this.getNodeParameter('selection', itemIndex, '') as string) || '';
   if (!selection || !String(selection).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -30,27 +31,24 @@ export async function executeFill(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['fill'];
-  if (options.groupby !== undefined && options.groupby !== '') {
-    args.push('--groupby', String(options.groupby));
-  }
-  if (options.first === true) {
-    args.push('--first');
-  }
   if (options.backfill === true) {
     args.push('--backfill');
   }
   if (options.default !== undefined && options.default !== '') {
     args.push('--default', String(options.default));
   }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
-
-  args.push(String(selection));
-
+  if (options.first === true) {
+    args.push('--first');
+  }
+  if (options.groupby !== undefined && options.groupby !== '') {
+    args.push('--groupby', String(options.groupby));
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -61,11 +59,10 @@ export async function executeFill(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(selection).trim());
   args.push(inputPath);
 
   const qsvBin =

@@ -17,85 +17,92 @@ export async function executeGeocode(
       { itemIndex },
     );
   }
+
+  const subcommand = (this.getNodeParameter('subcommand', itemIndex, '') as string) || '';
+  const column = (this.getNodeParameter('column', itemIndex, '') as string) || '';
+  const location = (this.getNodeParameter('location', itemIndex, '') as string) || '';
+  const indexFile = (this.getNodeParameter('indexFile', itemIndex, '') as string) || '';
+  if (!subcommand || !String(subcommand).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "Subcommand" is required for geocode.',
+      { itemIndex },
+    );
+  }
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['geocode'];
-  if (options.newColumn !== undefined && options.newColumn !== '') {
-    args.push('--new-column', String(options.newColumn));
-  }
-  if (options.rename !== undefined && options.rename !== '') {
-    args.push('--rename', String(options.rename));
-  }
-  if (options.country !== undefined && options.country !== '') {
-    args.push('--country', String(options.country));
-  }
-  if (options.minScore !== undefined && options.minScore !== '') {
-    args.push('--min-score', String(options.minScore));
+  if (subcommand && String(subcommand).trim()) {
+    args.push(String(subcommand).trim());
   }
   if (options.admin1 !== undefined && options.admin1 !== '') {
     args.push('--admin1', String(options.admin1));
   }
-  if (options.k_weight !== undefined && options.k_weight !== '') {
-    args.push('--k_weight', String(options.k_weight));
-  }
-  if (options.apiKey !== undefined && options.apiKey !== '') {
-    args.push('--api-key', String(options.apiKey));
-  }
-  if (options.rateLimit !== undefined && options.rateLimit !== '') {
-    args.push('--rate-limit', String(options.rateLimit));
-  }
-  if (options.reverse === true) {
-    args.push('--reverse');
-  }
-  if (options.noAnnotations === true) {
-    args.push('--no-annotations');
-  }
-  if (options.cacheTtl !== undefined && options.cacheTtl !== '') {
-    args.push('--cache-ttl', String(options.cacheTtl));
-  }
-  if (options.noCache === true) {
-    args.push('--no-cache');
-  }
-  if (options.language !== undefined && options.language !== '') {
-    args.push('--language', String(options.language));
-  }
-  if (options.invalidResult !== undefined && options.invalidResult !== '') {
-    args.push('--invalid-result', String(options.invalidResult));
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
   if (options.batch !== undefined && options.batch !== '') {
     args.push('--batch', String(options.batch));
-  }
-  if (options.timeout !== undefined && options.timeout !== '') {
-    args.push('--timeout', String(options.timeout));
   }
   if (options.cacheDir !== undefined && options.cacheDir !== '') {
     args.push('--cache-dir', String(options.cacheDir));
   }
-  if (options.olderThan !== undefined && options.olderThan !== '') {
-    args.push('--older-than', String(options.olderThan));
-  }
-  if (options.languages !== undefined && options.languages !== '') {
-    args.push('--languages', String(options.languages));
+  if (options.cacheTtl !== undefined && options.cacheTtl !== '') {
+    args.push('--cache-ttl', String(options.cacheTtl));
   }
   if (options.citiesUrl !== undefined && options.citiesUrl !== '') {
     args.push('--cities-url', String(options.citiesUrl));
   }
-  if (options.force === true) {
-    args.push('--force');
+  if (options.country !== undefined && options.country !== '') {
+    args.push('--country', String(options.country));
   }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
+  if (options.force === true) {
+    args.push('--force');
   }
-
-
+  if (options.formatstr !== undefined && options.formatstr !== '') {
+    args.push('--formatstr', String(options.formatstr));
+  }
+  if (options.invalidResult !== undefined && options.invalidResult !== '') {
+    args.push('--invalid-result', String(options.invalidResult));
+  }
+  if (options.k_weight !== undefined && options.k_weight !== '') {
+    args.push('--k_weight', String(options.k_weight));
+  }
+  if (options.language !== undefined && options.language !== '') {
+    args.push('--language', String(options.language));
+  }
+  if (options.languages !== undefined && options.languages !== '') {
+    args.push('--languages', String(options.languages));
+  }
+  if (options.minScore !== undefined && options.minScore !== '') {
+    args.push('--min-score', String(options.minScore));
+  }
+  if (options.newColumn !== undefined && options.newColumn !== '') {
+    args.push('--new-column', String(options.newColumn));
+  }
+  if (options.noAnnotations === true) {
+    args.push('--no-annotations');
+  }
+  if (options.noCache === true) {
+    args.push('--no-cache');
+  }
+  if (options.olderThan !== undefined && options.olderThan !== '') {
+    args.push('--older-than', String(options.olderThan));
+  }
+  if (options.rateLimit !== undefined && options.rateLimit !== '') {
+    args.push('--rate-limit', String(options.rateLimit));
+  }
+  if (options.rename !== undefined && options.rename !== '') {
+    args.push('--rename', String(options.rename));
+  }
+  if (options.reverse === true) {
+    args.push('--reverse');
+  }
+  if (options.timeout !== undefined && options.timeout !== '') {
+    args.push('--timeout', String(options.timeout));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -106,12 +113,19 @@ export async function executeGeocode(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  if (column !== undefined && String(column).trim()) {
+    args.push(String(column).trim());
+  }
   args.push(inputPath);
+  if (location !== undefined && String(location).trim()) {
+    args.push(String(location).trim());
+  }
+  if (indexFile !== undefined && String(indexFile).trim()) {
+    args.push(String(indexFile).trim());
+  }
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

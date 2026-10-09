@@ -20,7 +20,7 @@ export const ImplodeDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Delimiter string to join imploded values with',
+    description: 'The separator string used to split/join values.',
     displayOptions: {
       show: {
         operation: ['implode'],

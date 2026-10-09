@@ -17,7 +17,8 @@ export async function executeDatefmt(
       { itemIndex },
     );
   }
-  const column = (this.getNodeParameter('column', itemIndex) as string) || '';
+
+  const column = (this.getNodeParameter('column', itemIndex, '') as string) || '';
   if (!column || !String(column).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -30,26 +31,41 @@ export async function executeDatefmt(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['datefmt'];
-  if (options.newColumn !== undefined && options.newColumn !== '') {
-    args.push('--new-column', String(options.newColumn));
+  if (options.batch !== undefined && options.batch !== '') {
+    args.push('--batch', String(options.batch));
   }
-  if (options.rename !== undefined && options.rename !== '') {
-    args.push('--rename', String(options.rename));
+  if (options.defaultTz !== undefined && options.defaultTz !== '') {
+    args.push('--default-tz', String(options.defaultTz));
   }
-  if (options.preferDmy === true) {
-    args.push('--prefer-dmy');
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
-  if (options.keepZeroTime === true) {
-    args.push('--keep-zero-time');
+  if (options.formatstr !== undefined && options.formatstr !== '') {
+    args.push('--formatstr', String(options.formatstr));
   }
   if (options.inputTz !== undefined && options.inputTz !== '') {
     args.push('--input-tz', String(options.inputTz));
   }
+  if (options.keepZeroTime === true) {
+    args.push('--keep-zero-time');
+  }
+  if (options.newColumn !== undefined && options.newColumn !== '') {
+    args.push('--new-column', String(options.newColumn));
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
   if (options.outputTz !== undefined && options.outputTz !== '') {
     args.push('--output-tz', String(options.outputTz));
   }
-  if (options.defaultTz !== undefined && options.defaultTz !== '') {
-    args.push('--default-tz', String(options.defaultTz));
+  if (options.preferDmy === true) {
+    args.push('--prefer-dmy');
+  }
+  if (options.rename !== undefined && options.rename !== '') {
+    args.push('--rename', String(options.rename));
+  }
+  if (options.tsResolution !== undefined && options.tsResolution !== '') {
+    args.push('--ts-resolution', String(options.tsResolution));
   }
   if (options.utc === true) {
     args.push('--utc');
@@ -57,27 +73,6 @@ export async function executeDatefmt(
   if (options.zulu === true) {
     args.push('--zulu');
   }
-  if (options.tsResolution !== undefined && options.tsResolution !== '') {
-    args.push('--ts-resolution', String(options.tsResolution));
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.batch !== undefined && options.batch !== '') {
-    args.push('--batch', String(options.batch));
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
-  }
-
-  args.push(String(column));
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -88,11 +83,10 @@ export async function executeDatefmt(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(column).trim());
   args.push(inputPath);
 
   const qsvBin =

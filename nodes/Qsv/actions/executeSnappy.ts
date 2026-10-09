@@ -17,28 +17,26 @@ export async function executeSnappy(
       { itemIndex },
     );
   }
+
+  const subcommand = (this.getNodeParameter('subcommand', itemIndex, '') as string) || '';
+  if (!subcommand || !String(subcommand).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "Subcommand" is required for snappy.',
+      { itemIndex },
+    );
+  }
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['snappy'];
-  if (options.userAgent !== undefined && options.userAgent !== '') {
-    args.push('--user-agent', String(options.userAgent));
+  if (subcommand && String(subcommand).trim()) {
+    args.push(String(subcommand).trim());
   }
   if (options.timeout !== undefined && options.timeout !== '') {
     args.push('--timeout', String(options.timeout));
   }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.quiet === true) {
-    args.push('--quiet');
-  }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -49,11 +47,9 @@ export async function executeSnappy(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

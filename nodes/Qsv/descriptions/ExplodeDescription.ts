@@ -20,7 +20,7 @@ export const ExplodeDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Column name or index to explode',
+    description: 'The column to operate on. See \'qsv select --help\' for the selection syntax.',
     displayOptions: {
       show: {
         operation: ['explode'],
@@ -33,7 +33,7 @@ export const ExplodeDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Delimiter string to explode rows on',
+    description: 'The separator string used to split/join values.',
     displayOptions: {
       show: {
         operation: ['explode'],

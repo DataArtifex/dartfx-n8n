@@ -17,58 +17,51 @@ export async function executeSniff(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['sniff'];
-  if (options.sample !== undefined && options.sample !== '') {
-    args.push('--sample', String(options.sample));
-  }
-  if (options.preferDmy === true) {
-    args.push('--prefer-dmy');
-  }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
-  }
-  if (options.quote !== undefined && options.quote !== '') {
-    args.push('--quote', String(options.quote));
-  }
-  if (options.json === true) {
-    args.push('--json');
-  }
-  if (options.prettyJson === true) {
-    args.push('--pretty-json');
-  }
-  if (options.saveUrlsample !== undefined && options.saveUrlsample !== '') {
-    args.push('--save-urlsample', String(options.saveUrlsample));
-  }
-  if (options.timeout !== undefined && options.timeout !== '') {
-    args.push('--timeout', String(options.timeout));
-  }
-  if (options.userAgent !== undefined && options.userAgent !== '') {
-    args.push('--user-agent', String(options.userAgent));
-  }
-  if (options.statsTypes === true) {
-    args.push('--stats-types');
-  }
-  if (options.noInfer === true) {
-    args.push('--no-infer');
-  }
-  if (options.justMime === true) {
-    args.push('--just-mime');
-  }
-  if (options.quick === true) {
-    args.push('--quick');
   }
   if (options.harvestMode === true) {
     args.push('--harvest-mode');
   }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
+  if (options.json === true) {
+    args.push('--json');
   }
-
-
+  if (options.justMime === true) {
+    args.push('--just-mime');
+  }
+  if (options.noInfer === true) {
+    args.push('--no-infer');
+  }
+  if (options.preferDmy === true) {
+    args.push('--prefer-dmy');
+  }
+  if (options.prettyJson === true) {
+    args.push('--pretty-json');
+  }
+  if (options.quick === true) {
+    args.push('--quick');
+  }
+  if (options.quote !== undefined && options.quote !== '') {
+    args.push('--quote', String(options.quote));
+  }
+  if (options.sample !== undefined && options.sample !== '') {
+    args.push('--sample', String(options.sample));
+  }
+  if (options.saveUrlsample !== undefined && options.saveUrlsample !== '') {
+    args.push('--save-urlsample', String(options.saveUrlsample));
+  }
+  if (options.statsTypes === true) {
+    args.push('--stats-types');
+  }
+  if (options.timeout !== undefined && options.timeout !== '') {
+    args.push('--timeout', String(options.timeout));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -79,11 +72,6 @@ export async function executeSniff(
     });
     args.push(...parsedArgs);
   }
-
-  if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
-  }
-
   args.push(inputPath);
 
   const qsvBin =

@@ -17,37 +17,57 @@ export async function executeReadstat(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['readstat'];
-  if (options.metadata !== undefined && options.metadata !== '') {
-    args.push('--metadata', String(options.metadata));
-  }
-  if (options.valueLabels === true) {
-    args.push('--value-labels');
-  }
-  if (options.sentinelsAs !== undefined && options.sentinelsAs !== '') {
-    args.push('--sentinels-as', String(options.sentinelsAs));
-  }
-  if (options.sentinelsEmbedded === true) {
-    args.push('--sentinels-embedded');
-  }
-  if (options.sentinelsColumns !== undefined && options.sentinelsColumns !== '') {
-    args.push('--sentinels-columns', String(options.sentinelsColumns));
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
   if (options.batch !== undefined && options.batch !== '') {
     args.push('--batch', String(options.batch));
+  }
+  if (options.compressNumeric === true) {
+    args.push('--compress-numeric');
   }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
-
-
+  if (options.dictionary !== undefined && options.dictionary !== '') {
+    args.push('--dictionary', String(options.dictionary));
+  }
+  if (options.limit !== undefined && options.limit !== '') {
+    args.push('--limit', String(options.limit));
+  }
+  if (options.metadata !== undefined && options.metadata !== '') {
+    args.push('--metadata', String(options.metadata));
+  }
+  if (options.offset !== undefined && options.offset !== '') {
+    args.push('--offset', String(options.offset));
+  }
+  if (options.sample !== undefined && options.sample !== '') {
+    args.push('--sample', String(options.sample));
+  }
+  if (options.sas7bcat !== undefined && options.sas7bcat !== '') {
+    args.push('--sas7bcat', String(options.sas7bcat));
+  }
+  if (options.seed !== undefined && options.seed !== '') {
+    args.push('--seed', String(options.seed));
+  }
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
+  }
+  if (options.sentinelsAs !== undefined && options.sentinelsAs !== '') {
+    args.push('--sentinels-as', String(options.sentinelsAs));
+  }
+  if (options.sentinelsColumns !== undefined && options.sentinelsColumns !== '') {
+    args.push('--sentinels-columns', String(options.sentinelsColumns));
+  }
+  if (options.sentinelsEmbedded === true) {
+    args.push('--sentinels-embedded');
+  }
+  if (options.valueLabels === true) {
+    args.push('--value-labels');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -58,11 +78,9 @@ export async function executeReadstat(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

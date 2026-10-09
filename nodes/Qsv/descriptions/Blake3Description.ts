@@ -66,13 +66,6 @@ export const Blake3Description: INodeProperties[] = [
       description: 'Use the key derivation mode, with the given context string. Cannot be used with --keyed.',
     },
     {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel for hashing. When not set, uses the number of CPUs detected. Set to 1 to disable multithreading.',
-    },
-    {
       displayName: 'Keyed',
       name: 'keyed',
       type: 'boolean',
@@ -82,9 +75,9 @@ export const Blake3Description: INodeProperties[] = [
     {
       displayName: 'Length',
       name: 'length',
-      type: 'string',
-      default: '',
-      description: 'The number of output bytes, before hex encoding. [default: 32]',
+      type: 'number',
+      default: 32,
+      description: 'The number of output bytes, before hex encoding.',
     },
     {
       displayName: 'No Mmap',
@@ -99,13 +92,6 @@ export const Blake3Description: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Omit filenames in the output.',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Skip printing OK for each checked file. Must be used with --check.',
     },
     {
       displayName: 'Raw',

@@ -17,20 +17,21 @@ export async function executeExclude(
       { itemIndex },
     );
   }
-  const columns1 = (this.getNodeParameter('columns1', itemIndex) as string) || '';
-  const columns2 = (this.getNodeParameter('columns2', itemIndex) as string) || '';
-  const input2 = (this.getNodeParameter('input2', itemIndex) as string) || '';
+
+  const columns1 = (this.getNodeParameter('columns1', itemIndex, '') as string) || '';
+  const columns2 = (this.getNodeParameter('columns2', itemIndex, '') as string) || '';
+  const input2 = (this.getNodeParameter('input2', itemIndex, '') as string) || '';
   if (!columns1 || !String(columns1).trim()) {
     throw new NodeOperationError(
       this.getNode(),
-      'Parameter "First File Exclude Columns" is required for exclude.',
+      'Parameter "First File Join Columns" is required for exclude.',
       { itemIndex },
     );
   }
   if (!columns2 || !String(columns2).trim()) {
     throw new NodeOperationError(
       this.getNode(),
-      'Parameter "Second File Exclude Columns" is required for exclude.',
+      'Parameter "Second File Join Columns" is required for exclude.',
       { itemIndex },
     );
   }
@@ -46,24 +47,21 @@ export async function executeExclude(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['exclude'];
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
   if (options.ignoreCase === true) {
     args.push('--ignore-case');
   }
   if (options.invert === true) {
     args.push('--invert');
   }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
   if (options.memcheck === true) {
     args.push('--memcheck');
   }
-
-  args.push(columns1.trim(), inputPath, columns2.trim(), input2.trim());
-
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -74,10 +72,13 @@ export async function executeExclude(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
+  args.push(String(columns1).trim());
+  args.push(inputPath);
+  args.push(String(columns2).trim());
+  args.push(String(input2).trim());
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

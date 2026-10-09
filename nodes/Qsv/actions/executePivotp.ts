@@ -17,57 +17,45 @@ export async function executePivotp(
       { itemIndex },
     );
   }
-  const onCols = (this.getNodeParameter('onCols', itemIndex) as string) || '';
-  if (!onCols || !String(onCols).trim()) {
-    throw new NodeOperationError(
-      this.getNode(),
-      'Parameter "On Columns" is required for pivotp.',
-      { itemIndex },
-    );
-  }
+
+  const onCols = (this.getNodeParameter('onCols', itemIndex, '') as string) || '';
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['pivotp'];
-  if (options.index !== undefined && options.index !== '') {
-    args.push('--index', String(options.index));
-  }
-  if (options.values !== undefined && options.values !== '') {
-    args.push('--values', String(options.values));
-  }
   if (options.agg !== undefined && options.agg !== '') {
     args.push('--agg', String(options.agg));
-  }
-  if (options.sortColumns === true) {
-    args.push('--sort-columns');
-  }
-  if (options.maintainOrder === true) {
-    args.push('--maintain-order');
   }
   if (options.colSeparator !== undefined && options.colSeparator !== '') {
     args.push('--col-separator', String(options.colSeparator));
   }
-  if (options.validate === true) {
-    args.push('--validate');
-  }
-  if (options.maxColumns !== undefined && options.maxColumns !== '') {
-    args.push('--max-columns', String(options.maxColumns));
-  }
-  if (options.tryParsedates === true) {
-    args.push('--try-parsedates');
-  }
-  if (options.inferLen !== undefined && options.inferLen !== '') {
-    args.push('--infer-len', String(options.inferLen));
-  }
   if (options.decimalComma === true) {
     args.push('--decimal-comma');
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.grandTotal === true) {
+    args.push('--grand-total');
   }
   if (options.ignoreErrors === true) {
     args.push('--ignore-errors');
   }
-  if (options.grandTotal === true) {
-    args.push('--grand-total');
+  if (options.index !== undefined && options.index !== '') {
+    args.push('--index', String(options.index));
+  }
+  if (options.inferLen !== undefined && options.inferLen !== '') {
+    args.push('--infer-len', String(options.inferLen));
+  }
+  if (options.maintainOrder === true) {
+    args.push('--maintain-order');
+  }
+  if (options.maxColumns !== undefined && options.maxColumns !== '') {
+    args.push('--max-columns', String(options.maxColumns));
+  }
+  if (options.sortColumns === true) {
+    args.push('--sort-columns');
   }
   if (options.subtotal === true) {
     args.push('--subtotal');
@@ -75,15 +63,15 @@ export async function executePivotp(
   if (options.totalLabel !== undefined && options.totalLabel !== '') {
     args.push('--total-label', String(options.totalLabel));
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.tryParsedates === true) {
+    args.push('--try-parsedates');
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
+  if (options.validate === true) {
+    args.push('--validate');
   }
-
-  args.push(String(onCols));
-
+  if (options.values !== undefined && options.values !== '') {
+    args.push('--values', String(options.values));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -94,11 +82,12 @@ export async function executePivotp(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  if (onCols !== undefined && String(onCols).trim()) {
+    args.push(String(onCols).trim());
+  }
   args.push(inputPath);
 
   const qsvBin =

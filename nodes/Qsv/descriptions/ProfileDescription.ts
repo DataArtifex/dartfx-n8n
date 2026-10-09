@@ -32,7 +32,7 @@ export const ProfileDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv profile (Docs: https://github.com/dathere/qsv/blob/master/docs/help/profile.md)',
+    description: 'Additional raw command line arguments to pass to qsv profile [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/profile.md)',
     displayOptions: {
       show: {
         operation: ['profile'],
@@ -56,7 +56,7 @@ export const ProfileDescription: INodeProperties[] = [
       name: 'allowExternalValidator',
       type: 'boolean',
       default: false,
-      description: ' Opt in to spawning the validator binary declared by `validation.external` when the profile was loaded from an arbitrary YAML file. Bundled profiles (dcat-us-v3, dcat-ap-v3, croissant, geoconnex) always run their declared external validators because the profile content is vetted at qsv release time. Without this flag, file-loaded profiles emit a Recommended-severity warning instead of running the binary, so an untrusted YAML can\'t silently execute arbitrary commands. Default: off.',
+      description: 'Opt in to spawning the validator binary declared by `validation.external` when the profile was loaded from an arbitrary YAML file. Bundled profiles (dcat-us-v3, dcat-ap-v3, croissant, geoconnex) always run their declared external validators because the profile content is vetted at qsv release time. Without this flag, file-loaded profiles emit a Recommended-severity warning instead of running the binary, so an untrusted YAML can\'t silently execute arbitrary commands. Default: off.',
     },
     {
       displayName: 'Catalog',
@@ -75,8 +75,8 @@ export const ProfileDescription: INodeProperties[] = [
     {
       displayName: 'Dcat Discovery Timeout',
       name: 'dcatDiscoveryTimeout',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Per-request timeout for DCAT-markup discovery probes. Default: 5.',
     },
     {
@@ -106,13 +106,6 @@ export const ProfileDescription: INodeProperties[] = [
       type: 'string',
       default: '',
       description: 'JSON file providing seed values for the package / resource dicts plus optional JSON-Pointer overrides for the final projection block. Replaces the older --package-meta / --resource-meta flags. Top-level keys: `package`, `resource`, `dataset_info`. Each leaf value may be wrapped as {"value": ..., "force": true} to mark it as overriding any value discovered from URL DCAT markup AND any value qsv inferred. Force is honored across all three subtrees: dataset_info entries override their target path verbatim; package / resource entries route through the active profile\'s `field_mappings:` table (e.g. `package.title force=true` lands at `/projection/title`, beating inference and discovery). Forced values for slots the profile does not surface are silently dropped (no-op). See tests/resources/profile/dcat-init-context.README.md for a fully-populated example.',
-    },
-    {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel for the underlying stats/frequency passes. When not set, the number of jobs is set to the number of CPUs detected.',
     },
     {
       displayName: 'Memcheck',

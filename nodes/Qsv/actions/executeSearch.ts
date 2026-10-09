@@ -17,7 +17,8 @@ export async function executeSearch(
       { itemIndex },
     );
   }
-  const regex = (this.getNodeParameter('regex', itemIndex) as string) || '';
+
+  const regex = (this.getNodeParameter('regex', itemIndex, '') as string) || '';
   if (!regex || !String(regex).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -30,66 +31,54 @@ export async function executeSearch(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['search'];
-  if (options.ignoreCase === true) {
-    args.push('--ignore-case');
-  }
-  if (options.literal === true) {
-    args.push('--literal');
-  }
-  if (options.exact === true) {
-    args.push('--exact');
-  }
-  if (options.select !== undefined && options.select !== '') {
-    args.push('--select', String(options.select));
-  }
-  if (options.invertMatch === true) {
-    args.push('--invert-match');
-  }
-  if (options.unicode === true) {
-    args.push('--unicode');
-  }
-  if (options.flag !== undefined && options.flag !== '') {
-    args.push('--flag', String(options.flag));
-  }
-  if (options.quick === true) {
-    args.push('--quick');
-  }
-  if (options.previewMatch !== undefined && options.previewMatch !== '') {
-    args.push('--preview-match', String(options.previewMatch));
-  }
   if (options.count === true) {
     args.push('--count');
-  }
-  if (options.sizeLimit !== undefined && options.sizeLimit !== '') {
-    args.push('--size-limit', String(options.sizeLimit));
-  }
-  if (options.dfaSizeLimit !== undefined && options.dfaSizeLimit !== '') {
-    args.push('--dfa-size-limit', String(options.dfaSizeLimit));
-  }
-  if (options.json === true) {
-    args.push('--json');
-  }
-  if (options.notOne === true) {
-    args.push('--not-one');
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
   }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
+  if (options.dfaSizeLimit !== undefined && options.dfaSizeLimit !== '') {
+    args.push('--dfa-size-limit', String(options.dfaSizeLimit));
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
+  if (options.exact === true) {
+    args.push('--exact');
   }
-
-  args.push(String(regex));
-
+  if (options.flag !== undefined && options.flag !== '') {
+    args.push('--flag', String(options.flag));
+  }
+  if (options.ignoreCase === true) {
+    args.push('--ignore-case');
+  }
+  if (options.invertMatch === true) {
+    args.push('--invert-match');
+  }
+  if (options.json === true) {
+    args.push('--json');
+  }
+  if (options.literal === true) {
+    args.push('--literal');
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.notOne === true) {
+    args.push('--not-one');
+  }
+  if (options.previewMatch !== undefined && options.previewMatch !== '') {
+    args.push('--preview-match', String(options.previewMatch));
+  }
+  if (options.quick === true) {
+    args.push('--quick');
+  }
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
+  }
+  if (options.sizeLimit !== undefined && options.sizeLimit !== '') {
+    args.push('--size-limit', String(options.sizeLimit));
+  }
+  if (options.unicode === true) {
+    args.push('--unicode');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -100,11 +89,10 @@ export async function executeSearch(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(regex).trim());
   args.push(inputPath);
 
   const qsvBin =

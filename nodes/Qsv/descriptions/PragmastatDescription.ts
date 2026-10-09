@@ -32,7 +32,7 @@ export const PragmastatDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv pragmastat (Docs: https://github.com/dathere/qsv/blob/master/docs/help/pragmastat.md)',
+    description: 'Additional raw command line arguments to pass to qsv pragmastat [⚠️ High memory operation. ⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/pragmastat.md)',
     displayOptions: {
       show: {
         operation: ['pragmastat'],
@@ -80,13 +80,6 @@ export const PragmastatDescription: INodeProperties[] = [
       description: 'Force recomputing ps_* columns even if they already exist in the stats cache.',
     },
     {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.',
-    },
-    {
       displayName: 'Memcheck',
       name: 'memcheck',
       type: 'boolean',
@@ -96,9 +89,9 @@ export const PragmastatDescription: INodeProperties[] = [
     {
       displayName: 'Misrate',
       name: 'misrate',
-      type: 'string',
-      default: '',
-      description: 'Probability that bounds fail to contain the true parameter. Lower values produce wider bounds. Must be achievable for the given sample size. [default: 0.001]',
+      type: 'number',
+      default: 0.001,
+      description: 'Probability that bounds fail to contain the true parameter. Lower values produce wider bounds. Must be achievable for the given sample size.',
     },
     {
       displayName: 'No Bounds',
@@ -117,15 +110,15 @@ export const PragmastatDescription: INodeProperties[] = [
     {
       displayName: 'Round',
       name: 'round',
-      type: 'string',
-      default: '',
-      description: 'Round statistics to <n> decimal places. Rounding follows Midpoint Nearest Even (Bankers Rounding) rule. [default: 4]',
+      type: 'number',
+      default: 4,
+      description: 'Round statistics to <n> decimal places. Rounding follows Midpoint Nearest Even (Bankers Rounding) rule.',
     },
     {
       displayName: 'Seed',
       name: 'seed',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Seed for reproducible subsampling. If not specified, defaults to 42 when --subsample is used.',
     },
     {
@@ -146,14 +139,14 @@ export const PragmastatDescription: INodeProperties[] = [
       displayName: 'Stats Options',
       name: 'statsOptions',
       type: 'string',
-      default: '',
-      description: 'Options to pass to the stats command if baseline stats need to be generated. The options are passed as a single string that will be split by whitespace. [default: --infer-dates --infer-boolean --mad --quartiles --force --stats-jsonl]',
+      default: '--infer-dates --infer-boolean --mad --quartiles --force --stats-jsonl',
+      description: 'Options to pass to the stats command if baseline stats need to be generated. The options are passed as a single string that will be split by whitespace.',
     },
     {
       displayName: 'Subsample',
       name: 'subsample',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Randomly subsample N values per column before computing. Speeds up large datasets while maintaining statistical robustness. Recommended: 10000-50000 for exploratory analysis.',
     },
     {

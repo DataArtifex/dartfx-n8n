@@ -20,7 +20,7 @@ export const GeoconvertDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Format of input spatial file (e.g. geojson, shp, csv)',
+    description: 'Valid values are "geojson", "shp", and "csv"',
     displayOptions: {
       show: {
         operation: ['geoconvert'],
@@ -33,7 +33,7 @@ export const GeoconvertDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Format of output spatial file (e.g. geojson, shp, csv)',
+    description: 'Valid values are:',
     displayOptions: {
       show: {
         operation: ['geoconvert'],
@@ -100,8 +100,8 @@ export const GeoconvertDescription: INodeProperties[] = [
     {
       displayName: 'Max Length',
       name: 'maxLength',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'The maximum column length when the output format is CSV. Oftentimes, the geometry column is too long to fit in a CSV file, causing other tools like Python & PostgreSQL to fail. If a column is too long, it will be truncated to the specified length and an ellipsis ("...") will be appended.',
     },
     ],

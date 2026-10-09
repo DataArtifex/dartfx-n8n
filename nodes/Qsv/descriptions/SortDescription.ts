@@ -32,7 +32,7 @@ export const SortDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv sort (Docs: https://github.com/dathere/qsv/blob/master/docs/help/sort.md)',
+    description: 'Additional raw command line arguments to pass to qsv sort [⚠️ High memory operation.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/sort.md)',
     displayOptions: {
       show: {
         operation: ['sort'],
@@ -71,13 +71,6 @@ export const SortDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Compare strings disregarding case. Has no effect when numeric comparison is selected (i.e. when --numeric is used without --natural).',
-    },
-    {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.',
     },
     {
       displayName: 'Memcheck',
@@ -125,14 +118,14 @@ export const SortDescription: INodeProperties[] = [
       displayName: 'Rng',
       name: 'rng',
       type: 'string',
-      default: '',
-      description: 'The RNG algorithm to use if --random is set. Three RNGs are supported: * standard: Use the standard RNG. 1.5 GB/s throughput. * faster: Use faster RNG using the Xoshiro256Plus algorithm. 8 GB/s throughput. * cryptosecure: Use cryptographically secure HC128 algorithm. Recommended by eSTREAM (https://www.ecrypt.eu.org/stream/). 2.1 GB/s throughput though slow initialization. [default: standard]',
+      default: 'standard',
+      description: 'The RNG algorithm to use if --random is set. Three RNGs are supported: * standard: Use the standard RNG. 1.5 GB/s throughput. * faster: Use faster RNG using the Xoshiro256Plus algorithm. 8 GB/s throughput. * cryptosecure: Use cryptographically secure HC128 algorithm. Recommended by eSTREAM (https://www.ecrypt.eu.org/stream/). 2.1 GB/s throughput though slow initialization.',
     },
     {
       displayName: 'Seed',
       name: 'seed',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Random Number Generator (RNG) seed to use if --random is set',
     },
     {

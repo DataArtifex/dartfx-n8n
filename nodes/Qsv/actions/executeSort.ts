@@ -17,55 +17,51 @@ export async function executeSort(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['sort'];
-  if (options.select !== undefined && options.select !== '') {
-    args.push('--select', String(options.select));
-  }
-  if (options.numeric === true) {
-    args.push('--numeric');
-  }
-  if (options.natural === true) {
-    args.push('--natural');
-  }
-  if (options.reverse === true) {
-    args.push('--reverse');
-  }
-  if (options.ignoreCase === true) {
-    args.push('--ignore-case');
-  }
-  if (options.unique === true) {
-    args.push('--unique');
-  }
-  if (options.random === true) {
-    args.push('--random');
-  }
-  if (options.seed !== undefined && options.seed !== '') {
-    args.push('--seed', String(options.seed));
-  }
-  if (options.rng !== undefined && options.rng !== '') {
-    args.push('--rng', String(options.rng));
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.faster === true) {
     args.push('--faster');
   }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.ignoreCase === true) {
+    args.push('--ignore-case');
   }
   if (options.memcheck === true) {
     args.push('--memcheck');
   }
-
-
+  if (options.natural === true) {
+    args.push('--natural');
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.numeric === true) {
+    args.push('--numeric');
+  }
+  if (options.random === true) {
+    args.push('--random');
+  }
+  if (options.reverse === true) {
+    args.push('--reverse');
+  }
+  if (options.rng !== undefined && options.rng !== '') {
+    args.push('--rng', String(options.rng));
+  }
+  if (options.seed !== undefined && options.seed !== '') {
+    args.push('--seed', String(options.seed));
+  }
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
+  }
+  if (options.unique === true) {
+    args.push('--unique');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -76,11 +72,9 @@ export async function executeSort(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

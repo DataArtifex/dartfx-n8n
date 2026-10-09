@@ -75,8 +75,8 @@ export const ExtdedupDescription: INodeProperties[] = [
     {
       displayName: 'Memory Limit',
       name: 'memoryLimit',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'How much memory to use before deduping switches to a temporary file on disk (see --temp-dir). If less than 50, this is a percentage of total memory. If more than 50, this is the memory in MB to allocate, capped at 90 percent of total memory. Defaults to 100 MB. Raising this mostly just uses more memory, as deduping on disk needs far less memory per row.',
     },
     {
@@ -94,13 +94,6 @@ export const ExtdedupDescription: INodeProperties[] = [
       description: 'Do not write deduplicated output to <output>. Use this if you only want to know the duplicate count. Applies to both CSV MODE and LINE MODE.',
     },
     {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not print duplicate count to stderr.',
-    },
-    {
       displayName: 'Select',
       name: 'select',
       type: 'string',
@@ -112,7 +105,7 @@ export const ExtdedupDescription: INodeProperties[] = [
       name: 'tempDir',
       type: 'string',
       default: '',
-      description: 'Directory to store temporary hash table file. If not specified, defaults to operating system temp directory. CSV MODE ONLY:',
+      description: 'Directory to store temporary hash table file. If not specified, defaults to operating system temp directory.',
     },
     ],
   },

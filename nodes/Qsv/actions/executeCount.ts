@@ -17,13 +17,32 @@ export async function executeCount(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['count'];
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.flexible === true) {
+    args.push('--flexible');
+  }
   if (options.humanReadable === true) {
     args.push('--human-readable');
+  }
+  if (options.json === true) {
+    args.push('--json');
+  }
+  if (options.lowMemory === true) {
+    args.push('--low-memory');
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.noPolars === true) {
+    args.push('--no-polars');
   }
   if (options.width === true) {
     args.push('--width');
@@ -31,26 +50,6 @@ export async function executeCount(
   if (options.widthNoDelims === true) {
     args.push('--width-no-delims');
   }
-  if (options.json === true) {
-    args.push('--json');
-  }
-  if (options.noPolars === true) {
-    args.push('--no-polars');
-  }
-  if (options.lowMemory === true) {
-    args.push('--low-memory');
-  }
-  if (options.flexible === true) {
-    args.push('--flexible');
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -61,11 +60,6 @@ export async function executeCount(
     });
     args.push(...parsedArgs);
   }
-
-  if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
-  }
-
   args.push(inputPath);
 
   const qsvBin =

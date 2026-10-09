@@ -20,7 +20,7 @@ export const DatefmtDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Column name or index containing date/datetime strings to format',
+    description: 'The column/s to apply the date formats to. Note that the <column> argument supports multiple columns. See \'qsv select --help\' for the format details.',
     displayOptions: {
       show: {
         operation: ['datefmt'],
@@ -44,7 +44,7 @@ export const DatefmtDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv datefmt (Docs: https://github.com/dathere/qsv/blob/master/docs/help/datefmt.md)',
+    description: 'Additional raw command line arguments to pass to qsv datefmt [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/datefmt.md)',
     displayOptions: {
       show: {
         operation: ['datefmt'],
@@ -66,9 +66,9 @@ export const DatefmtDescription: INodeProperties[] = [
     {
       displayName: 'Batch',
       name: 'batch',
-      type: 'string',
-      default: '',
-      description: 'The number of rows per batch to load into memory, before running in parallel. Automatically determined for CSV files with more than 50000 rows. Set to 0 to load all rows in one batch. Set to 1 to force batch optimization even for files with less than 50000 rows. [default: 50000]',
+      type: 'number',
+      default: 50000,
+      description: 'The number of rows per batch to load into memory, before running in parallel. Automatically determined for CSV files with more than 50000 rows. Set to 0 to load all rows in one batch. Set to 1 to force batch optimization even for files with less than 50000 rows.',
     },
     {
       displayName: 'Default Tz',
@@ -85,18 +85,18 @@ export const DatefmtDescription: INodeProperties[] = [
       description: 'The field delimiter for reading CSV data. Must be a single character. (default: ,)',
     },
     {
+      displayName: 'Formatstr',
+      name: 'formatstr',
+      type: 'string',
+      default: '%+',
+      description: 'The date format to use for the datefmt operation. For formats, see https://docs.rs/chrono/latest/chrono/format/strftime/ Default to ISO 8601 / RFC 3339 date & time format - "%Y-%m-%dT%H:%M:%S%z" - e.g. 2001-07-08T00:34:60.026490+09:30',
+    },
+    {
       displayName: 'Input Tz',
       name: 'inputTz',
       type: 'string',
-      default: '',
-      description: 'The timezone to use for the input date if the date does not have timezone specified. The timezone must be a valid IANA timezone name or the string "local" for the local timezone. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for a list of valid timezone names. [default: UTC]',
-    },
-    {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.',
+      default: 'UTC',
+      description: 'The timezone to use for the input date if the date does not have timezone specified. The timezone must be a valid IANA timezone name or the string "local" for the local timezone. See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for a list of valid timezone names.',
     },
     {
       displayName: 'Keep Zero Time',
@@ -123,8 +123,8 @@ export const DatefmtDescription: INodeProperties[] = [
       displayName: 'Output Tz',
       name: 'outputTz',
       type: 'string',
-      default: '',
-      description: 'The timezone to use for the output date. The timezone must be a valid IANA timezone name or the string "local". [default: UTC]',
+      default: 'UTC',
+      description: 'The timezone to use for the output date. The timezone must be a valid IANA timezone name or the string "local".',
     },
     {
       displayName: 'Prefer Dmy',
@@ -132,13 +132,6 @@ export const DatefmtDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Prefer to parse dates in dmy format. Otherwise, use mdy format.',
-    },
-    {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show progress bars. Not valid for stdin.',
     },
     {
       displayName: 'Rename',
@@ -151,8 +144,8 @@ export const DatefmtDescription: INodeProperties[] = [
       displayName: 'Ts Resolution',
       name: 'tsResolution',
       type: 'string',
-      default: '',
-      description: 'The resolution to use when parsing Unix timestamps. Valid values are "sec", "milli", "micro", "nano". [default: sec]',
+      default: 'sec',
+      description: 'The resolution to use when parsing Unix timestamps. Valid values are "sec", "milli", "micro", "nano".',
     },
     {
       displayName: 'Utc',

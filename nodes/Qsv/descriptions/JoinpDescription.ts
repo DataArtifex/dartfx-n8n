@@ -18,9 +18,9 @@ export const JoinpDescription: INodeProperties[] = [
     displayName: 'First File Join Columns',
     name: 'columns1',
     type: 'string',
-    required: true,
+    required: false,
     default: '',
-    description: 'Join columns for first input file (e.g. id or 1)',
+    description: 'Column selection for the first input. See \'qsv select --help\' for the selection syntax.',
     displayOptions: {
       show: {
         operation: ['joinp'],
@@ -31,9 +31,9 @@ export const JoinpDescription: INodeProperties[] = [
     displayName: 'Second File Join Columns',
     name: 'columns2',
     type: 'string',
-    required: true,
+    required: false,
     default: '',
-    description: 'Join columns for second input file (e.g. id or 1)',
+    description: 'Column selection for the second input. See \'qsv select --help\' for the selection syntax.',
     displayOptions: {
       show: {
         operation: ['joinp'],
@@ -46,7 +46,7 @@ export const JoinpDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Path to second input CSV file on disk',
+    description: 'The second input CSV file.',
     displayOptions: {
       show: {
         operation: ['joinp'],
@@ -106,9 +106,9 @@ export const JoinpDescription: INodeProperties[] = [
     {
       displayName: 'Cache Schema',
       name: 'cacheSchema',
-      type: 'string',
-      default: '',
-      description: 'Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0. [default: 0]',
+      type: 'number',
+      default: 0,
+      description: 'Create and cache Polars schema JSON files. Ignored when --infer-len is 0. ‎ -2: treat all columns as String. A Polars schema file is created & cached. ‎ -1: treat all columns as String. No Polars schema file is created. ‎  0: do not cache Polars schema. Uses --infer-len to infer schema. ‎  1: cache Polars schema with the following behavior: * If schema file exists and is newer than input: use cached schema * If schema file missing/outdated and stats cache exists: derive schema from stats and cache it * If no schema or stats cache: infer schema using --infer-len and cache the result Schema files use the same name as input with .pschema.json extension (e.g., data.csv -> data.pschema.json). ‎NOTE: If the input files have pschema.json files that are newer or created at the same time as the input files, they will be used to inform the join operation regardless of the value of --cache-schema unless --infer-len is 0.',
     },
     {
       displayName: 'Coalesce',
@@ -169,8 +169,8 @@ export const JoinpDescription: INodeProperties[] = [
     {
       displayName: 'Float Precision',
       name: 'floatPrecision',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'The number of digits of precision to use when writing floats. (default: 6)',
     },
     {
@@ -204,9 +204,9 @@ export const JoinpDescription: INodeProperties[] = [
     {
       displayName: 'Infer Len',
       name: 'inferLen',
-      type: 'string',
-      default: '',
-      description: 'The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0. [default: 10000]',
+      type: 'number',
+      default: 10000,
+      description: 'The number of rows to scan when inferring the schema of the CSV. Set to 0 to do a full table scan (warning: very slow). Only used when --cache-schema is 0 or 1 and no cached schema exists or when --infer-len is 0.',
     },
     {
       displayName: 'Left',
@@ -214,6 +214,13 @@ export const JoinpDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Do a \'left outer\' join. This returns all rows in first CSV data set, including rows with no corresponding row in the second data set. When no corresponding row exists, it is padded out with empty fields.',
+    },
+    {
+      displayName: 'Left_by',
+      name: 'left_by',
+      type: 'string',
+      default: '',
+      description: 'Do an \'asof_by\' join - a special implementation of the asof join that searches for the nearest keys within a subgroup set by the asof_by columns. This specifies the column/s for the left CSV. Columns are referenced by name. Specify multiple columns by separating them with a comma.',
     },
     {
       displayName: 'Left Anti',
@@ -230,13 +237,6 @@ export const JoinpDescription: INodeProperties[] = [
       description: 'This returns only the rows in the first CSV data set that have a corresponding row in the second data set. The output schema is the same as the first data set.',
     },
     {
-      displayName: 'Left_by',
-      name: 'left_by',
-      type: 'string',
-      default: '',
-      description: 'Do an \'asof_by\' join - a special implementation of the asof join that searches for the nearest keys within a subgroup set by the asof_by columns. This specifies the column/s for the left CSV. Columns are referenced by name. Specify multiple columns by separating them with a comma.',
-    },
-    {
       displayName: 'Low Memory',
       name: 'lowMemory',
       type: 'boolean',
@@ -247,8 +247,8 @@ export const JoinpDescription: INodeProperties[] = [
       displayName: 'Maintain Order',
       name: 'maintainOrder',
       type: 'string',
-      default: '',
-      description: 'Which row order to preserve, if any. Valid values are: none, left, right, left_right, right_left Defaults to "none", which lets the engine emit rows in whatever order it finishes them - faster on large joins, but the output is NOT reproducible: the same invocation can return the same rows in a different order each run. "left" orders by the left row only, so when one left row matches several right rows those matches are tied and their relative order is still unspecified. Use "left_right" (or "right_left") for a fully deterministic, byte-repeatable order. Only inner, left, right and full joins can maintain order; cross, non-equi and asof joins ignore this option. [default: none]',
+      default: 'none',
+      description: 'Which row order to preserve, if any. Valid values are: none, left, right, left_right, right_left Defaults to "none", which lets the engine emit rows in whatever order it finishes them - faster on large joins, but the output is NOT reproducible: the same invocation can return the same rows in a different order each run. "left" orders by the left row only, so when one left row matches several right rows those matches are tied and their relative order is still unspecified. Use "left_right" (or "right_left") for a fully deterministic, byte-repeatable order. Only inner, left, right and full joins can maintain order; cross, non-equi and asof joins ignore this option.',
     },
     {
       displayName: 'No Optimizations',
@@ -275,15 +275,15 @@ export const JoinpDescription: INodeProperties[] = [
       displayName: 'Norm Unicode',
       name: 'normUnicode',
       type: 'string',
-      default: '',
-      description: 'When set, join keys are Unicode normalized. Valid values are: nfc - Normalization Form C nfd - Normalization Form D nfkc - Normalization Form KC nfkd - Normalization Form KD none - No normalization is performed. [default: none]',
+      default: 'none',
+      description: 'When set, join keys are Unicode normalized. Valid values are: nfc - Normalization Form C nfd - Normalization Form D nfkc - Normalization Form KC nfkd - Normalization Form KD none - No normalization is performed.',
     },
     {
       displayName: 'Null Value',
       name: 'nullValue',
       type: 'string',
       default: '',
-      description: 'The string to use when writing null values. (default: <empty string>) Note that transformations are applied to TEMPORARY join key columns. The original columns are not modified and the TEMPORARY columns are removed after the join.',
+      description: 'The string to use when writing null values. (default: <empty string>)',
     },
     {
       displayName: 'Nulls',
@@ -293,18 +293,18 @@ export const JoinpDescription: INodeProperties[] = [
       description: 'When set, joins will work on empty fields. Otherwise, empty fields are completely ignored.',
     },
     {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not return join shape to stderr.',
-    },
-    {
       displayName: 'Right',
       name: 'right',
       type: 'boolean',
       default: false,
       description: 'Do a \'right outer\' join. This returns all rows in second CSV data set, including rows with no corresponding row in the first data set. When no corresponding row exists, it is padded out with empty fields. (This is the reverse of \'outer left\'.)',
+    },
+    {
+      displayName: 'Right_by',
+      name: 'right_by',
+      type: 'string',
+      default: '',
+      description: 'Do an \'asof_by\' join. This specifies the column/s for the right CSV.',
     },
     {
       displayName: 'Right Anti',
@@ -321,13 +321,6 @@ export const JoinpDescription: INodeProperties[] = [
       description: 'This returns only the rows in the second CSV data set that have a corresponding row in the first data set. The output schema is the same as the second data set.',
     },
     {
-      displayName: 'Right_by',
-      name: 'right_by',
-      type: 'string',
-      default: '',
-      description: 'Do an \'asof_by\' join. This specifies the column/s for the right CSV.',
-    },
-    {
       displayName: 'Sql Filter',
       name: 'sqlFilter',
       type: 'string',
@@ -338,8 +331,8 @@ export const JoinpDescription: INodeProperties[] = [
       displayName: 'Strategy',
       name: 'strategy',
       type: 'string',
-      default: '',
-      description: 'The strategy to use for the asof join: backward - For each row in the first CSV data set, we find the last row in the second data set whose key is less than the key in the first data set (or <= with --allow-exact-matches). forward -  For each row in the first CSV data set, we find the first row in the second data set whose key is greater than the key in the first data set (or >= with --allow-exact-matches). nearest -  selects the last row in the second data set whose value is nearest to the value in the first data set. [default: backward]',
+      default: 'backward',
+      description: 'The strategy to use for the asof join: backward - For each row in the first CSV data set, we find the last row in the second data set whose key is less than the key in the first data set (or <= with --allow-exact-matches). forward -  For each row in the first CSV data set, we find the first row in the second data set whose key is greater than the key in the first data set (or >= with --allow-exact-matches). nearest -  selects the last row in the second data set whose value is nearest to the value in the first data set.',
     },
     {
       displayName: 'Streaming',
@@ -360,7 +353,7 @@ export const JoinpDescription: INodeProperties[] = [
       name: 'tolerance',
       type: 'string',
       default: '',
-      description: 'The tolerance for the nearest asof join. This is only used when the nearest strategy is used. The tolerance is a positive integer that specifies the maximum number of rows to search for a match. If the join is done on a column of type Date, Time or DateTime, then the tolerance is interpreted using the following language: 1d - 1 day 1h - 1 hour 1m - 1 minute 1s - 1 second 1ms - 1 millisecond 1us - 1 microsecond 1ns - 1 nanosecond 1w - 1 week 1mo - 1 month 1q - 1 quarter 1y - 1 year 1i - 1 index count Or combine them: “3d12h4m25s” # 3 days, 12 hours, 4 minutes, and 25 seconds Suffix with “_saturating” to indicate that dates too large for their month should saturate at the largest date (e.g. 2022-02-29 -> 2022-02-28) instead of erroring.',
+      description: 'The tolerance for the nearest asof join. This is only used when the nearest strategy is used. The tolerance is a positive integer that specifies the maximum number of rows to search for a match.',
     },
     {
       displayName: 'Try Parsedates',
@@ -373,8 +366,8 @@ export const JoinpDescription: INodeProperties[] = [
       displayName: 'Validate',
       name: 'validate',
       type: 'string',
-      default: '',
-      description: 'Validate the join keys BEFORE performing the join. Valid values are: none - No validation is performed. onetomany - join keys are unique in the left data set. manytoone - join keys are unique in the right data set. onetoone - join keys are unique in both left & right data sets. [default: none]',
+      default: 'none',
+      description: 'Validate the join keys BEFORE performing the join. Valid values are: none - No validation is performed. onetomany - join keys are unique in the left data set. manytoone - join keys are unique in the right data set. onetoone - join keys are unique in both left & right data sets.',
     },
     ],
   },

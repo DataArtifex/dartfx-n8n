@@ -15,12 +15,12 @@ export const ExcludeDescription: INodeProperties[] = [
     },
   },
   {
-    displayName: 'First File Exclude Columns',
+    displayName: 'First File Join Columns',
     name: 'columns1',
     type: 'string',
     required: true,
     default: '',
-    description: 'Columns in first input file to match on',
+    description: 'Column selection for the first input. See \'qsv select --help\' for the selection syntax.',
     displayOptions: {
       show: {
         operation: ['exclude'],
@@ -28,12 +28,12 @@ export const ExcludeDescription: INodeProperties[] = [
     },
   },
   {
-    displayName: 'Second File Exclude Columns',
+    displayName: 'Second File Join Columns',
     name: 'columns2',
     type: 'string',
     required: true,
     default: '',
-    description: 'Columns in second input file to match on',
+    description: 'Column selection for the second input. See \'qsv select --help\' for the selection syntax.',
     displayOptions: {
       show: {
         operation: ['exclude'],
@@ -46,7 +46,7 @@ export const ExcludeDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Path to second input CSV file on disk',
+    description: 'is the file containing the data to be removed from <input1> e.g. \'qsv exclude id records.csv id previously-processed.csv\' Either input may be set to `-` to read from stdin, but not both.',
     displayOptions: {
       show: {
         operation: ['exclude'],

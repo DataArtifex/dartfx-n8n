@@ -17,8 +17,9 @@ export async function executeForeach(
       { itemIndex },
     );
   }
-  const column = (this.getNodeParameter('column', itemIndex) as string) || '';
-  const command = (this.getNodeParameter('command', itemIndex) as string) || '';
+
+  const column = (this.getNodeParameter('column', itemIndex, '') as string) || '';
+  const command = (this.getNodeParameter('command', itemIndex, '') as string) || '';
   if (!column || !String(column).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -38,28 +39,21 @@ export async function executeForeach(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['foreach'];
-  if (options.unify === true) {
-    args.push('--unify');
-  }
-  if (options.newColumn !== undefined && options.newColumn !== '') {
-    args.push('--new-column', String(options.newColumn));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.dryRun !== undefined && options.dryRun !== '') {
     args.push('--dry-run', String(options.dryRun));
   }
+  if (options.newColumn !== undefined && options.newColumn !== '') {
+    args.push('--new-column', String(options.newColumn));
+  }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.unify === true) {
+    args.push('--unify');
   }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
-  }
-
-  args.push(String(column));
-  args.push(String(command));
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -70,11 +64,8 @@ export async function executeForeach(
     });
     args.push(...parsedArgs);
   }
-
-  if (outputPath.trim()) {
-    args.push('--output', outputPath.trim());
-  }
-
+  args.push(String(column).trim());
+  args.push(String(command).trim());
   args.push(inputPath);
 
   const qsvBin =

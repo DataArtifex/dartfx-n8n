@@ -18,9 +18,9 @@ export const PivotpDescription: INodeProperties[] = [
     displayName: 'On Columns',
     name: 'onCols',
     type: 'string',
-    required: true,
+    required: false,
     default: '',
-    description: 'Columns to aggregate on for pivoting',
+    description: 'The column(s) to pivot on (creates new columns). When omitted, pivotp runs in group-by mode.',
     displayOptions: {
       show: {
         operation: ['pivotp'],
@@ -67,15 +67,15 @@ export const PivotpDescription: INodeProperties[] = [
       displayName: 'Agg',
       name: 'agg',
       type: 'string',
-      default: '',
-      description: 'The aggregation function to use: first - First value encountered last - Last value encountered sum - Sum of values min - Minimum value max - Maximum value mean - Average value median - Median value quantile@<p> - Quantile at probability p in [0, 1] using linear interpolation. Alias: q@<p>. Examples: quantile@0.95, q@0.5 (q@0.5 is equivalent to median for even-length groups). len - Count of values item - Get single value from group. Raises error if there are multiple values. smart - use value column data type & statistics to pick an aggregation. Always uses type, cardinality, sparsity, CV, sign distribution (n_negative/n_positive), and sort_order from streaming stats. When the stats cache includes non-streaming stats (from a prior `stats --everything` or `stats --mode --quartiles`), also uses skewness and mode_count. When moarstats has been run, also leverages outlier profile, Pearson skewness, MAD/stddev ratio, median/mean ratio, and quartile coefficient of dispersion for smarter selection. With moarstats --advanced, also uses kurtosis, bimodality (bimodality coefficient >= 0.555 with negative excess kurtosis), entropy and Gini coefficient. For Date/DateTime values, checks sparsity and sort order. Will only work if there is one value column, otherwise it falls back to `first` [default: smart]',
+      default: 'smart',
+      description: 'The aggregation function to use: first - First value encountered last - Last value encountered sum - Sum of values min - Minimum value max - Maximum value mean - Average value median - Median value quantile@<p> - Quantile at probability p in [0, 1] using linear interpolation. Alias: q@<p>. Examples: quantile@0.95, q@0.5 (q@0.5 is equivalent to median for even-length groups). len - Count of values item - Get single value from group. Raises error if there are multiple values. smart - use value column data type & statistics to pick an aggregation. Always uses type, cardinality, sparsity, CV, sign distribution (n_negative/n_positive), and sort_order from streaming stats. When the stats cache includes non-streaming stats (from a prior `stats --everything` or `stats --mode --quartiles`), also uses skewness and mode_count. When moarstats has been run, also leverages outlier profile, Pearson skewness, MAD/stddev ratio, median/mean ratio, and quartile coefficient of dispersion for smarter selection. With moarstats --advanced, also uses kurtosis, bimodality (bimodality coefficient >= 0.555 with negative excess kurtosis), entropy and Gini coefficient. For Date/DateTime values, checks sparsity and sort order. Will only work if there is one value column, otherwise it falls back to `first`',
     },
     {
       displayName: 'Col Separator',
       name: 'colSeparator',
       type: 'string',
-      default: '',
-      description: 'The separator in generated column names in case of multiple --values columns. (pivot mode only; ignored in group-by mode) [default: _]',
+      default: '_',
+      description: 'The separator in generated column names in case of multiple --values columns. (pivot mode only; ignored in group-by mode)',
     },
     {
       displayName: 'Decimal Comma',
@@ -115,9 +115,9 @@ export const PivotpDescription: INodeProperties[] = [
     {
       displayName: 'Infer Len',
       name: 'inferLen',
-      type: 'string',
-      default: '',
-      description: 'Number of rows to scan when inferring schema. Set to 0 to scan entire file. [default: 10000]',
+      type: 'number',
+      default: 10000,
+      description: 'Number of rows to scan when inferring schema. Set to 0 to scan entire file.',
     },
     {
       displayName: 'Maintain Order',
@@ -129,16 +129,9 @@ export const PivotpDescription: INodeProperties[] = [
     {
       displayName: 'Max Columns',
       name: 'maxColumns',
-      type: 'string',
-      default: '',
-      description: 'Maximum number of columns the pivot may create before it is refused. Guards against pivoting on a high-cardinality column, which can exhaust memory. Unlike --validate, this ALWAYS runs. Set to 0 for no limit, for a deliberately wide pivot. (pivot mode only; ignored in group-by mode) [default: 100000]',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not return smart aggregation chosen nor pivot result shape to stderr.',
+      type: 'number',
+      default: 100000,
+      description: 'Maximum number of columns the pivot may create before it is refused. Guards against pivoting on a high-cardinality column, which can exhaust memory. Unlike --validate, this ALWAYS runs. Set to 0 for no limit, for a deliberately wide pivot. (pivot mode only; ignored in group-by mode)',
     },
     {
       displayName: 'Sort Columns',
@@ -159,7 +152,7 @@ export const PivotpDescription: INodeProperties[] = [
       name: 'totalLabel',
       type: 'string',
       default: 'Total',
-      description: 'Custom label for total rows. [default: Total]',
+      description: 'Custom label for total rows.',
     },
     {
       displayName: 'Try Parsedates',

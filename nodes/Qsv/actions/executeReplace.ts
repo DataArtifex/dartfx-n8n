@@ -17,8 +17,9 @@ export async function executeReplace(
       { itemIndex },
     );
   }
-  const pattern = (this.getNodeParameter('pattern', itemIndex) as string) || '';
-  const replacement = (this.getNodeParameter('replacement', itemIndex) as string) || '';
+
+  const pattern = (this.getNodeParameter('pattern', itemIndex, '') as string) || '';
+  const replacement = (this.getNodeParameter('replacement', itemIndex, '') as string) || '';
   if (!pattern || !String(pattern).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -38,49 +39,36 @@ export async function executeReplace(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['replace'];
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.dfaSizeLimit !== undefined && options.dfaSizeLimit !== '') {
+    args.push('--dfa-size-limit', String(options.dfaSizeLimit));
+  }
+  if (options.exact === true) {
+    args.push('--exact');
+  }
   if (options.ignoreCase === true) {
     args.push('--ignore-case');
   }
   if (options.literal === true) {
     args.push('--literal');
   }
-  if (options.exact === true) {
-    args.push('--exact');
-  }
-  if (options.select !== undefined && options.select !== '') {
-    args.push('--select', String(options.select));
-  }
-  if (options.unicode === true) {
-    args.push('--unicode');
-  }
-  if (options.sizeLimit !== undefined && options.sizeLimit !== '') {
-    args.push('--size-limit', String(options.sizeLimit));
-  }
-  if (options.dfaSizeLimit !== undefined && options.dfaSizeLimit !== '') {
-    args.push('--dfa-size-limit', String(options.dfaSizeLimit));
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
   }
   if (options.notOne === true) {
     args.push('--not-one');
   }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
   }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
+  if (options.sizeLimit !== undefined && options.sizeLimit !== '') {
+    args.push('--size-limit', String(options.sizeLimit));
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.unicode === true) {
+    args.push('--unicode');
   }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
-  }
-  if (options.quiet === true) {
-    args.push('--quiet');
-  }
-
-  args.push(String(pattern));
-  args.push(String(replacement));
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -91,11 +79,11 @@ export async function executeReplace(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(pattern).trim());
+  args.push(String(replacement).trim());
   args.push(inputPath);
 
   const qsvBin =

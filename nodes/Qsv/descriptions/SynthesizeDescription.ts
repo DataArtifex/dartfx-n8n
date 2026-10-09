@@ -32,7 +32,7 @@ export const SynthesizeDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv synthesize (Docs: https://github.com/dathere/qsv/blob/master/docs/help/synthesize.md)',
+    description: 'Additional raw command line arguments to pass to qsv synthesize [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/synthesize.md)',
     displayOptions: {
       show: {
         operation: ['synthesize'],
@@ -61,9 +61,9 @@ export const SynthesizeDescription: INodeProperties[] = [
     {
       displayName: 'Correlation Threshold',
       name: 'correlationThreshold',
-      type: 'string',
-      default: '',
-      description: 'Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped. [default: 0.3]',
+      type: 'number',
+      default: 0.3,
+      description: 'Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped.',
     },
     {
       displayName: 'Delimiter',
@@ -82,9 +82,9 @@ export const SynthesizeDescription: INodeProperties[] = [
     {
       displayName: 'Freq Limit',
       name: 'freqLimit',
-      type: 'string',
-      default: '',
-      description: 'Frequency pool depth passed to the internal `frequency` run as --limit. A column is reproduced via exact frequency-weighted sampling only when its cardinality is fully captured within this limit; higher values reproduce more columns verbatim. 0 means unlimited. [default: 100]',
+      type: 'number',
+      default: 100,
+      description: 'Frequency pool depth passed to the internal `frequency` run as --limit. A column is reproduced via exact frequency-weighted sampling only when its cardinality is fully captured within this limit; higher values reproduce more columns verbatim. 0 means unlimited.',
     },
     {
       displayName: 'Infer Content Type',
@@ -94,25 +94,18 @@ export const SynthesizeDescription: INodeProperties[] = [
       description: 'Generate the Data Dictionary on the fly by invoking `describegpt --dictionary --infer-content-type` on <input>. Requires an LLM API key (QSV_LLM_APIKEY). Ignored if --dictionary is given.',
     },
     {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'Number of jobs to use for the internal `stats` and `frequency` runs.',
-    },
-    {
       displayName: 'Joint Cardinality Cap',
       name: 'jointCardinalityCap',
-      type: 'string',
-      default: '',
-      description: 'Maximum number of distinct value-tuples a `joint` relationship may have. A joint group above this cap falls back to independent generation (or aborts under --strict-relationships). 0 means unlimited. [default: 100000]',
+      type: 'number',
+      default: 100000,
+      description: 'Maximum number of distinct value-tuples a `joint` relationship may have. A joint group above this cap falls back to independent generation (or aborts under --strict-relationships). 0 means unlimited.',
     },
     {
       displayName: 'Locale',
       name: 'locale',
       type: 'string',
-      default: '',
-      description: 'Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing categories — e.g. lorem text under a non-en locale is still English, since only zh_cn has localized lorem data. [default: en]',
+      default: 'en',
+      description: 'Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing categories — e.g. lorem text under a non-en locale is still English, since only zh_cn has localized lorem data.',
     },
     {
       displayName: 'No Relationships',
@@ -126,13 +119,13 @@ export const SynthesizeDescription: INodeProperties[] = [
       name: 'rows',
       type: 'number',
       default: 100,
-      description: 'Number of synthetic rows to generate. [default: 100]',
+      description: 'Number of synthetic rows to generate.',
     },
     {
       displayName: 'Seed',
       name: 'seed',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'RNG seed for fully reproducible output.',
     },
     {

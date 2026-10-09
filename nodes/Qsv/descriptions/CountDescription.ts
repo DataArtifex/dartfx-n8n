@@ -15,24 +15,13 @@ export const CountDescription: INodeProperties[] = [
     },
   },
 
-  {
-    displayName: 'Output File Path',
-    name: 'outputPath',
-    type: 'string',
-    default: '',
-    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
-    displayOptions: {
-      show: {
-        operation: ['count'],
-      },
-    },
-  },
+
   {
     displayName: 'Additional Flags',
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv count (Docs: https://github.com/dathere/qsv/blob/master/docs/help/count.md)',
+    description: 'Additional raw command line arguments to pass to qsv count [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/count.md)',
     displayOptions: {
       show: {
         operation: ['count'],
@@ -55,8 +44,8 @@ export const CountDescription: INodeProperties[] = [
       displayName: 'Delimiter',
       name: 'delimiter',
       type: 'string',
-      default: '',
-      description: 'The delimiter to use when reading CSV data. Must be a single character. [default: ,]',
+      default: ',',
+      description: 'The delimiter to use when reading CSV data. Must be a single character.',
     },
     {
       displayName: 'Flexible',

@@ -17,13 +17,25 @@ export async function executeCat(
       { itemIndex },
     );
   }
+
+  const subcommand = (this.getNodeParameter('subcommand', itemIndex, '') as string) || '';
+  if (!subcommand || !String(subcommand).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "Subcommand" is required for cat.',
+      { itemIndex },
+    );
+  }
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['cat'];
-  if (options.pad === true) {
-    args.push('--pad');
+  if (subcommand && String(subcommand).trim()) {
+    args.push(String(subcommand).trim());
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.flexible === true) {
     args.push('--flexible');
@@ -37,11 +49,9 @@ export async function executeCat(
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.pad === true) {
+    args.push('--pad');
   }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -52,11 +62,9 @@ export async function executeCat(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

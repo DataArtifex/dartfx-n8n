@@ -17,9 +17,10 @@ export async function executeJoin(
       { itemIndex },
     );
   }
-  const columns1 = (this.getNodeParameter('columns1', itemIndex) as string) || '';
-  const columns2 = (this.getNodeParameter('columns2', itemIndex) as string) || '';
-  const input2 = (this.getNodeParameter('input2', itemIndex) as string) || '';
+
+  const columns1 = (this.getNodeParameter('columns1', itemIndex, '') as string) || '';
+  const columns2 = (this.getNodeParameter('columns2', itemIndex, '') as string) || '';
+  const input2 = (this.getNodeParameter('input2', itemIndex, '') as string) || '';
   if (!columns1 || !String(columns1).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -46,6 +47,24 @@ export async function executeJoin(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['join'];
+  if (options.cross === true) {
+    args.push('--cross');
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.full === true) {
+    args.push('--full');
+  }
+  if (options.ignoreCase === true) {
+    args.push('--ignore-case');
+  }
+  if (options.ignoreLeadingZeros === true) {
+    args.push('--ignore-leading-zeros');
+  }
+  if (options.keysOutput !== undefined && options.keysOutput !== '') {
+    args.push('--keys-output', String(options.keysOutput));
+  }
   if (options.left === true) {
     args.push('--left');
   }
@@ -54,6 +73,12 @@ export async function executeJoin(
   }
   if (options.leftSemi === true) {
     args.push('--left-semi');
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.nulls === true) {
+    args.push('--nulls');
   }
   if (options.right === true) {
     args.push('--right');
@@ -64,33 +89,6 @@ export async function executeJoin(
   if (options.rightSemi === true) {
     args.push('--right-semi');
   }
-  if (options.full === true) {
-    args.push('--full');
-  }
-  if (options.cross === true) {
-    args.push('--cross');
-  }
-  if (options.nulls === true) {
-    args.push('--nulls');
-  }
-  if (options.keysOutput !== undefined && options.keysOutput !== '') {
-    args.push('--keys-output', String(options.keysOutput));
-  }
-  if (options.ignoreCase === true) {
-    args.push('--ignore-case');
-  }
-  if (options.ignoreLeadingZeros === true) {
-    args.push('--ignore-leading-zeros');
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-
-  args.push(columns1.trim(), inputPath, columns2.trim(), input2.trim());
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -101,10 +99,13 @@ export async function executeJoin(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
+  args.push(String(columns1).trim());
+  args.push(inputPath);
+  args.push(String(columns2).trim());
+  args.push(String(input2).trim());
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

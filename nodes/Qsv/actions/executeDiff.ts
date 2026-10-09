@@ -17,56 +17,46 @@ export async function executeDiff(
       { itemIndex },
     );
   }
-  const inputRight = (this.getNodeParameter('inputRight', itemIndex) as string) || '';
-  if (!inputRight || !String(inputRight).trim()) {
-    throw new NodeOperationError(
-      this.getNode(),
-      'Parameter "Right CSV File Path" is required for diff.',
-      { itemIndex },
-    );
-  }
+
+  const inputRight = (this.getNodeParameter('inputRight', itemIndex, '') as string) || '';
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['diff'];
-  if (options.noHeadersLeft === true) {
-    args.push('--no-headers-left');
-  }
-  if (options.noHeadersRight === true) {
-    args.push('--no-headers-right');
-  }
-  if (options.noHeadersOutput === true) {
-    args.push('--no-headers-output');
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.delimiterLeft !== undefined && options.delimiterLeft !== '') {
     args.push('--delimiter-left', String(options.delimiterLeft));
   }
-  if (options.delimiterRight !== undefined && options.delimiterRight !== '') {
-    args.push('--delimiter-right', String(options.delimiterRight));
-  }
   if (options.delimiterOutput !== undefined && options.delimiterOutput !== '') {
     args.push('--delimiter-output', String(options.delimiterOutput));
   }
-  if (options.key !== undefined && options.key !== '') {
-    args.push('--key', String(options.key));
-  }
-  if (options.sortColumns !== undefined && options.sortColumns !== '') {
-    args.push('--sort-columns', String(options.sortColumns));
-  }
-  if (options.dropEqualFields === true) {
-    args.push('--drop-equal-fields');
+  if (options.delimiterRight !== undefined && options.delimiterRight !== '') {
+    args.push('--delimiter-right', String(options.delimiterRight));
   }
   if (options.dropEqualColumns === true) {
     args.push('--drop-equal-columns');
   }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
+  if (options.dropEqualFields === true) {
+    args.push('--drop-equal-fields');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.key !== undefined && options.key !== '') {
+    args.push('--key', String(options.key));
   }
-
+  if (options.noHeadersLeft === true) {
+    args.push('--no-headers-left');
+  }
+  if (options.noHeadersOutput === true) {
+    args.push('--no-headers-output');
+  }
+  if (options.noHeadersRight === true) {
+    args.push('--no-headers-right');
+  }
+  if (options.sortColumns !== undefined && options.sortColumns !== '') {
+    args.push('--sort-columns', String(options.sortColumns));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -77,12 +67,13 @@ export async function executeDiff(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
-  args.push(inputPath, inputRight.trim());
+  args.push(inputPath);
+  if (inputRight !== undefined && String(inputRight).trim()) {
+    args.push(String(inputRight).trim());
+  }
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

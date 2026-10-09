@@ -20,7 +20,7 @@ export const PartitionDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Column to partition CSV data on',
+    description: 'The column to use as a key for partitioning. You can use the `--select` option to select the column by name or index, but only one column can be used for partitioning. See `select` command for more details.',
     displayOptions: {
       show: {
         operation: ['partition'],
@@ -33,7 +33,7 @@ export const PartitionDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Directory where partitioned CSV files will be written',
+    description: 'The directory to write the output files to.',
     displayOptions: {
       show: {
         operation: ['partition'],
@@ -83,14 +83,14 @@ export const PartitionDescription: INodeProperties[] = [
       displayName: 'Filename',
       name: 'filename',
       type: 'string',
-      default: '',
-      description: 'A filename template to use when constructing the names of the output files.  The string \'{}\' will be replaced by a value based on the partition column, but sanitized for shell safety. [default: {}.csv]',
+      default: '{}.csv',
+      description: 'A filename template to use when constructing the names of the output files.  The string \'{}\' will be replaced by a value based on the partition column, but sanitized for shell safety.',
     },
     {
       displayName: 'Limit',
       name: 'limit',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Limit the number of simultaneously open files. Useful for partitioning large datasets with many unique values to avoid "too many open files" errors. Data is processed in batches until all unique values are processed. If not set, it will be automatically set to the system limit with a 10% safety margin. If set to 0, it will process all data at once, regardless of the system\'s open files limit.',
     },
     {
@@ -103,8 +103,8 @@ export const PartitionDescription: INodeProperties[] = [
     {
       displayName: 'Prefix Length',
       name: 'prefixLength',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Truncate the partition column after the specified number of bytes when creating the output file.',
     },
     ],

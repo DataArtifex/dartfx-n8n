@@ -32,7 +32,7 @@ export const SliceDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv slice (Docs: https://github.com/dathere/qsv/blob/master/docs/help/slice.md)',
+    description: 'Additional raw command line arguments to pass to qsv slice [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/slice.md)',
     displayOptions: {
       show: {
         operation: ['slice'],
@@ -61,15 +61,15 @@ export const SliceDescription: INodeProperties[] = [
     {
       displayName: 'End',
       name: 'end',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'The index of the record to slice to.',
     },
     {
       displayName: 'Index',
       name: 'index',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Slice a single record (shortcut for -s N -l 1). If negative, starts from the last record.',
     },
     {
@@ -89,8 +89,8 @@ export const SliceDescription: INodeProperties[] = [
     {
       displayName: 'Len',
       name: 'len',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'The length of the slice (can be used instead of --end).',
     },
     {
@@ -103,8 +103,8 @@ export const SliceDescription: INodeProperties[] = [
     {
       displayName: 'Start',
       name: 'start',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'The index of the record to slice from. If negative, starts from the last record.',
     },
     ],

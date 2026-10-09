@@ -20,7 +20,7 @@ export const ReplaceDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Regular expression pattern to search for',
+    description: 'Regular expression pattern to match. Uses Rust regex syntax. See https://docs.rs/regex/latest/regex/index.html#syntax or https://regex101.com with the Rust flavor for more info.',
     displayOptions: {
       show: {
         operation: ['replace'],
@@ -33,7 +33,7 @@ export const ReplaceDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Replacement string (supports regex capture groups like $1)',
+    description: 'Replacement string. Set to \'<NULL>\' if you want to replace matches with \'\'. replace options:',
     displayOptions: {
       show: {
         operation: ['replace'],
@@ -57,7 +57,7 @@ export const ReplaceDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv replace (Docs: https://github.com/dathere/qsv/blob/master/docs/help/replace.md)',
+    description: 'Additional raw command line arguments to pass to qsv replace [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/replace.md)',
     displayOptions: {
       show: {
         operation: ['replace'],
@@ -86,9 +86,9 @@ export const ReplaceDescription: INodeProperties[] = [
     {
       displayName: 'Dfa Size Limit',
       name: 'dfaSizeLimit',
-      type: 'string',
-      default: '',
-      description: 'Set the approximate size of the cache (MB) used by the regular expression engine\'s Discrete Finite Automata. [default: 10]',
+      type: 'number',
+      default: 10,
+      description: 'Set the approximate size of the cache (MB) used by the regular expression engine\'s Discrete Finite Automata.',
     },
     {
       displayName: 'Exact',
@@ -103,13 +103,6 @@ export const ReplaceDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Case insensitive search. This is equivalent to prefixing the regex with \'(?i)\'.',
-    },
-    {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel when the given CSV data has an index. Note that a file handle is opened for each job. When not set, defaults to the number of CPUs detected.',
     },
     {
       displayName: 'Literal',
@@ -133,20 +126,6 @@ export const ReplaceDescription: INodeProperties[] = [
       description: 'Use exit code 0 instead of 1 for no replacement found.',
     },
     {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show progress bars. Not valid for stdin.',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not print number of replacements to stderr.',
-    },
-    {
       displayName: 'Select',
       name: 'select',
       type: 'string',
@@ -156,9 +135,9 @@ export const ReplaceDescription: INodeProperties[] = [
     {
       displayName: 'Size Limit',
       name: 'sizeLimit',
-      type: 'string',
-      default: '',
-      description: 'Set the approximate size limit (MB) of the compiled regular expression. If the compiled expression exceeds this number, then a compilation error is returned. [default: 50]',
+      type: 'number',
+      default: 50,
+      description: 'Set the approximate size limit (MB) of the compiled regular expression. If the compiled expression exceeds this number, then a compilation error is returned.',
     },
     {
       displayName: 'Unicode',

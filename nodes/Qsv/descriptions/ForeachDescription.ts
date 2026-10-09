@@ -20,7 +20,7 @@ export const ForeachDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Column whose values will be passed to the command',
+    description: 'The column whose value is substituted into the command. Only a single column is accepted.',
     displayOptions: {
       show: {
         operation: ['foreach'],
@@ -33,25 +33,14 @@ export const ForeachDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Shell command to execute for each row',
+    description: 'The command to execute. Use "{}" to substitute the value of the current input file line. The command must be non-empty after whitespace trimming. If you need to execute multiple commands, use a shell script. See foreach_multiple_commands_with_shell_script() in tests/test_foreach.rs for an example.',
     displayOptions: {
       show: {
         operation: ['foreach'],
       },
     },
   },
-  {
-    displayName: 'Output File Path',
-    name: 'outputPath',
-    type: 'string',
-    default: '',
-    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
-    displayOptions: {
-      show: {
-        operation: ['foreach'],
-      },
-    },
-  },
+
   {
     displayName: 'Additional Flags',
     name: 'additionalArgs',
@@ -87,8 +76,8 @@ export const ForeachDescription: INodeProperties[] = [
       displayName: 'Dry Run',
       name: 'dryRun',
       type: 'string',
-      default: '',
-      description: 'If set to true (the default for safety reasons), the commands are sent to stdout instead of executing them. If set to a file, the commands will be written to the specified text file instead of executing them. The file is only created after all flag validation succeeds, so a conflicting flag combination will not truncate an existing file. Only if set to false will the commands be actually executed. [default: true]',
+      default: 'true',
+      description: 'If set to true (the default for safety reasons), the commands are sent to stdout instead of executing them. If set to a file, the commands will be written to the specified text file instead of executing them. The file is only created after all flag validation succeeds, so a conflicting flag combination will not truncate an existing file. Only if set to false will the commands be actually executed.',
     },
     {
       displayName: 'New Column',
@@ -103,13 +92,6 @@ export const ForeachDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'When set, the file will be considered to have no headers.',
-    },
-    {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show progress bars. Not valid for stdin.',
     },
     {
       displayName: 'Unify',

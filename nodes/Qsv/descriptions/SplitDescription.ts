@@ -20,7 +20,7 @@ export const SplitDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Directory where split chunk CSV files will be written',
+    description: 'The directory where the output files will be written. If it does not exist, it will be created.',
     displayOptions: {
       show: {
         operation: ['split'],
@@ -33,7 +33,7 @@ export const SplitDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv split (Docs: https://github.com/dathere/qsv/blob/master/docs/help/split.md)',
+    description: 'Additional raw command line arguments to pass to qsv split [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/split.md)',
     displayOptions: {
       show: {
         operation: ['split'],
@@ -55,8 +55,8 @@ export const SplitDescription: INodeProperties[] = [
     {
       displayName: 'Chunks',
       name: 'chunks',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'The number of chunks to split the data into. This option is mutually exclusive with --size. The number of rows in each chunk is determined by the number of records in the CSV data and the number of desired chunks. If the number of records is not evenly divisible by the number of chunks, the last chunk will have fewer records.',
     },
     {
@@ -70,8 +70,8 @@ export const SplitDescription: INodeProperties[] = [
       displayName: 'Filename',
       name: 'filename',
       type: 'string',
-      default: '',
-      description: 'A filename template to use when constructing the names of the output files.  The string \'{}\' will be replaced by the zero-based row number of the first row in the chunk. [default: {}.csv]',
+      default: '{}.csv',
+      description: 'A filename template to use when constructing the names of the output files.  The string \'{}\' will be replaced by the zero-based row number of the first row in the chunk.',
     },
     {
       displayName: 'Filter',
@@ -95,17 +95,10 @@ export const SplitDescription: INodeProperties[] = [
       description: 'Ignore errors when running the filter command. Only valid when --filter is used.',
     },
     {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of splitting jobs to run in parallel. This only works when the given CSV data has an index already created. Note that a file handle is opened for each job. When not set, the number of jobs is set to the number of CPUs detected.',
-    },
-    {
       displayName: 'Kb Size',
       name: 'kbSize',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'The size of each chunk in kilobytes. The number of rows in each chunk may vary, but the size of each chunk will not exceed the desired size. This option is mutually exclusive with --size and --chunks.',
     },
     {
@@ -118,23 +111,16 @@ export const SplitDescription: INodeProperties[] = [
     {
       displayName: 'Pad',
       name: 'pad',
-      type: 'string',
-      default: '',
-      description: 'The zero padding width that is used in the generated filename. [default: 0]',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not display an output summary to stderr.',
+      type: 'number',
+      default: 0,
+      description: 'The zero padding width that is used in the generated filename.',
     },
     {
       displayName: 'Size',
       name: 'size',
-      type: 'string',
-      default: '',
-      description: 'The number of records to write into each chunk. [default: 500]',
+      type: 'number',
+      default: 500,
+      description: 'The number of records to write into each chunk.',
     },
     ],
   },

@@ -32,7 +32,7 @@ export const SchemaDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv schema (Docs: https://github.com/dathere/qsv/blob/master/docs/help/schema.md)',
+    description: 'Additional raw command line arguments to pass to qsv schema [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/schema.md)',
     displayOptions: {
       show: {
         operation: ['schema'],
@@ -55,8 +55,8 @@ export const SchemaDescription: INodeProperties[] = [
       displayName: 'Dates Whitelist',
       name: 'datesWhitelist',
       type: 'string',
-      default: '',
-      description: 'The case-insensitive patterns to look for when shortlisting fields for date inference. i.e. if the field\'s name has any of these patterns, it is shortlisted for date inferencing. Set to "all" to inspect ALL fields for date/datetime types. [default: date,time,due,open,close,created]',
+      default: 'date,time,due,open,close,created',
+      description: 'The case-insensitive patterns to look for when shortlisting fields for date inference. i.e. if the field\'s name has any of these patterns, it is shortlisted for date inferencing. Set to "all" to inspect ALL fields for date/datetime types.',
     },
     {
       displayName: 'Delimiter',
@@ -68,9 +68,9 @@ export const SchemaDescription: INodeProperties[] = [
     {
       displayName: 'Enum Threshold',
       name: 'enumThreshold',
-      type: 'string',
-      default: '',
-      description: 'Cardinality threshold for adding enum constraints. Enum constraints are compiled for String & Integer types. [default: 50]',
+      type: 'number',
+      default: 50,
+      description: 'Cardinality threshold for adding enum constraints. Enum constraints are compiled for String & Integer types.',
     },
     {
       displayName: 'Force',
@@ -85,13 +85,6 @@ export const SchemaDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Ignore case when compiling unique values for enum constraints. Do note however that the `validate` command is case-sensitive when validating against enum constraints.',
-    },
-    {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.',
     },
     {
       displayName: 'Memcheck',

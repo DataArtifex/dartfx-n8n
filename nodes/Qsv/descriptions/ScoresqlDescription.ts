@@ -20,14 +20,25 @@ export const ScoresqlDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'SQL query to score for execution performance',
+    description: 'The SQL query to score/analyze. If the query ends with ".sql", it will be read as a SQL script file, with single-line "--" comments stripped. If the script has multiple queries separated by ";", only the last non-empty query is scored.',
     displayOptions: {
       show: {
         operation: ['scoresql'],
       },
     },
   },
-
+  {
+    displayName: 'Output File Path',
+    name: 'outputPath',
+    type: 'string',
+    default: '',
+    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
+    displayOptions: {
+      show: {
+        operation: ['scoresql'],
+      },
+    },
+  },
   {
     displayName: 'Additional Flags',
     name: 'additionalArgs',
@@ -56,8 +67,8 @@ export const ScoresqlDescription: INodeProperties[] = [
       displayName: 'Delimiter',
       name: 'delimiter',
       type: 'string',
-      default: '',
-      description: 'The field delimiter for reading CSV data. Must be a single character. [default: ,]',
+      default: ',',
+      description: 'The field delimiter for reading CSV data. Must be a single character.',
     },
     {
       displayName: 'Duckdb',
@@ -76,9 +87,9 @@ export const ScoresqlDescription: INodeProperties[] = [
     {
       displayName: 'Infer Len',
       name: 'inferLen',
-      type: 'string',
-      default: '',
-      description: 'Number of rows to scan when inferring schema. [default: 10000]',
+      type: 'number',
+      default: 10000,
+      description: 'Number of rows to scan when inferring schema.',
     },
     {
       displayName: 'Json',
@@ -86,13 +97,6 @@ export const ScoresqlDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Output results as JSON instead of human-readable report.',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not print informational messages to stderr.',
     },
     {
       displayName: 'Truncate Ragged Lines',

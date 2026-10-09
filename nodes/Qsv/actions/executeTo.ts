@@ -17,8 +17,9 @@ export async function executeTo(
       { itemIndex },
     );
   }
-  const format = (this.getNodeParameter('format', itemIndex, 'parquet') as string) || '';
-  const destination = (this.getNodeParameter('destination', itemIndex) as string) || '';
+
+  const format = (this.getNodeParameter('format', itemIndex, '') as string) || '';
+  const destination = (this.getNodeParameter('destination', itemIndex, '') as string) || '';
   if (!format || !String(format).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -38,13 +39,44 @@ export async function executeTo(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['to'];
-
-  args.push(format.trim());
-  if (options.printPackage === true) {
-    args.push('--print-package');
+  if (format && String(format).trim()) {
+    args.push(String(format).trim());
+  }
+  if (options.allStrings === true) {
+    args.push('--all-strings');
+  }
+  if (options.compressLevel !== undefined && options.compressLevel !== '') {
+    args.push('--compress-level', String(options.compressLevel));
+  }
+  if (options.compression !== undefined && options.compression !== '') {
+    args.push('--compression', String(options.compression));
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.drop === true) {
+    args.push('--drop');
   }
   if (options.dump === true) {
     args.push('--dump');
+  }
+  if (options.evolve === true) {
+    args.push('--evolve');
+  }
+  if (options.inferLen !== undefined && options.inferLen !== '') {
+    args.push('--infer-len', String(options.inferLen));
+  }
+  if (options.pipe === true) {
+    args.push('--pipe');
+  }
+  if (options.printPackage === true) {
+    args.push('--print-package');
+  }
+  if (options.schema !== undefined && options.schema !== '') {
+    args.push('--schema', String(options.schema));
+  }
+  if (options.separator !== undefined && options.separator !== '') {
+    args.push('--separator', String(options.separator));
   }
   if (options.stats === true) {
     args.push('--stats');
@@ -52,49 +84,12 @@ export async function executeTo(
   if (options.statsCsv !== undefined && options.statsCsv !== '') {
     args.push('--stats-csv', String(options.statsCsv));
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
-  }
-  if (options.schema !== undefined && options.schema !== '') {
-    args.push('--schema', String(options.schema));
-  }
-  if (options.inferLen !== undefined && options.inferLen !== '') {
-    args.push('--infer-len', String(options.inferLen));
+  if (options.table !== undefined && options.table !== '') {
+    args.push('--table', String(options.table));
   }
   if (options.tryParseDates === true) {
     args.push('--try-parse-dates');
   }
-  if (options.drop === true) {
-    args.push('--drop');
-  }
-  if (options.evolve === true) {
-    args.push('--evolve');
-  }
-  if (options.pipe === true) {
-    args.push('--pipe');
-  }
-  if (options.table !== undefined && options.table !== '') {
-    args.push('--table', String(options.table));
-  }
-  if (options.separator !== undefined && options.separator !== '') {
-    args.push('--separator', String(options.separator));
-  }
-  if (options.compression !== undefined && options.compression !== '') {
-    args.push('--compression', String(options.compression));
-  }
-  if (options.compressLevel !== undefined && options.compressLevel !== '') {
-    args.push('--compress-level', String(options.compressLevel));
-  }
-  if (options.allStrings === true) {
-    args.push('--all-strings');
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -105,8 +100,8 @@ export async function executeTo(
     });
     args.push(...parsedArgs);
   }
-
-  args.push(destination.trim(), inputPath);
+  args.push(String(destination).trim());
+  args.push(inputPath);
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

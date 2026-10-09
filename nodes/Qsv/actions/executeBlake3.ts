@@ -17,16 +17,20 @@ export async function executeBlake3(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['blake3'];
-  if (options.keyed === true) {
-    args.push('--keyed');
+  if (options.check === true) {
+    args.push('--check');
   }
   if (options.deriveKey !== undefined && options.deriveKey !== '') {
     args.push('--derive-key', String(options.deriveKey));
+  }
+  if (options.keyed === true) {
+    args.push('--keyed');
   }
   if (options.length !== undefined && options.length !== '') {
     args.push('--length', String(options.length));
@@ -43,17 +47,6 @@ export async function executeBlake3(
   if (options.tag === true) {
     args.push('--tag');
   }
-  if (options.check === true) {
-    args.push('--check');
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.quiet === true) {
-    args.push('--quiet');
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -64,11 +57,9 @@ export async function executeBlake3(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

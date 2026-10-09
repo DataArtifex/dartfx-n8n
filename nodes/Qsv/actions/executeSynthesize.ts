@@ -17,16 +17,38 @@ export async function executeSynthesize(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['synthesize'];
+  if (options.consistentFakes === true) {
+    args.push('--consistent-fakes');
+  }
+  if (options.correlationThreshold !== undefined && options.correlationThreshold !== '') {
+    args.push('--correlation-threshold', String(options.correlationThreshold));
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
   if (options.dictionary !== undefined && options.dictionary !== '') {
     args.push('--dictionary', String(options.dictionary));
   }
+  if (options.freqLimit !== undefined && options.freqLimit !== '') {
+    args.push('--freq-limit', String(options.freqLimit));
+  }
   if (options.inferContentType === true) {
     args.push('--infer-content-type');
+  }
+  if (options.jointCardinalityCap !== undefined && options.jointCardinalityCap !== '') {
+    args.push('--joint-cardinality-cap', String(options.jointCardinalityCap));
+  }
+  if (options.locale !== undefined && options.locale !== '') {
+    args.push('--locale', String(options.locale));
+  }
+  if (options.noRelationships === true) {
+    args.push('--no-relationships');
   }
   if (options.rows !== undefined && options.rows !== '') {
     args.push('--rows', String(options.rows));
@@ -34,38 +56,12 @@ export async function executeSynthesize(
   if (options.seed !== undefined && options.seed !== '') {
     args.push('--seed', String(options.seed));
   }
-  if (options.locale !== undefined && options.locale !== '') {
-    args.push('--locale', String(options.locale));
-  }
-  if (options.freqLimit !== undefined && options.freqLimit !== '') {
-    args.push('--freq-limit', String(options.freqLimit));
-  }
   if (options.statsOptions !== undefined && options.statsOptions !== '') {
     args.push('--stats-options', String(options.statsOptions));
-  }
-  if (options.consistentFakes === true) {
-    args.push('--consistent-fakes');
-  }
-  if (options.noRelationships === true) {
-    args.push('--no-relationships');
-  }
-  if (options.jointCardinalityCap !== undefined && options.jointCardinalityCap !== '') {
-    args.push('--joint-cardinality-cap', String(options.jointCardinalityCap));
-  }
-  if (options.correlationThreshold !== undefined && options.correlationThreshold !== '') {
-    args.push('--correlation-threshold', String(options.correlationThreshold));
   }
   if (options.strictRelationships === true) {
     args.push('--strict-relationships');
   }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -76,11 +72,9 @@ export async function executeSynthesize(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

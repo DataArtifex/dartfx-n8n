@@ -17,28 +17,27 @@ export async function executeTranspose(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['transpose'];
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.long !== undefined && options.long !== '') {
+    args.push('--long', String(options.long));
+  }
+  if (options.memcheck === true) {
+    args.push('--memcheck');
+  }
   if (options.multipass === true) {
     args.push('--multipass');
   }
   if (options.select !== undefined && options.select !== '') {
     args.push('--select', String(options.select));
   }
-  if (options.long !== undefined && options.long !== '') {
-    args.push('--long', String(options.long));
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-  if (options.memcheck === true) {
-    args.push('--memcheck');
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -49,11 +48,9 @@ export async function executeTranspose(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

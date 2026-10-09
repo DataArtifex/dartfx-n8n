@@ -20,7 +20,7 @@ export const FillDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Column selection to fill empty values in',
+    description: 'The columns to operate on. See \'qsv select --help\' for the selection syntax.',
     displayOptions: {
       show: {
         operation: ['fill'],

@@ -17,49 +17,66 @@ export async function executeApply(
       { itemIndex },
     );
   }
+
+  const subcommand = (this.getNodeParameter('subcommand', itemIndex, '') as string) || '';
+  const operations = (this.getNodeParameter('operations', itemIndex, '') as string) || '';
+  const column = (this.getNodeParameter('column', itemIndex, '') as string) || '';
+  if (!subcommand || !String(subcommand).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "Subcommand" is required for apply.',
+      { itemIndex },
+    );
+  }
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['apply'];
-  if (options.newColumn !== undefined && options.newColumn !== '') {
-    args.push('--new-column', String(options.newColumn));
+  if (subcommand && String(subcommand).trim()) {
+    args.push(String(subcommand).trim());
   }
-  if (options.rename !== undefined && options.rename !== '') {
-    args.push('--rename', String(options.rename));
-  }
-  if (options.comparand !== undefined && options.comparand !== '') {
-    args.push('--comparand', String(options.comparand));
-  }
-  if (options.replacement !== undefined && options.replacement !== '') {
-    args.push('--replacement', String(options.replacement));
-  }
-  if (options.formatstr !== undefined && options.formatstr !== '') {
-    args.push('--formatstr', String(options.formatstr));
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.batch !== undefined && options.batch !== '') {
-    args.push('--batch', String(options.batch));
+  if (options.addlProps !== undefined && options.addlProps !== '') {
+    args.push('--addl-props', String(options.addlProps));
   }
   if (options.baseUrl !== undefined && options.baseUrl !== '') {
     args.push('--base-url', String(options.baseUrl));
   }
-  if (options.model !== undefined && options.model !== '') {
-    args.push('--model', String(options.model));
+  if (options.batch !== undefined && options.batch !== '') {
+    args.push('--batch', String(options.batch));
   }
-  if (options.apiKey !== undefined && options.apiKey !== '') {
-    args.push('--api-key', String(options.apiKey));
+  if (options.cacheDir !== undefined && options.cacheDir !== '') {
+    args.push('--cache-dir', String(options.cacheDir));
+  }
+  if (options.comparand !== undefined && options.comparand !== '') {
+    args.push('--comparand', String(options.comparand));
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.formatstr !== undefined && options.formatstr !== '') {
+    args.push('--formatstr', String(options.formatstr));
+  }
+  if (options.fresh === true) {
+    args.push('--fresh');
   }
   if (options.maxTokens !== undefined && options.maxTokens !== '') {
     args.push('--max-tokens', String(options.maxTokens));
   }
-  if (options.timeout !== undefined && options.timeout !== '') {
-    args.push('--timeout', String(options.timeout));
+  if (options.model !== undefined && options.model !== '') {
+    args.push('--model', String(options.model));
   }
-  if (options.addlProps !== undefined && options.addlProps !== '') {
-    args.push('--addl-props', String(options.addlProps));
+  if (options.newColumn !== undefined && options.newColumn !== '') {
+    args.push('--new-column', String(options.newColumn));
+  }
+  if (options.noCache === true) {
+    args.push('--no-cache');
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.onError !== undefined && options.onError !== '') {
+    args.push('--on-error', String(options.onError));
   }
   if (options.prompt !== undefined && options.prompt !== '') {
     args.push('--prompt', String(options.prompt));
@@ -70,35 +87,18 @@ export async function executeApply(
   if (options.rateLimit !== undefined && options.rateLimit !== '') {
     args.push('--rate-limit', String(options.rateLimit));
   }
-  if (options.onError !== undefined && options.onError !== '') {
-    args.push('--on-error', String(options.onError));
+  if (options.rename !== undefined && options.rename !== '') {
+    args.push('--rename', String(options.rename));
   }
-  if (options.userAgent !== undefined && options.userAgent !== '') {
-    args.push('--user-agent', String(options.userAgent));
-  }
-  if (options.cacheDir !== undefined && options.cacheDir !== '') {
-    args.push('--cache-dir', String(options.cacheDir));
-  }
-  if (options.noCache === true) {
-    args.push('--no-cache');
-  }
-  if (options.fresh === true) {
-    args.push('--fresh');
+  if (options.replacement !== undefined && options.replacement !== '') {
+    args.push('--replacement', String(options.replacement));
   }
   if (options.stats === true) {
     args.push('--stats');
   }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
+  if (options.timeout !== undefined && options.timeout !== '') {
+    args.push('--timeout', String(options.timeout));
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -109,11 +109,15 @@ export async function executeApply(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  if (operations !== undefined && String(operations).trim()) {
+    args.push(String(operations).trim());
+  }
+  if (column !== undefined && String(column).trim()) {
+    args.push(String(column).trim());
+  }
   args.push(inputPath);
 
   const qsvBin =

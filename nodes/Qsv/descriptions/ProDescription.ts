@@ -14,19 +14,24 @@ export const ProDescription: INodeProperties[] = [
       },
     },
   },
-
   {
-    displayName: 'Output File Path',
-    name: 'outputPath',
-    type: 'string',
-    default: '',
-    description: 'Optional path to write output file directly to disk (if omitted, results are returned in node output)',
+    displayName: 'Subcommand',
+    name: 'subcommand',
+    type: 'options',
+    required: true,
+    default: 'lens',
+    options: [
+        { name: 'lens', value: 'lens' },
+        { name: 'workflow', value: 'workflow' },
+    ],
+    description: 'Subcommand to execute. Valid values: lens, workflow',
     displayOptions: {
       show: {
         operation: ['pro'],
       },
     },
   },
+
   {
     displayName: 'Additional Flags',
     name: 'additionalArgs',

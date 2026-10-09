@@ -17,25 +17,44 @@ export async function executePragmastat(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['pragmastat'];
-  if (options.twosample === true) {
-    args.push('--twosample');
-  }
   if (options.compare1 !== undefined && options.compare1 !== '') {
     args.push('--compare1', String(options.compare1));
   }
   if (options.compare2 !== undefined && options.compare2 !== '') {
     args.push('--compare2', String(options.compare2));
   }
-  if (options.select !== undefined && options.select !== '') {
-    args.push('--select', String(options.select));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
+  }
+  if (options.force === true) {
+    args.push('--force');
+  }
+  if (options.memcheck === true) {
+    args.push('--memcheck');
   }
   if (options.misrate !== undefined && options.misrate !== '') {
     args.push('--misrate', String(options.misrate));
+  }
+  if (options.noBounds === true) {
+    args.push('--no-bounds');
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.round !== undefined && options.round !== '') {
+    args.push('--round', String(options.round));
+  }
+  if (options.seed !== undefined && options.seed !== '') {
+    args.push('--seed', String(options.seed));
+  }
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
   }
   if (options.standalone === true) {
     args.push('--standalone');
@@ -43,35 +62,12 @@ export async function executePragmastat(
   if (options.statsOptions !== undefined && options.statsOptions !== '') {
     args.push('--stats-options', String(options.statsOptions));
   }
-  if (options.round !== undefined && options.round !== '') {
-    args.push('--round', String(options.round));
-  }
-  if (options.force === true) {
-    args.push('--force');
-  }
   if (options.subsample !== undefined && options.subsample !== '') {
     args.push('--subsample', String(options.subsample));
   }
-  if (options.seed !== undefined && options.seed !== '') {
-    args.push('--seed', String(options.seed));
+  if (options.twosample === true) {
+    args.push('--twosample');
   }
-  if (options.noBounds === true) {
-    args.push('--no-bounds');
-  }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.memcheck === true) {
-    args.push('--memcheck');
-  }
-
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -82,11 +78,9 @@ export async function executePragmastat(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

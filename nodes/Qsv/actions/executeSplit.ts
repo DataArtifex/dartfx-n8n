@@ -17,7 +17,8 @@ export async function executeSplit(
       { itemIndex },
     );
   }
-  const outdir = (this.getNodeParameter('outdir', itemIndex) as string) || '';
+
+  const outdir = (this.getNodeParameter('outdir', itemIndex, '') as string) || '';
   if (!outdir || !String(outdir).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -30,23 +31,14 @@ export async function executeSplit(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['split'];
-  if (options.size !== undefined && options.size !== '') {
-    args.push('--size', String(options.size));
-  }
   if (options.chunks !== undefined && options.chunks !== '') {
     args.push('--chunks', String(options.chunks));
   }
-  if (options.kbSize !== undefined && options.kbSize !== '') {
-    args.push('--kb-size', String(options.kbSize));
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.filename !== undefined && options.filename !== '') {
     args.push('--filename', String(options.filename));
-  }
-  if (options.pad !== undefined && options.pad !== '') {
-    args.push('--pad', String(options.pad));
   }
   if (options.filter !== undefined && options.filter !== '') {
     args.push('--filter', String(options.filter));
@@ -57,18 +49,18 @@ export async function executeSplit(
   if (options.filterIgnoreErrors === true) {
     args.push('--filter-ignore-errors');
   }
+  if (options.kbSize !== undefined && options.kbSize !== '') {
+    args.push('--kb-size', String(options.kbSize));
+  }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.pad !== undefined && options.pad !== '') {
+    args.push('--pad', String(options.pad));
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
+  if (options.size !== undefined && options.size !== '') {
+    args.push('--size', String(options.size));
   }
-
-  args.push(outdir.trim());
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -79,7 +71,7 @@ export async function executeSplit(
     });
     args.push(...parsedArgs);
   }
-
+  args.push(String(outdir).trim());
   args.push(inputPath);
 
   const qsvBin =

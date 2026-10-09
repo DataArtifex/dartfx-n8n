@@ -17,28 +17,20 @@ export async function executeExcel(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['excel'];
-  if (options.sheet !== undefined && options.sheet !== '') {
-    args.push('--sheet', String(options.sheet));
-  }
-  if (options.headerRow !== undefined && options.headerRow !== '') {
-    args.push('--header-row', String(options.headerRow));
-  }
-  if (options.metadata !== undefined && options.metadata !== '') {
-    args.push('--metadata', String(options.metadata));
-  }
-  if (options.table !== undefined && options.table !== '') {
-    args.push('--table', String(options.table));
-  }
-  if (options.range !== undefined && options.range !== '') {
-    args.push('--range', String(options.range));
-  }
   if (options.cell !== undefined && options.cell !== '') {
     args.push('--cell', String(options.cell));
+  }
+  if (options.dateFormat !== undefined && options.dateFormat !== '') {
+    args.push('--date-format', String(options.dateFormat));
+  }
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.errorFormat !== undefined && options.errorFormat !== '') {
     args.push('--error-format', String(options.errorFormat));
@@ -46,26 +38,27 @@ export async function executeExcel(
   if (options.flexible === true) {
     args.push('--flexible');
   }
-  if (options.trim === true) {
-    args.push('--trim');
-  }
-  if (options.dateFormat !== undefined && options.dateFormat !== '') {
-    args.push('--date-format', String(options.dateFormat));
+  if (options.headerRow !== undefined && options.headerRow !== '') {
+    args.push('--header-row', String(options.headerRow));
   }
   if (options.keepZeroTime === true) {
     args.push('--keep-zero-time');
   }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
+  if (options.metadata !== undefined && options.metadata !== '') {
+    args.push('--metadata', String(options.metadata));
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.range !== undefined && options.range !== '') {
+    args.push('--range', String(options.range));
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
+  if (options.sheet !== undefined && options.sheet !== '') {
+    args.push('--sheet', String(options.sheet));
   }
-
-
+  if (options.table !== undefined && options.table !== '') {
+    args.push('--table', String(options.table));
+  }
+  if (options.trim === true) {
+    args.push('--trim');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -76,11 +69,9 @@ export async function executeExcel(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

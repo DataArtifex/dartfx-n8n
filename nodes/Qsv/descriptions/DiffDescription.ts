@@ -18,9 +18,9 @@ export const DiffDescription: INodeProperties[] = [
     displayName: 'Right CSV File Path',
     name: 'inputRight',
     type: 'string',
-    required: true,
+    required: false,
     default: '',
-    description: 'Path to second (right) CSV file to compare against',
+    description: 'The right input CSV file to compare.',
     displayOptions: {
       show: {
         operation: ['diff'],
@@ -104,13 +104,6 @@ export const DiffDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Drop values of equal fields in modified rows of the CSV diff result (and replace them with the empty string). Key field values will not be dropped.',
-    },
-    {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel. When not set, the number of jobs is set to the number of CPUs detected.',
     },
     {
       displayName: 'Key',

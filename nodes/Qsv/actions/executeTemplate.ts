@@ -17,37 +17,22 @@ export async function executeTemplate(
       { itemIndex },
     );
   }
+
+  const outdir = (this.getNodeParameter('outdir', itemIndex, '') as string) || '';
+  if (!outdir || !String(outdir).trim()) {
+    throw new NodeOperationError(
+      this.getNode(),
+      'Parameter "Output Directory" is required for template.',
+      { itemIndex },
+    );
+  }
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['template'];
-  if (options.template !== undefined && options.template !== '') {
-    args.push('--template', String(options.template));
-  }
-  if (options.templateFile !== undefined && options.templateFile !== '') {
-    args.push('--template-file', String(options.templateFile));
-  }
-  if (options.globalsJson !== undefined && options.globalsJson !== '') {
-    args.push('--globals-json', String(options.globalsJson));
-  }
-  if (options.outfilename !== undefined && options.outfilename !== '') {
-    args.push('--outfilename', String(options.outfilename));
-  }
-  if (options.outsubdirSize !== undefined && options.outsubdirSize !== '') {
-    args.push('--outsubdir-size', String(options.outsubdirSize));
-  }
-  if (options.customfilterError !== undefined && options.customfilterError !== '') {
-    args.push('--customfilter-error', String(options.customfilterError));
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
   if (options.batch !== undefined && options.batch !== '') {
     args.push('--batch', String(options.batch));
-  }
-  if (options.timeout !== undefined && options.timeout !== '') {
-    args.push('--timeout', String(options.timeout));
   }
   if (options.cacheDir !== undefined && options.cacheDir !== '') {
     args.push('--cache-dir', String(options.cacheDir));
@@ -55,20 +40,33 @@ export async function executeTemplate(
   if (options.ckanApi !== undefined && options.ckanApi !== '') {
     args.push('--ckan-api', String(options.ckanApi));
   }
-  if (options.ckanToken !== undefined && options.ckanToken !== '') {
-    args.push('--ckan-token', String(options.ckanToken));
-  }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
+  if (options.customfilterError !== undefined && options.customfilterError !== '') {
+    args.push('--customfilter-error', String(options.customfilterError));
   }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
+  if (options.globalsJson !== undefined && options.globalsJson !== '') {
+    args.push('--globals-json', String(options.globalsJson));
   }
-
-
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.outfilename !== undefined && options.outfilename !== '') {
+    args.push('--outfilename', String(options.outfilename));
+  }
+  if (options.outsubdirSize !== undefined && options.outsubdirSize !== '') {
+    args.push('--outsubdir-size', String(options.outsubdirSize));
+  }
+  if (options.template !== undefined && options.template !== '') {
+    args.push('--template', String(options.template));
+  }
+  if (options.templateFile !== undefined && options.templateFile !== '') {
+    args.push('--template-file', String(options.templateFile));
+  }
+  if (options.timeout !== undefined && options.timeout !== '') {
+    args.push('--timeout', String(options.timeout));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -79,12 +77,11 @@ export async function executeTemplate(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
+  args.push(String(outdir).trim());
 
   const qsvBin =
     process.env.DARTFX_QSV_BIN_PATH ||

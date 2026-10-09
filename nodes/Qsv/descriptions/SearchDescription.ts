@@ -20,7 +20,7 @@ export const SearchDescription: INodeProperties[] = [
     type: 'string',
     required: true,
     default: '',
-    description: 'Regular expression pattern to search for',
+    description: 'Regular expression to match. Uses Rust regex syntax. See https://docs.rs/regex/latest/regex/index.html#syntax or https://regex101.com with the Rust flavor for more info.',
     displayOptions: {
       show: {
         operation: ['search'],
@@ -44,7 +44,7 @@ export const SearchDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv search (Docs: https://github.com/dathere/qsv/blob/master/docs/help/search.md)',
+    description: 'Additional raw command line arguments to pass to qsv search [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/search.md)',
     displayOptions: {
       show: {
         operation: ['search'],
@@ -80,9 +80,9 @@ export const SearchDescription: INodeProperties[] = [
     {
       displayName: 'Dfa Size Limit',
       name: 'dfaSizeLimit',
-      type: 'string',
-      default: '',
-      description: 'Set the approximate size of the cache (MB) used by the regular expression engine\'s Discrete Finite Automata. Modify this only if you\'re getting regular expression compilation errors. [default: 10]',
+      type: 'number',
+      default: 10,
+      description: 'Set the approximate size of the cache (MB) used by the regular expression engine\'s Discrete Finite Automata. Modify this only if you\'re getting regular expression compilation errors.',
     },
     {
       displayName: 'Exact',
@@ -111,13 +111,6 @@ export const SearchDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Select only rows that did not match',
-    },
-    {
-      displayName: 'Jobs',
-      name: 'jobs',
-      type: 'string',
-      default: '',
-      description: 'The number of jobs to run in parallel when the given CSV data has an index. Note that a file handle is opened for each job. When not set, defaults to the number of CPUs detected.',
     },
     {
       displayName: 'Json',
@@ -150,16 +143,9 @@ export const SearchDescription: INodeProperties[] = [
     {
       displayName: 'Preview Match',
       name: 'previewMatch',
-      type: 'string',
-      default: '',
+      type: 'number',
+      default: 0,
       description: 'Preview the first N matches OR all matches found within N milliseconds, whichever occurs first. NOTE: the same numeric value is used for BOTH the match count AND the millisecond timeout - choose a value where one bound effectively dominates (e.g., a small count for "first N" preview, or a large count for "all within N ms"). Returns the preview to stderr; output is still written to stdout or --output as usual. Forces a sequential search, even if the CSV is indexed.',
-    },
-    {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show progress bars. Not valid for stdin. Disabled when running parallel search (i.e., when the CSV is indexed and --jobs > 1). Sequential search on an indexed CSV (--jobs 1) still shows the progress bar.',
     },
     {
       displayName: 'Quick',
@@ -167,13 +153,6 @@ export const SearchDescription: INodeProperties[] = [
       type: 'boolean',
       default: false,
       description: 'Return on first match with an exitcode of 0, returning the row number of the first match to stderr. Return exit code 1 if no match is found. No output is produced.',
-    },
-    {
-      displayName: 'Quiet',
-      name: 'quiet',
-      type: 'boolean',
-      default: false,
-      description: 'Do not write the match count (--count) or the first match row number reported by --quick to stderr.',
     },
     {
       displayName: 'Select',
@@ -185,9 +164,9 @@ export const SearchDescription: INodeProperties[] = [
     {
       displayName: 'Size Limit',
       name: 'sizeLimit',
-      type: 'string',
-      default: '',
-      description: 'Set the approximate size limit (MB) of the compiled regular expression. If the compiled expression exceeds this number, then a compilation error is returned. Modify this only if you\'re getting regular expression compilation errors. [default: 50]',
+      type: 'number',
+      default: 50,
+      description: 'Set the approximate size limit (MB) of the compiled regular expression. If the compiled expression exceeds this number, then a compilation error is returned. Modify this only if you\'re getting regular expression compilation errors.',
     },
     {
       displayName: 'Unicode',

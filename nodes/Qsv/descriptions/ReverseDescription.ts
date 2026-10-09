@@ -32,7 +32,7 @@ export const ReverseDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv reverse (Docs: https://github.com/dathere/qsv/blob/master/docs/help/reverse.md)',
+    description: 'Additional raw command line arguments to pass to qsv reverse [⚠️ High memory operation. ⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/reverse.md)',
     displayOptions: {
       show: {
         operation: ['reverse'],

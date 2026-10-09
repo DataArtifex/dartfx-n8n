@@ -17,7 +17,8 @@ export async function executePseudo(
       { itemIndex },
     );
   }
-  const column = (this.getNodeParameter('column', itemIndex) as string) || '';
+
+  const column = (this.getNodeParameter('column', itemIndex, '') as string) || '';
   if (!column || !String(column).trim()) {
     throw new NodeOperationError(
       this.getNode(),
@@ -30,24 +31,21 @@ export async function executePseudo(
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['pseudo'];
-  if (options.start !== undefined && options.start !== '') {
-    args.push('--start', String(options.start));
-  }
-  if (options.increment !== undefined && options.increment !== '') {
-    args.push('--increment', String(options.increment));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.formatstr !== undefined && options.formatstr !== '') {
     args.push('--formatstr', String(options.formatstr));
   }
+  if (options.increment !== undefined && options.increment !== '') {
+    args.push('--increment', String(options.increment));
+  }
   if (options.noHeaders === true) {
     args.push('--no-headers');
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.start !== undefined && options.start !== '') {
+    args.push('--start', String(options.start));
   }
-
-  args.push(String(column));
-
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -58,11 +56,10 @@ export async function executePseudo(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
+  args.push(String(column).trim());
   args.push(inputPath);
 
   const qsvBin =

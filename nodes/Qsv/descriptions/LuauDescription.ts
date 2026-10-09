@@ -14,7 +14,49 @@ export const LuauDescription: INodeProperties[] = [
       },
     },
   },
-
+  {
+    displayName: 'Subcommand',
+    name: 'subcommand',
+    type: 'options',
+    required: true,
+    default: 'filter',
+    options: [
+        { name: 'filter', value: 'filter' },
+        { name: 'map', value: 'map' },
+    ],
+    description: 'Subcommand to execute. Valid values: filter, map',
+    displayOptions: {
+      show: {
+        operation: ['luau'],
+      },
+    },
+  },
+  {
+    displayName: 'New Columns',
+    name: 'newColumns',
+    type: 'string',
+    required: false,
+    default: '',
+    description: 'is a comma-separated list of new computed columns to add to the CSV when using "luau map". The new columns are added to the CSV after the existing columns, unless the --remap option is used.',
+    displayOptions: {
+      show: {
+        operation: ['luau'],
+      },
+    },
+  },
+  {
+    displayName: 'Main Script',
+    name: 'mainScript',
+    type: 'string',
+    required: true,
+    default: '',
+    description: 'The MAIN Luau script, executed for EACH ROW: the Luau code itself or, if it starts with "file:" or ends with ".luau"/".lua", the file to load it from. In map mode it returns the new column value/s; in filter mode, a boolean saying whether to keep the row.',
+    displayOptions: {
+      show: {
+        operation: ['luau'],
+      },
+    },
+  },
   {
     displayName: 'Output File Path',
     name: 'outputPath',
@@ -32,7 +74,7 @@ export const LuauDescription: INodeProperties[] = [
     name: 'additionalArgs',
     type: 'string',
     default: '',
-    description: 'Additional raw command line arguments to pass to qsv luau (Docs: https://github.com/dathere/qsv/blob/master/docs/help/luau.md)',
+    description: 'Additional raw command line arguments to pass to qsv luau [⚡ Runs faster when CSV index (.qsv.idx) is present.] (Docs: https://github.com/dathere/qsv/blob/master/docs/help/luau.md)',
     displayOptions: {
       show: {
         operation: ['luau'],
@@ -62,22 +104,15 @@ export const LuauDescription: INodeProperties[] = [
       displayName: 'Cache Dir',
       name: 'cacheDir',
       type: 'string',
-      default: '',
-      description: 'The directory to use for caching downloaded lookup_table resources using the qsv_register_lookup() helper function. If the directory does not exist, qsv will attempt to create it. If the QSV_CACHE_DIR envvar is set, it will be used instead. [default: ~/.qsv-cache]',
+      default: '~/.qsv-cache',
+      description: 'The directory to use for caching downloaded lookup_table resources using the qsv_register_lookup() helper function. If the directory does not exist, qsv will attempt to create it. If the QSV_CACHE_DIR envvar is set, it will be used instead.',
     },
     {
       displayName: 'Ckan Api',
       name: 'ckanApi',
       type: 'string',
-      default: '',
-      description: 'The URL of the CKAN API to use for downloading lookup_table resources using the qsv_register_lookup() helper function with the "ckan://" scheme. If the QSV_CKAN_API envvar is set, it will be used instead. [default: https://data.dathere.com/api/3/action]',
-    },
-    {
-      displayName: 'Ckan Token',
-      name: 'ckanToken',
-      type: 'string',
-      default: '',
-      description: 'The CKAN API token to use. Only required if downloading private resources. If the QSV_CKAN_TOKEN envvar is set, it will be used instead.',
+      default: 'https://data.dathere.com/api/3/action',
+      description: 'The URL of the CKAN API to use for downloading lookup_table resources using the qsv_register_lookup() helper function with the "ckan://" scheme. If the QSV_CKAN_API envvar is set, it will be used instead.',
     },
     {
       displayName: 'Colindex',
@@ -103,9 +138,9 @@ export const LuauDescription: INodeProperties[] = [
     {
       displayName: 'Max Errors',
       name: 'maxErrors',
-      type: 'string',
-      default: '',
-      description: 'The maximum number of errors to tolerate before aborting. Set to zero to disable error limit. [default: 10]',
+      type: 'number',
+      default: 10,
+      description: 'The maximum number of errors to tolerate before aborting. Set to zero to disable error limit.',
     },
     {
       displayName: 'No Globals',
@@ -122,13 +157,6 @@ export const LuauDescription: INodeProperties[] = [
       description: 'When set, the first row will not be interpreted as headers. Automatically enables --colindex option.',
     },
     {
-      displayName: 'Progressbar',
-      name: 'progressbar',
-      type: 'boolean',
-      default: false,
-      description: 'Show progress bars. Not valid for stdin. Ignored in qsvdp. In SEQUENTIAL MODE, the progress bar will show the number of rows processed. In RANDOM ACCESS MODE, the progress bar will show the position of the current row being processed. Enabling this option will also suppress stderr output from the END script.',
-    },
-    {
       displayName: 'Remap',
       name: 'remap',
       type: 'boolean',
@@ -138,9 +166,9 @@ export const LuauDescription: INodeProperties[] = [
     {
       displayName: 'Timeout',
       name: 'timeout',
-      type: 'string',
-      default: '',
-      description: 'Timeout for downloading lookup_tables using the qsv_register_lookup() helper function. [default: 60]',
+      type: 'number',
+      default: 60,
+      description: 'Timeout for downloading lookup_tables using the qsv_register_lookup() helper function.',
     },
     ],
   },

@@ -17,34 +17,30 @@ export async function executeFixlengths(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['fixlengths'];
-  if (options.length !== undefined && options.length !== '') {
-    args.push('--length', String(options.length));
-  }
-  if (options.removeEmpty === true) {
-    args.push('--remove-empty');
-  }
-  if (options.insert !== undefined && options.insert !== '') {
-    args.push('--insert', String(options.insert));
-  }
-  if (options.quote !== undefined && options.quote !== '') {
-    args.push('--quote', String(options.quote));
+  if (options.delimiter !== undefined && options.delimiter !== '') {
+    args.push('--delimiter', String(options.delimiter));
   }
   if (options.escape !== undefined && options.escape !== '') {
     args.push('--escape', String(options.escape));
   }
-  if (options.delimiter !== undefined && options.delimiter !== '') {
-    args.push('--delimiter', String(options.delimiter));
+  if (options.insert !== undefined && options.insert !== '') {
+    args.push('--insert', String(options.insert));
   }
-  if (options.quiet === true) {
-    args.push('--quiet');
+  if (options.length !== undefined && options.length !== '') {
+    args.push('--length', String(options.length));
   }
-
-
+  if (options.quote !== undefined && options.quote !== '') {
+    args.push('--quote', String(options.quote));
+  }
+  if (options.removeEmpty === true) {
+    args.push('--remove-empty');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -55,11 +51,9 @@ export async function executeFixlengths(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

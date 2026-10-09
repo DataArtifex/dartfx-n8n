@@ -17,6 +17,7 @@ export async function executeMoarstats(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
@@ -25,26 +26,11 @@ export async function executeMoarstats(
   if (options.advanced === true) {
     args.push('--advanced');
   }
-  if (options.epsilon !== undefined && options.epsilon !== '') {
-    args.push('--epsilon', String(options.epsilon));
-  }
-  if (options.statsOptions !== undefined && options.statsOptions !== '') {
-    args.push('--stats-options', String(options.statsOptions));
-  }
-  if (options.round !== undefined && options.round !== '') {
-    args.push('--round', String(options.round));
-  }
-  if (options.usePercentiles === true) {
-    args.push('--use-percentiles');
-  }
-  if (options.pctThresholds !== undefined && options.pctThresholds !== '') {
-    args.push('--pct-thresholds', String(options.pctThresholds));
-  }
-  if (options.xsdGdateScan !== undefined && options.xsdGdateScan !== '') {
-    args.push('--xsd-gdate-scan', String(options.xsdGdateScan));
-  }
   if (options.bivariate === true) {
     args.push('--bivariate');
+  }
+  if (options.bivariateBatch !== undefined && options.bivariateBatch !== '') {
+    args.push('--bivariate-batch', String(options.bivariateBatch));
   }
   if (options.bivariateStats !== undefined && options.bivariateStats !== '') {
     args.push('--bivariate-stats', String(options.bivariateStats));
@@ -52,8 +38,11 @@ export async function executeMoarstats(
   if (options.cardinalityThreshold !== undefined && options.cardinalityThreshold !== '') {
     args.push('--cardinality-threshold', String(options.cardinalityThreshold));
   }
-  if (options.bivariateBatch !== undefined && options.bivariateBatch !== '') {
-    args.push('--bivariate-batch', String(options.bivariateBatch));
+  if (options.epsilon !== undefined && options.epsilon !== '') {
+    args.push('--epsilon', String(options.epsilon));
+  }
+  if (options.force === true) {
+    args.push('--force');
   }
   if (options.joinInputs !== undefined && options.joinInputs !== '') {
     args.push('--join-inputs', String(options.joinInputs));
@@ -64,17 +53,21 @@ export async function executeMoarstats(
   if (options.joinType !== undefined && options.joinType !== '') {
     args.push('--join-type', String(options.joinType));
   }
-  if (options.progressbar === true) {
-    args.push('--progressbar');
+  if (options.pctThresholds !== undefined && options.pctThresholds !== '') {
+    args.push('--pct-thresholds', String(options.pctThresholds));
   }
-  if (options.force === true) {
-    args.push('--force');
+  if (options.round !== undefined && options.round !== '') {
+    args.push('--round', String(options.round));
   }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
+  if (options.statsOptions !== undefined && options.statsOptions !== '') {
+    args.push('--stats-options', String(options.statsOptions));
   }
-
-
+  if (options.usePercentiles === true) {
+    args.push('--use-percentiles');
+  }
+  if (options.xsdGdateScan !== undefined && options.xsdGdateScan !== '') {
+    args.push('--xsd-gdate-scan', String(options.xsdGdateScan));
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -85,11 +78,9 @@ export async function executeMoarstats(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =

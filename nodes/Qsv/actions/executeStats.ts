@@ -17,112 +17,108 @@ export async function executeStats(
       { itemIndex },
     );
   }
+
   const outputPath = (this.getNodeParameter('outputPath', itemIndex, '') as string) || '';
   const additionalArgs = (this.getNodeParameter('additionalArgs', itemIndex, '') as string) || '';
   const options = (this.getNodeParameter('options', itemIndex, {}) as any) || {};
 
   const args: string[] = ['stats'];
-  if (options.select !== undefined && options.select !== '') {
-    args.push('--select', String(options.select));
-  }
-  if (options.everything === true) {
-    args.push('--everything');
-  }
-  if (options.typesonly === true) {
-    args.push('--typesonly');
-  }
-  if (options.inferBoolean === true) {
-    args.push('--infer-boolean');
-  }
   if (options.booleanPatterns !== undefined && options.booleanPatterns !== '') {
     args.push('--boolean-patterns', String(options.booleanPatterns));
-  }
-  if (options.mode === true) {
-    args.push('--mode');
-  }
-  if (options.cardinality === true) {
-    args.push('--cardinality');
-  }
-  if (options.zeroPaddedNumeric === true) {
-    args.push('--zero-padded-numeric');
-  }
-  if (options.median === true) {
-    args.push('--median');
-  }
-  if (options.mad === true) {
-    args.push('--mad');
-  }
-  if (options.quartiles === true) {
-    args.push('--quartiles');
-  }
-  if (options.percentiles === true) {
-    args.push('--percentiles');
-  }
-  if (options.percentileList !== undefined && options.percentileList !== '') {
-    args.push('--percentile-list', String(options.percentileList));
-  }
-  if (options.quantileMethod !== undefined && options.quantileMethod !== '') {
-    args.push('--quantile-method', String(options.quantileMethod));
-  }
-  if (options.cardinalityMethod !== undefined && options.cardinalityMethod !== '') {
-    args.push('--cardinality-method', String(options.cardinalityMethod));
-  }
-  if (options.modeCardinalityCap !== undefined && options.modeCardinalityCap !== '') {
-    args.push('--mode-cardinality-cap', String(options.modeCardinalityCap));
-  }
-  if (options.round !== undefined && options.round !== '') {
-    args.push('--round', String(options.round));
-  }
-  if (options.nulls === true) {
-    args.push('--nulls');
-  }
-  if (options.weight !== undefined && options.weight !== '') {
-    args.push('--weight', String(options.weight));
-  }
-  if (options.inferDates === true) {
-    args.push('--infer-dates');
-  }
-  if (options.datesWhitelist !== undefined && options.datesWhitelist !== '') {
-    args.push('--dates-whitelist', String(options.datesWhitelist));
-  }
-  if (options.preferDmy === true) {
-    args.push('--prefer-dmy');
-  }
-  if (options.force === true) {
-    args.push('--force');
-  }
-  if (options.jobs !== undefined && options.jobs !== '') {
-    args.push('--jobs', String(options.jobs));
-  }
-  if (options.statsJsonl === true) {
-    args.push('--stats-jsonl');
-  }
-  if (options.jsonl === true) {
-    args.push('--jsonl');
-  }
-  if (options.prettyJson === true) {
-    args.push('--pretty-json');
   }
   if (options.cacheThreshold !== undefined && options.cacheThreshold !== '') {
     args.push('--cache-threshold', String(options.cacheThreshold));
   }
-  if (options.visWhitespace === true) {
-    args.push('--vis-whitespace');
+  if (options.cardinality === true) {
+    args.push('--cardinality');
   }
-  if (options.noHeaders === true) {
-    args.push('--no-headers');
+  if (options.cardinalityMethod !== undefined && options.cardinalityMethod !== '') {
+    args.push('--cardinality-method', String(options.cardinalityMethod));
+  }
+  if (options.datesWhitelist !== undefined && options.datesWhitelist !== '') {
+    args.push('--dates-whitelist', String(options.datesWhitelist));
   }
   if (options.delimiter !== undefined && options.delimiter !== '') {
     args.push('--delimiter', String(options.delimiter));
   }
+  if (options.everything === true) {
+    args.push('--everything');
+  }
   if (options.flexible === true) {
     args.push('--flexible');
+  }
+  if (options.force === true) {
+    args.push('--force');
+  }
+  if (options.inferBoolean === true) {
+    args.push('--infer-boolean');
+  }
+  if (options.inferDates === true) {
+    args.push('--infer-dates');
+  }
+  if (options.jsonl === true) {
+    args.push('--jsonl');
+  }
+  if (options.mad === true) {
+    args.push('--mad');
+  }
+  if (options.median === true) {
+    args.push('--median');
   }
   if (options.memcheck === true) {
     args.push('--memcheck');
   }
-
-
+  if (options.mode === true) {
+    args.push('--mode');
+  }
+  if (options.modeCardinalityCap !== undefined && options.modeCardinalityCap !== '') {
+    args.push('--mode-cardinality-cap', String(options.modeCardinalityCap));
+  }
+  if (options.noHeaders === true) {
+    args.push('--no-headers');
+  }
+  if (options.nulls === true) {
+    args.push('--nulls');
+  }
+  if (options.percentileList !== undefined && options.percentileList !== '') {
+    args.push('--percentile-list', String(options.percentileList));
+  }
+  if (options.percentiles === true) {
+    args.push('--percentiles');
+  }
+  if (options.preferDmy === true) {
+    args.push('--prefer-dmy');
+  }
+  if (options.prettyJson === true) {
+    args.push('--pretty-json');
+  }
+  if (options.quantileMethod !== undefined && options.quantileMethod !== '') {
+    args.push('--quantile-method', String(options.quantileMethod));
+  }
+  if (options.quartiles === true) {
+    args.push('--quartiles');
+  }
+  if (options.round !== undefined && options.round !== '') {
+    args.push('--round', String(options.round));
+  }
+  if (options.select !== undefined && options.select !== '') {
+    args.push('--select', String(options.select));
+  }
+  if (options.statsJsonl === true) {
+    args.push('--stats-jsonl');
+  }
+  if (options.typesonly === true) {
+    args.push('--typesonly');
+  }
+  if (options.visWhitespace === true) {
+    args.push('--vis-whitespace');
+  }
+  if (options.weight !== undefined && options.weight !== '') {
+    args.push('--weight', String(options.weight));
+  }
+  if (options.zeroPaddedNumeric === true) {
+    args.push('--zero-padded-numeric');
+  }
   if (additionalArgs.trim()) {
     const rawMatches = additionalArgs.match(/[^\s"']+|"[^"]*"|'[^']*'/g) || [];
     const parsedArgs = rawMatches.map((arg) => {
@@ -133,11 +129,9 @@ export async function executeStats(
     });
     args.push(...parsedArgs);
   }
-
   if (outputPath.trim()) {
     args.push('--output', outputPath.trim());
   }
-
   args.push(inputPath);
 
   const qsvBin =
