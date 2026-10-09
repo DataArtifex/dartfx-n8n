@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0-staging.0] - 2026-10-08
+
+### Added
+
+- **QSV v24 JSON Tool Definitions Ingestion**: Generator (`scripts/generate-qsv-nodes.ts`) directly ingests machine-readable tool definitions and help documentation via `qsv --export-tool-definitions` (with fallback to `qsv <cmd> --help --format json`).
+- **Dynamic Positional Argument Mapping**: Automatically extracts positional parameters, types, and sequence from `command.args`, eliminating manual configuration dictionaries.
+- **Subcommand Enum Dropdowns**: Native n8n `options` dropdown selection for subcommands and fixed format modes (e.g., `to` formats, `cat` modes, `luau` subcommands, `viz` plot types).
+- **Category & Resource Hints Integration**: Integrated 11 standard QSV categories and memory/indexing hints (`hints.memory`, `hints.indexed`) into UI descriptions and tooltips.
+- **73 Generated Command Nodes**: Expanded generated operations across all supported non-interactive QSV commands.
+
 ## [0.1.0] - 2026-09-02
 
 ### Added
