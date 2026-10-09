@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@dartfx/n8n-nodes-dartfx.svg)](https://www.npmjs.com/package/@dartfx/n8n-nodes-dartfx)
 [![CI](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/ci.yml/badge.svg)](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/ci.yml)
 [![Docs](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/sphinx.yaml/badge.svg)](https://dataartifex.github.io/dartfx-n8n/)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/DataArtifex/dartfx-n8n)
+[![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-6366f1.svg)](https://deepwiki.com/DataArtifex/dartfx-n8n)
 [![n8n Community Node](https://img.shields.io/badge/n8n-community--node-ea4b71.svg)](https://docs.n8n.io/integrations/community-nodes/)
 [![Powered by QSV](https://img.shields.io/badge/powered%20by-QSV-orange.svg)](https://github.com/dathere/qsv)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
