@@ -1,31 +1,29 @@
 {
-  "name": "@dartfx/n8n-nodes-dartfx",
+  "name": "@dartfx/n8n-nodes-qsv",
   "version": "0.2.0",
-  "description": "n8n community nodes for Data Artifex FAIRification and QSV high-performance tabular data wrangling (requires 'qsv' CLI on host)",
+  "description": "n8n community node for datHere QSV ultra-fast tabular data wrangling, stats, and transformations (requires 'qsv' CLI on host)",
   "keywords": [
     "n8n-community-node-package",
     "n8n-nodes",
-    "dartfx",
-    "fair",
-    "fairification",
     "qsv",
-    "data-wrangling",
     "csv",
-    "schema",
-    "unf"
+    "data-wrangling",
+    "tabular",
+    "data-engineering",
+    "dartfx"
   ],
   "license": "MIT",
   "author": {
     "name": "Data Artifex",
     "url": "https://github.com/DataArtifex"
   },
-  "homepage": "https://github.com/DataArtifex/dartfx-n8n",
+  "homepage": "https://github.com/DataArtifex/dartfx-n8n-nodes-qsv",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DataArtifex/dartfx-n8n.git"
+    "url": "https://github.com/DataArtifex/dartfx-n8n-nodes-qsv.git"
   },
   "bugs": {
-    "url": "https://github.com/DataArtifex/dartfx-n8n/issues"
+    "url": "https://github.com/DataArtifex/dartfx-n8n-nodes-qsv/issues"
   },
   "main": "index.js",
   "packageManager": "pnpm@11.15.1",

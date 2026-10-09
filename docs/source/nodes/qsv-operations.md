@@ -1,6 +1,6 @@
 # QSV Operations Reference
 
-`@dartfx/n8n-nodes-dartfx` supports **77 high-performance QSV operations** organized across functional domains:
+`@dartfx/n8n-nodes-qsv` supports **77 high-performance QSV operations** organized across functional domains:
 
 ---
 

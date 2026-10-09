@@ -1,6 +1,6 @@
 # Release & Deployment Guide
 
-This document defines the lifecycle, versioning rules, and workflows for **Staging** (isolated pre-release testing) and **Production** (general availability) deployments of `@dartfx/n8n-nodes-dartfx`.
+This document defines the lifecycle, versioning rules, and workflows for **Staging** (isolated pre-release testing) and **Production** (general availability) deployments of `@dartfx/n8n-nodes-qsv`.
 
 ---
 
@@ -12,7 +12,7 @@ This document defines the lifecycle, versioning rules, and workflows for **Stagi
 | **SemVer Format** | `0.1.0-staging.0` (pre-release) | `0.1.0` (stable release) |
 | **Git Tag Created?** | **No** (`--no-git-tag-version`) | **Yes** (`v0.1.0` annotated tag) |
 | **Triggers CI/CD?** | No (manual CLI push) | **Yes** (GitHub Actions triggers on `v*` tag) |
-| **Who Receives It?** | Only test instances specifying `@staging` | All users installing `@dartfx/n8n-nodes-dartfx` |
+| **Who Receives It?** | Only test instances specifying `@staging` | All users installing `@dartfx/n8n-nodes-qsv` |
 | **Git Hygiene Check** | Bypassed (`--no-git-checks`) | Enforced (clean working tree on `main`) |
 | **npm Provenance** | Optional | **Enforced** (`--provenance` via OIDC) |
 
@@ -65,27 +65,27 @@ pnpm publish --tag latest --access public --no-git-checks
 ### 4. Promote / Re-point Dist-Tags (Make Any Version `latest`)
 If a version was already published under the `staging` tag and you now want to make it the default `latest` without republishing:
 ```bash
-npm dist-tag add @dartfx/n8n-nodes-dartfx@0.2.0-staging.0 latest
+npm dist-tag add @dartfx/n8n-nodes-qsv@0.2.0-staging.0 latest
 ```
 
 To list all active distribution tags:
 ```bash
-npm dist-tag ls @dartfx/n8n-nodes-dartfx
+npm dist-tag ls @dartfx/n8n-nodes-qsv
 ```
 
 ### 5. Verify in a Live n8n Instance
 In n8n (**Settings > Community Nodes > Install**), specify:
 - Default `latest` channel:
   ```text
-  @dartfx/n8n-nodes-dartfx
+  @dartfx/n8n-nodes-qsv
   ```
 - Specific `staging` channel:
   ```text
-  @dartfx/n8n-nodes-dartfx@staging
+  @dartfx/n8n-nodes-qsv@staging
   ```
 - Specific exact version:
   ```text
-  @dartfx/n8n-nodes-dartfx@0.2.0-staging.0
+  @dartfx/n8n-nodes-qsv@0.2.0-staging.0
   ```
 
 ---
@@ -136,7 +136,7 @@ Production releases are triggered only when an annotated version tag (e.g. `v0.2
 If you have already thoroughly tested a staging build on npm and want to promote it to `latest` without rebuilding or creating a git tag:
 
 ```bash
-npm dist-tag add @dartfx/n8n-nodes-dartfx@0.2.0-staging.0 latest
+npm dist-tag add @dartfx/n8n-nodes-qsv@0.2.0-staging.0 latest
 ```
 
 ---
@@ -149,6 +149,52 @@ pnpm publish --tag latest --access public
 
 ---
 
+## 🔍 Inspecting & Verifying Releases (Bypassing Browser CDN Cache)
+
+Because `npmjs.com` web pages are cached behind a 2–5 minute CDN edge layer, use direct CLI queries to immediately verify live registry states and Git tags:
+
+### 1. Query npm Registry Directly (Real-Time API)
+
+- **View active distribution tags (`latest`, `staging`):**
+  ```bash
+  npm view @dartfx/n8n-nodes-qsv dist-tags
+  ```
+  *Example output: `{ staging: '0.2.0-staging.1', latest: '0.2.0' }`*
+
+- **Check current version served as `latest`:**
+  ```bash
+  npm view @dartfx/n8n-nodes-qsv version
+  ```
+
+- **List all published versions across history:**
+  ```bash
+  npm view @dartfx/n8n-nodes-qsv versions
+  ```
+
+### 2. Query Local & Remote Git State
+
+- **Check latest tag on current branch:**
+  ```bash
+  git describe --tags --abbrev=0
+  ```
+
+- **List all Git tags sorted by SemVer (newest first):**
+  ```bash
+  git tag -l --sort=-v:refname
+  ```
+
+- **Check live tags on GitHub remote:**
+  ```bash
+  git ls-remote --tags origin
+  ```
+
+- **Check local `package.json` version:**
+  ```bash
+  node -p "require('./package.json').version"
+  ```
+
+---
+
 ## 🔐 NPM Authentication & OIDC Trusted Publishers
 
 ### Modern Tokenless OIDC via Trusted Publishers (Recommended for CI/CD)
@@ -156,7 +202,7 @@ pnpm publish --tag latest --access public
 npm supports **Trusted Publishers** via OpenID Connect (OIDC), eliminating static tokens from GitHub Actions.
 
 #### 1. Bootstrap: Initial First-Time Publish
-Because `@dartfx/n8n-nodes-dartfx` is a brand new package, it must be published **once** manually with your personal access token before npm exposes package settings:
+Because `@dartfx/n8n-nodes-qsv` is a brand new package, it must be published **once** manually with your personal access token before npm exposes package settings:
 ```bash
 pnpm publish --tag staging --access public --no-git-checks
 ```
@@ -164,11 +210,11 @@ pnpm publish --tag staging --access public --no-git-checks
 #### 2. Configure Trusted Publisher on npmjs.com
 Once the package exists on npm:
 1. Log in to [npmjs.com](https://www.npmjs.com/) and open the package access page:
-   `https://www.npmjs.com/package/@dartfx/n8n-nodes-dartfx/access`
+   `https://www.npmjs.com/package/@dartfx/n8n-nodes-qsv/access`
 2. Under **Trusted Publishers**, click **Add Trusted Publisher**.
 3. Choose **GitHub Actions** and fill in:
    - **GitHub Organization / Owner**: `DataArtifex`
-   - **Repository**: `dartfx-n8n`
+   - **Repository**: `dartfx-n8n-nodes-qsv`
    - **Workflow filename**: `publish.yml`
    - **Environment**: *(Leave blank unless using GitHub Environments)*
 4. Click **Add Publisher**.

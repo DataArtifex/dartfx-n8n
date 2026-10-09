@@ -23,7 +23,7 @@ function createMockContext(params: Record<string, any>) {
     },
     getNode: () => ({
       name: "qsv",
-      type: "@dartfx/n8n-nodes-dartfx.qsv",
+      type: "@dartfx/n8n-nodes-qsv.qsv",
       typeVersion: 1,
       position: [0, 0] as [number, number],
       parameters: {},

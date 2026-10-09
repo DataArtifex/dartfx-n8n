@@ -1,6 +1,6 @@
 # Local Testing & Development
 
-This guide explains how to test `@dartfx/n8n-nodes-dartfx` inside a local n8n instance during development.
+This guide explains how to test `@dartfx/n8n-nodes-qsv` inside a local n8n instance during development.
 
 ---
 
@@ -10,8 +10,8 @@ First, clone the repository, install dependencies, and start TypeScript watch mo
 
 ```bash
 # Clone repository
-git clone https://github.com/DataArtifex/dartfx-n8n.git
-cd dartfx-n8n
+git clone https://github.com/DataArtifex/dartfx-n8n-nodes-qsv.git
+cd dartfx-n8n-nodes-qsv
 
 # Use supported Node LTS
 nvm use
@@ -39,7 +39,7 @@ docker run -it --rm \
   --name n8n \
   -p 5678:5678 \
   -v ~/.n8n:/home/node/.n8n \
-  -v $(pwd):/home/node/.n8n/custom/node_modules/@dartfx/n8n-nodes-dartfx:ro \
+  -v $(pwd):/home/node/.n8n/custom/node_modules/@dartfx/n8n-nodes-qsv:ro \
   -v /path/to/local/qsv:/usr/local/bin/qsv:ro \
   docker.n8n.io/n8nio/n8n:latest
 ```
@@ -53,7 +53,7 @@ If developing against a legacy n8n v1 or v2 instance running directly on your ho
 ```bash
 mkdir -p ~/.n8n/custom
 cd ~/.n8n/custom
-pnpm link /path/to/dartfx-n8n
+pnpm link /path/to/dartfx-n8n-nodes-qsv
 
 # Start n8n
 n8n start
@@ -62,14 +62,14 @@ n8n start
 ### Method C: Traditional 2-Step `npm link` — n8n v1 / v2 Bare CLI
 
 ```bash
-# Step 1: In the dartfx-n8n directory
-cd /path/to/dartfx-n8n
+# Step 1: In the dartfx-n8n-nodes-qsv directory
+cd /path/to/dartfx-n8n-nodes-qsv
 npm link
 
 # Step 2: In the n8n custom directory
 mkdir -p ~/.n8n/custom
 cd ~/.n8n/custom
-npm link @dartfx/n8n-nodes-dartfx
+npm link @dartfx/n8n-nodes-qsv
 
 # Start n8n
 n8n start

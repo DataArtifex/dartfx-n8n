@@ -1,10 +1,10 @@
-# `@dartfx/n8n-nodes-dartfx` Documentation
+# `@dartfx/n8n-nodes-qsv` Documentation
 
 ```{warning}
 **Experimental / Early-Stage Project**: This project is under active development. Node APIs, parameters, and operation interfaces are subject to change between releases.
 ```
 
-Welcome to the documentation for **`@dartfx/n8n-nodes-dartfx`**, the official [n8n](https://n8n.io/) community node package from **Data Artifex** for high-performance tabular data wrangling and processing using [datHere QSV](https://github.com/dathere/qsv).
+Welcome to the documentation for **`@dartfx/n8n-nodes-qsv`**, the official [n8n](https://n8n.io/) community node package from **Data Artifex** for high-performance tabular data wrangling and processing using [datHere QSV](https://github.com/dathere/qsv).
 
 ---
 

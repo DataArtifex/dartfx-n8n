@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Initial Release** of `@dartfx/n8n-nodes-dartfx` community node package for high-performance tabular data FAIRification and wrangling.
+- **Initial Release** of `@dartfx/n8n-nodes-qsv` community node package for high-performance tabular data wrangling.
 - **71+ High-Performance QSV Operations**: Streamlined suite of tabular data profiling, transformation, slicing, joining, SQL querying, format conversion, synthetic test data generation, and validation tools powered by [datHere QSV](https://github.com/dathere/qsv).
 - **First-Class Positional Argument Engine**: Fully typed UI parameters for command-specific arguments (e.g. `selection` in `select`, `regex` in `search`, `sampleSize` in `sample`, `sql` in `sqlp`, `column`/`row`/`value` in `edit`), with precise docopt positional argv ordering.
 - **Zero-Copy File-Path Architecture**: Pass filesystem paths (`inputPath`, `outputPath`) directly to native Rust engines for multi-gigabyte dataset processing without memory overhead.

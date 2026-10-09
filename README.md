@@ -1,17 +1,17 @@
-# n8n Community Nodes for Data Artifex (`@dartfx/n8n-nodes-dartfx`)
+# n8n Community Node for datHere QSV (`@dartfx/n8n-nodes-qsv`)
 
-[![npm version](https://img.shields.io/npm/v/@dartfx/n8n-nodes-dartfx.svg)](https://www.npmjs.com/package/@dartfx/n8n-nodes-dartfx)
-[![CI](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/ci.yml/badge.svg)](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/ci.yml)
-[![Docs](https://github.com/DataArtifex/dartfx-n8n/actions/workflows/sphinx.yaml/badge.svg)](https://dataartifex.github.io/dartfx-n8n/)
-[![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-6366f1.svg)](https://deepwiki.com/DataArtifex/dartfx-n8n)
+[![npm version](https://img.shields.io/npm/v/@dartfx/n8n-nodes-qsv.svg)](https://www.npmjs.com/package/@dartfx/n8n-nodes-qsv)
+[![CI](https://github.com/DataArtifex/dartfx-n8n-nodes-qsv/actions/workflows/ci.yml/badge.svg)](https://github.com/DataArtifex/dartfx-n8n-nodes-qsv/actions/workflows/ci.yml)
+[![Docs](https://github.com/DataArtifex/dartfx-n8n-nodes-qsv/actions/workflows/sphinx.yaml/badge.svg)](https://dataartifex.github.io/dartfx-n8n-nodes-qsv/)
+[![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-6366f1.svg)](https://deepwiki.com/DataArtifex/dartfx-n8n-nodes-qsv)
 [![n8n Community Node](https://img.shields.io/badge/n8n-community--node-ea4b71.svg)](https://docs.n8n.io/integrations/community-nodes/)
 [![Powered by QSV](https://img.shields.io/badge/powered%20by-QSV-orange.svg)](https://github.com/dathere/qsv)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > [!NOTE]
-> Node APIs, parameters, and operation interfaces in `@dartfx/n8n-nodes-dartfx` are actively expanding. Please report any issues or feature requests on [GitHub Issues](https://github.com/DataArtifex/dartfx-n8n/issues).
+> Node APIs, parameters, and operation interfaces in `@dartfx/n8n-nodes-qsv` are actively expanding. Please report any issues or feature requests on [GitHub Issues](https://github.com/DataArtifex/dartfx-n8n-nodes-qsv/issues).
 
-A collection of custom [n8n](https://n8n.io/) community nodes to support **data FAIRification** pipelines and high-performance tabular data wrangling using [datHere QSV](https://github.com/dathere/qsv), Data Artifex packages, and other tools.
+A custom [n8n](https://n8n.io/) community node for ultra-fast, zero-copy tabular data wrangling, transformation, validation, and analytics powered by [datHere QSV](https://github.com/dathere/qsv).
 
 ---
 
@@ -40,7 +40,7 @@ Follow the [n8n Community Nodes installation guide](https://docs.n8n.io/integrat
 
 1. Go to **Settings > Community Nodes**.
 2. Select **Install**.
-3. Enter `@dartfx/n8n-nodes-dartfx`.
+3. Enter `@dartfx/n8n-nodes-qsv`.
 4. Agree to the risks and select **Install**.
 
 ---
@@ -128,11 +128,11 @@ volumes:
 ```
 
 > [!TIP]
-> **Pre-Baking `@dartfx/n8n-nodes-dartfx` (Immutable Containers):**
+> **Pre-Baking `@dartfx/n8n-nodes-qsv` (Immutable Containers):**
 > If you want the community node package pre-installed inside the image (no in-app installation step required), add this to the end of your `Dockerfile`:
 > ```dockerfile
 > USER node
-> RUN cd ~/.n8n && npm install @dartfx/n8n-nodes-dartfx
+> RUN cd ~/.n8n && npm install @dartfx/n8n-nodes-qsv
 > ```
 
 ### 3. Environment Variables (Custom Binary Path)
@@ -159,7 +159,7 @@ DARTFX_QSV_BIN_PATH=/opt/custom/bin/qsv
 
 This package follows a decoupled versioning model to support multiple independent node collections (e.g. QSV, Data Artifex FAIRification, Harvester):
 
-### 1. Package Semantic Versioning (`@dartfx/n8n-nodes-dartfx`)
+### 1. Package Semantic Versioning (`@dartfx/n8n-nodes-qsv`)
 
 - The package follows standard [Semantic Versioning](https://semver.org/) (starting at `0.1.0`).
 - Package releases are **independent** of external CLI versioning numbers.
@@ -189,8 +189,8 @@ Node collections that wrap host binaries declare and verify their target CLI ver
 
 ```bash
 # Clone repository
-git clone https://github.com/DataArtifex/dartfx-n8n.git
-cd dartfx-n8n
+git clone https://github.com/DataArtifex/dartfx-n8n-nodes-qsv.git
+cd dartfx-n8n-nodes-qsv
 
 # Use supported Node LTS (20/22)
 nvm use
@@ -221,7 +221,7 @@ docker run -it --rm \
   --name n8n \
   -p 5678:5678 \
   -v ~/.n8n:/home/node/.n8n \
-  -v $(pwd):/home/node/.n8n/custom/node_modules/@dartfx/n8n-nodes-dartfx:ro \
+  -v $(pwd):/home/node/.n8n/custom/node_modules/@dartfx/n8n-nodes-qsv:ro \
   -v /path/to/local/qsv:/usr/local/bin/qsv:ro \
   docker.n8n.io/n8nio/n8n:latest
 ```
@@ -235,7 +235,7 @@ If running an older n8n v1 or v2 instance directly via Node / npm on your host m
 ```bash
 mkdir -p ~/.n8n/custom
 cd ~/.n8n/custom
-pnpm link /path/to/dartfx-n8n
+pnpm link /path/to/dartfx-n8n-nodes-qsv
 
 # Start n8n
 n8n start
@@ -250,13 +250,13 @@ n8n start
 
 ```bash
 # Step 1: Register package globally
-cd /path/to/dartfx-n8n
+cd /path/to/dartfx-n8n-nodes-qsv
 npm link
 
 # Step 2: Link into n8n custom directory
 mkdir -p ~/.n8n/custom
 cd ~/.n8n/custom
-npm link @dartfx/n8n-nodes-dartfx
+npm link @dartfx/n8n-nodes-qsv
 
 # Start n8n
 n8n start
@@ -333,9 +333,9 @@ To test the package in a live n8n instance without replacing or affecting the pr
 4. **Install and verify in n8n:**
    In n8n (**Settings > Community Nodes > Install**), specify:
    ```text
-   @dartfx/n8n-nodes-dartfx@staging
+   @dartfx/n8n-nodes-qsv@staging
    ```
-   *(or exact version `@dartfx/n8n-nodes-dartfx@0.2.0-staging.0`)*
+   *(or exact version `@dartfx/n8n-nodes-qsv@0.2.0-staging.0`)*
 
 ---
 
@@ -361,7 +361,7 @@ git push origin main --follow-tags
 Promote a tested staging release to `latest` without rebuilding:
 
 ```bash
-npm dist-tag add @dartfx/n8n-nodes-dartfx@0.2.0-staging.0 latest
+npm dist-tag add @dartfx/n8n-nodes-qsv@0.2.0-staging.0 latest
 ```
 
 #### Option C: Manual CLI Production Publish

@@ -1,13 +1,13 @@
 # Architecture & Developer Guide
 
-This document details the internal architecture and development patterns of `@dartfx/n8n-nodes-dartfx`.
+This document details the internal architecture and development patterns of `@dartfx/n8n-nodes-qsv`.
 
 ---
 
 ## 📂 Source Code Layout
 
 ```text
-dartfx-n8n/
+dartfx-n8n-nodes-qsv/
 ├── nodes/
 │   └── Qsv/
 │       ├── Qsv.node.ts           # Main INodeType class definition
