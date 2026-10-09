@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > [!NOTE]
-> **Initial Release (`v0.1.0`)**: This is the initial public release of `@dartfx/n8n-nodes-dartfx`. Node APIs, parameters, and operation interfaces are actively expanding. Please report any issues or feature requests on [GitHub Issues](https://github.com/DataArtifex/dartfx-n8n/issues).
+> Node APIs, parameters, and operation interfaces in `@dartfx/n8n-nodes-dartfx` are actively expanding. Please report any issues or feature requests on [GitHub Issues](https://github.com/DataArtifex/dartfx-n8n/issues).
 
 A collection of custom [n8n](https://n8n.io/) community nodes to support **data FAIRification** pipelines and high-performance tabular data wrangling using [datHere QSV](https://github.com/dathere/qsv), Data Artifex packages, and other tools.
 
@@ -19,7 +19,7 @@ A collection of custom [n8n](https://n8n.io/) community nodes to support **data 
 
 - **File Path-First (Zero-Copy Architecture)**: Pass filesystem paths (`inputPath`, `outputPath`) between nodes to stream multi-gigabyte datasets directly through native Rust engines without overwhelming n8n memory. Downstream nodes can chain output directly with `{{ $json.outputPath }}`.
 - **First-Class Positional & Typed Parameters**: Intuitive UI form fields for command-specific arguments (e.g. `selection` for `select`, `regex` for `search`, `sampleSize` for `sample`, `sql` for `sqlp`, `column`/`row`/`value` for `edit`) with precise docopt CLI argument ordering.
-- **71+ Automated QSV Operations**: Full suite of high-performance tabular operations:
+- **73+ Automated QSV Operations**: Full suite of high-performance tabular operations:
   - **Profiling & Analysis**: `stats`, `frequency`, `schema`, `sniff`, `count`, `moarstats`, `pragmastat`, `profile`
   - **Transformation & Cleaning**: `apply`, `behead`, `dedup`, `denull`, `fill`, `flatten`, `fmt`, `replace`, `safenames`, `rename`, `pseudo`, `edit`
   - **Slicing, Search & Sampling**: `index`, `slice`, `search`, `searchset`, `select`, `sample`, `split`, `partition`
@@ -322,7 +322,7 @@ To test the package in a live n8n instance without replacing or affecting the pr
 
 2. **Set a pre-release version without creating a Git tag:**
    ```bash
-   pnpm version 0.1.0-staging.0 --no-git-tag-version
+   pnpm version 0.2.0-staging.0 --no-git-tag-version
    ```
 
 3. **Publish to npm with the `staging` dist-tag:**
@@ -335,7 +335,7 @@ To test the package in a live n8n instance without replacing or affecting the pr
    ```text
    @dartfx/n8n-nodes-dartfx@staging
    ```
-   *(or exact version `@dartfx/n8n-nodes-dartfx@0.1.0-staging.0`)*
+   *(or exact version `@dartfx/n8n-nodes-dartfx@0.2.0-staging.0`)*
 
 ---
 
@@ -361,7 +361,7 @@ git push origin main --follow-tags
 Promote a tested staging release to `latest` without rebuilding:
 
 ```bash
-npm dist-tag add @dartfx/n8n-nodes-dartfx@0.1.0-staging.0 latest
+npm dist-tag add @dartfx/n8n-nodes-dartfx@0.2.0-staging.0 latest
 ```
 
 #### Option C: Manual CLI Production Publish

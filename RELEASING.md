@@ -45,20 +45,48 @@ pnpm publish --dry-run --no-git-checks
 ### 2. Set Pre-Release Version (No Git Commit / Tag)
 Update `package.json` without cluttering Git history:
 ```bash
-pnpm version 0.1.0-staging.0 --no-git-tag-version
+pnpm version 0.2.0-staging.0 --no-git-tag-version
 ```
 
-### 3. Publish to npm under the `staging` Tag
+### 3. Publish to npm
+
+#### Option 1: Publish to the Isolated `staging` Channel (Recommended for pre-releases)
+This publishes the package without changing the default `latest` version that standard users install:
 ```bash
 pnpm publish --tag staging --access public --no-git-checks
 ```
 
-### 4. Verify in a Live n8n Instance
-In n8n (**Settings > Community Nodes > Install**), specify:
-```text
-@dartfx/n8n-nodes-dartfx@staging
+#### Option 2: Publish Directly as the Default (`latest`) Channel
+If you want the version to immediately become the default `latest` upon publish, simply omit `--tag staging` (or explicitly specify `--tag latest`):
+```bash
+pnpm publish --tag latest --access public --no-git-checks
 ```
-*(or by explicit version `@dartfx/n8n-nodes-dartfx@0.1.0-staging.0`)*
+
+### 4. Promote / Re-point Dist-Tags (Make Any Version `latest`)
+If a version was already published under the `staging` tag and you now want to make it the default `latest` without republishing:
+```bash
+npm dist-tag add @dartfx/n8n-nodes-dartfx@0.2.0-staging.0 latest
+```
+
+To list all active distribution tags:
+```bash
+npm dist-tag ls @dartfx/n8n-nodes-dartfx
+```
+
+### 5. Verify in a Live n8n Instance
+In n8n (**Settings > Community Nodes > Install**), specify:
+- Default `latest` channel:
+  ```text
+  @dartfx/n8n-nodes-dartfx
+  ```
+- Specific `staging` channel:
+  ```text
+  @dartfx/n8n-nodes-dartfx@staging
+  ```
+- Specific exact version:
+  ```text
+  @dartfx/n8n-nodes-dartfx@0.2.0-staging.0
+  ```
 
 ---
 
@@ -66,7 +94,7 @@ In n8n (**Settings > Community Nodes > Install**), specify:
 
 ### Option A: Automated via Git Tag & GitHub Actions (Recommended)
 
-Production releases are triggered only when an annotated version tag (e.g. `v0.1.0`) is pushed to GitHub:
+Production releases are triggered only when an annotated version tag (e.g. `v0.2.0`) is pushed to GitHub:
 
 1. **Ensure Working Tree is Clean & Validated:**
    ```bash
@@ -79,7 +107,7 @@ Production releases are triggered only when an annotated version tag (e.g. `v0.1
    ```
 
 2. **Update [CHANGELOG.md](CHANGELOG.md):**
-   Document release notes under `## [0.1.0] - YYYY-MM-DD`.
+   Document release notes under `## [0.2.0] - YYYY-MM-DD`.
 
 3. **Bump Production Version & Create Git Tag:**
    ```bash
@@ -101,12 +129,12 @@ Production releases are triggered only when an annotated version tag (e.g. `v0.1
 
 ---
 
-### Option B: Promote Existing Staging Release to Production
+### Option B: Promote Existing Staging Release to Production (`latest`)
 
-If you have already thoroughly tested a staging build on npm and want to promote it to `latest` without rebuilding:
+If you have already thoroughly tested a staging build on npm and want to promote it to `latest` without rebuilding or creating a git tag:
 
 ```bash
-npm dist-tag add @dartfx/n8n-nodes-dartfx@0.1.0-staging.0 latest
+npm dist-tag add @dartfx/n8n-nodes-dartfx@0.2.0-staging.0 latest
 ```
 
 ---
