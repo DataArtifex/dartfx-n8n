@@ -112,20 +112,22 @@ Production releases are triggered only when an annotated version tag (e.g. `v0.2
 3. **Bump Production Version & Create Git Tag:**
    ```bash
    # Patch release (e.g., 0.1.0 -> 0.1.1)
-   npm version patch -m "chore(release): %s"
+   pnpm version patch -m "chore(release): %s"
 
    # Minor release (e.g., 0.1.0 -> 0.2.0)
-   npm version minor -m "chore(release): %s"
+   pnpm version minor -m "chore(release): %s"
 
    # Major release (e.g., 0.1.0 -> 1.0.0)
-   npm version major -m "chore(release): %s"
+   pnpm version major -m "chore(release): %s"
    ```
 
 4. **Push Commit and Tag to Trigger GitHub Actions CI/CD:**
    ```bash
    git push origin main --follow-tags
+   # Or push tag individually:
+   # git push origin v0.2.0
    ```
-   *GitHub Actions will automatically build, test, and publish to npm with cryptographic provenance attestation.*
+   *GitHub Actions will automatically run `.github/workflows/publish.yml`, building, testing, and publishing to npm with cryptographic provenance attestation via OIDC.*
 
 ---
 
