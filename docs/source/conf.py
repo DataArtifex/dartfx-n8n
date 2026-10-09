@@ -9,7 +9,7 @@
 project = "@dartfx/n8n-nodes-qsv"
 copyright = "2026, Data Artifex"
 author = "Data Artifex"
-release = "0.2.0"
+release = "0.2.1"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
